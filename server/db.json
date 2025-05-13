@@ -1,0 +1,344 @@
+{
+  "settings": {
+    "theme": "light",
+    "language": "en",
+    "notifications": true
+  },
+  "projects": [
+    {
+      "id": "proj-001",
+      "user_id": "user-001",
+      "created_at": "2025-05-08T10:00:00Z",
+      "status": "blueprint",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Summer Collection T-Shirt",
+      "tshirt_color": "#FFFFFF",
+      "tshirt_size": "M",
+      "last_modified": "2025-05-08T15:30:00Z",
+      "genre": "women",
+      "canvas": {
+        "id": "canvas-001",
+        "project_id": "proj-001",
+        "background_color": "#FFFFFF",
+        "created_at": "2025-05-08T10:00:00Z",
+        "last_modified": "2025-05-08T15:30:00Z",
+        "layers": [
+          {
+            "id": "layer-001",
+            "canvas_id": "canvas-001",
+            "type": "text",
+            "z_index": 1,
+            "content": {
+              "text": "Summer Vibes",
+              "x": 100,
+              "y": 150,
+              "font_family": "Arial",
+              "font_size": 24,
+              "font_weight": 700,
+              "color": "#000000",
+              "rotation": 0,
+              "text_align": "center",
+              "opacity": 1
+            },
+            "is_visible": true,
+            "created_at": "2025-05-08T10:05:00Z",
+            "last_modified": "2025-05-08T15:30:00Z"
+          },
+          {
+            "id": "layer-002",
+            "canvas_id": "canvas-001",
+            "type": "image",
+            "z_index": 2,
+            "content": {
+              "image_url": "https://example.com/images/summer-icon.png",
+              "width": 200,
+              "height": 200,
+              "x": 150,
+              "y": 200,
+              "rotation": 0,
+              "opacity": 1,
+              "scale": 1,
+              "maintain_aspect_ratio": true
+            },
+            "is_visible": true,
+            "created_at": "2025-05-08T10:10:00Z",
+            "last_modified": "2025-05-08T15:30:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "proj-002",
+      "user_id": "user-001",
+      "created_at": "2025-05-07T14:20:00Z",
+      "status": "designed-garment",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Urban Style Design",
+      "tshirt_color": "#000000",
+      "tshirt_size": "L",
+      "last_modified": "2025-05-08T09:15:00Z",
+      "genre": "women",
+      "canvas": {
+        "id": "canvas-002",
+        "project_id": "proj-002",
+        "background_color": "#000000",
+        "created_at": "2025-05-07T14:20:00Z",
+        "last_modified": "2025-05-08T09:15:00Z",
+        "layers": [
+          {
+            "id": "layer-003",
+            "canvas_id": "canvas-002",
+            "type": "text",
+            "z_index": 1,
+            "content": {
+              "text": "Urban Style",
+              "x": 100,
+              "y": 150,
+              "font_family": "Helvetica",
+              "font_size": 32,
+              "font_weight": 800,
+              "color": "#FFFFFF",
+              "rotation": 0,
+              "text_align": "center",
+              "opacity": 1
+            },
+            "is_visible": true,
+            "created_at": "2025-05-07T14:25:00Z",
+            "last_modified": "2025-05-08T09:15:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "proj-003",
+      "user_id": "user-001",
+      "created_at": "2025-05-09T08:00:00Z",
+      "status": "blueprint",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Beach Party Design",
+      "tshirt_color": "#FFD700",
+      "tshirt_size": "S",
+      "last_modified": "2025-05-09T08:30:00Z",
+      "genre": "men",
+      "canvas": {
+        "id": "canvas-003",
+        "project_id": "proj-003",
+        "background_color": "#FFD700",
+        "created_at": "2025-05-09T08:00:00Z",
+        "last_modified": "2025-05-09T08:30:00Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "proj-004",
+      "user_id": "user-001",
+      "created_at": "2025-05-09T09:00:00Z",
+      "status": "designed-garment",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Winter Wonderland",
+      "tshirt_color": "#FFFFFF",
+      "tshirt_size": "L",
+      "last_modified": "2025-05-09T09:30:00Z",
+      "genre": "men",
+      "canvas": {
+        "id": "canvas-004",
+        "project_id": "proj-004",
+        "background_color": "#FFFFFF",
+        "created_at": "2025-05-09T09:00:00Z",
+        "last_modified": "2025-05-09T09:30:00Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "proj-005",
+      "user_id": "user-002",
+      "created_at": "2025-05-09T10:00:00Z",
+      "status": "blueprint",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Spring Blossom",
+      "tshirt_color": "#FF69B4",
+      "tshirt_size": "M",
+      "last_modified": "2025-05-09T10:30:00Z",
+      "genre": "men",
+      "canvas": {
+        "id": "canvas-005",
+        "project_id": "proj-005",
+        "background_color": "#FF69B4",
+        "created_at": "2025-05-09T10:00:00Z",
+        "last_modified": "2025-05-09T10:30:00Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "proj-006",
+      "user_id": "user-001",
+      "created_at": "2025-05-09T11:00:00Z",
+      "status": "designed-garment",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "Autumn Leaves",
+      "tshirt_color": "#FFA500",
+      "tshirt_size": "XL",
+      "last_modified": "2025-05-09T11:30:00Z",
+      "genre": "men",
+      "canvas": {
+        "id": "canvas-006",
+        "project_id": "proj-006",
+        "background_color": "#FFA500",
+        "created_at": "2025-05-09T11:00:00Z",
+        "last_modified": "2025-05-09T11:30:00Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "9a5cb46d-8aa3-4851-9289-45ec8fa4dcf5",
+      "userId": "user-001",
+      "createdAt": "2025-05-12T05:41:06.956Z",
+      "status": "blueprint",
+      "genre": "men",
+      "previewImageUrl": "",
+      "name": "Mateo",
+      "garmentColor": "black",
+      "garmentSize": "M",
+      "lastModified": "2025-05-12T05:41:06.956Z",
+      "canvas": {
+        "id": "",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-12T05:41:06.956Z",
+        "lastModified": "2025-05-12T05:41:06.956Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "3f281b94-8d87-493f-8490-d663a3a4d9ee",
+      "userId": "user-001",
+      "createdAt": "2025-05-13T03:07:44.139Z",
+      "status": "blueprint",
+      "genre": "men",
+      "previewImageUrl": "",
+      "name": "Fabri",
+      "garmentColor": "#1B3D92",
+      "garmentSize": "M",
+      "lastModified": "2025-05-13T03:07:44.139Z",
+      "canvas": {
+        "id": "",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-13T03:07:44.139Z",
+        "lastModified": "2025-05-13T03:07:44.139Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "0c521a95-cfad-46c2-9328-adb01bae6bcc",
+      "userId": "user-001",
+      "createdAt": "2025-05-13T03:37:40.347Z",
+      "status": "blueprint",
+      "genre": "men",
+      "previewImageUrl": "",
+      "name": "sdfsdf",
+      "garmentColor": "#693FA0",
+      "garmentSize": "M",
+      "lastModified": "2025-05-13T03:37:40.347Z",
+      "canvas": {
+        "id": "",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-13T03:37:40.347Z",
+        "lastModified": "2025-05-13T03:37:40.347Z",
+        "layers": []
+      }
+    }
+  ],
+  "templates": [],
+  "favorites": [],
+  "designs": [],
+  "users": [
+    {
+      "id": "user-001",
+      "email": "user@example.com",
+      "name": "Test User",
+      "created_at": "2024-03-19T00:00:00Z"
+    }
+  ],
+  "analytics": [
+    {
+      "id": "analytics-001",
+      "user_id": "user-001",
+      "project_id": "proj-001",
+      "garment_size": "M",
+      "garment_color": "#FFFFFF",
+      "created_at": "2025-05-08T15:30:00Z",
+      "last_modified": "2025-05-12T11:00:00Z",
+      "page_views": 245,
+      "total_likes": 78,
+      "click_count": 120,
+      "conversion_rate": 0.32
+    },
+    {
+      "id": "analytics-002",
+      "user_id": "user-001",
+      "project_id": "proj-002",
+      "garment_size": "L",
+      "garment_color": "#000000",
+      "created_at": "2025-05-08T09:15:00Z",
+      "last_modified": "2025-05-12T11:15:00Z",
+      "page_views": 189,
+      "total_likes": 42,
+      "click_count": 95,
+      "conversion_rate": 0.25
+    },
+    {
+      "id": "analytics-003",
+      "user_id": "user-001",
+      "project_id": "proj-003",
+      "garment_size": "S",
+      "garment_color": "#FFD700",
+      "created_at": "2025-05-09T08:30:00Z",
+      "last_modified": "2025-05-12T11:30:00Z",
+      "page_views": 312,
+      "total_likes": 105,
+      "click_count": 167,
+      "conversion_rate": 0.38
+    },
+    {
+      "id": "analytics-004",
+      "user_id": "user-001",
+      "project_id": "proj-004",
+      "garment_size": "L",
+      "garment_color": "#FFFFFF",
+      "created_at": "2025-05-09T09:30:00Z",
+      "last_modified": "2025-05-12T11:45:00Z",
+      "page_views": 176,
+      "total_likes": 53,
+      "click_count": 89,
+      "conversion_rate": 0.29
+    },
+    {
+      "id": "analytics-005",
+      "user_id": "user-002",
+      "project_id": "proj-005",
+      "garment_size": "M",
+      "garment_color": "#FF69B4",
+      "created_at": "2025-05-09T10:30:00Z",
+      "last_modified": "2025-05-12T12:00:00Z",
+      "page_views": 205,
+      "total_likes": 67,
+      "click_count": 115,
+      "conversion_rate": 0.31
+    },
+    {
+      "id": "analytics-006",
+      "user_id": "user-001",
+      "project_id": "proj-006",
+      "garment_size": "XL",
+      "garment_color": "#FFA500",
+      "created_at": "2025-05-09T11:30:00Z",
+      "last_modified": "2025-05-12T12:15:00Z",
+      "page_views": 283,
+      "total_likes": 91,
+      "click_count": 142,
+      "conversion_rate": 0.35
+    }
+  ]
+}
