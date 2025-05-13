@@ -39,6 +39,7 @@ export class DesignLabComponent implements OnInit {
     // For demo purposes, using a hardcoded user ID
     // In a real app, you would get this from an auth service
     const userId = 'user-001';
+    console.log(this.projectService.getURL());
 
     this.projectService.getAllById(userId).subscribe({
       next: (projects) => {
