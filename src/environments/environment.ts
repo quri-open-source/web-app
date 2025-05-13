@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  serverBaseUrl: 'http://localhost:3000',
+  serverBaseUrl: 'https://68230d7eb342dce800507517.mockapi.io',
 };

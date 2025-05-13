@@ -16,6 +16,10 @@ export abstract class BaseService<T> {
     return `${this.apiUrl}${this.path}`;
   }
 
+  getURL(): string {
+    return this.resourcePath();
+  }
+
   getAll(): Observable<T[]> {
     return this.http.get<T[]>(this.resourcePath());
   }
