@@ -1,0 +1,50 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="avatar-edit-container">
+      <img [src]="user?.avatar_url" class="profile-avatar" alt="Avatar" (dblclick)="triggerAvatarInput(avatarInput)" />
+      <input type="file" accept="image/*" #avatarInput style="display:none" (change)="onAvatarSelected($event)" />
+      <span class="edit-avatar-hint">Double click to change</span>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">
+        <span *ngIf="!editingName" (dblclick)="enableEditName()">{{ user?.name }}</span>
+        <input *ngIf="editingName" [(ngModel)]="editedName" (blur)="saveName()" (keydown.enter)="saveName()" (keydown.esc)="cancelEditName()"
+          class="edit-input name-input" />
+        <span class="verified-badge">&#10003;</span>
+      </div>
+      <div class="profile-bio">
+        <span *ngIf="!editingBio" (dblclick)="enableEditBio()">{{ user?.bio }}</span>
+        <textarea *ngIf="editingBio" [(ngModel)]="editedBio" (blur)="saveBio()" (keydown.enter)="saveBio()" (keydown.esc)="cancelEditBio()"
+          class="edit-input bio-input"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <section>
+    <h2>Your Projects</h2>
+    <div class="projects-list">
+      <ng-container *ngFor="let project of getBlueprints()">
+        <img [src]="project.previewImageUrl" class="project-thumb" [alt]="project.name" />
+      </ng-container>
+    </div>
+  </section>
+
+  <section>
+    <h2>Designs</h2>
+    <div class="designs-list">
+      <ng-container *ngFor="let project of getDesigns()">
+        <div class="design-card">
+          <img [src]="project.previewImageUrl" class="design-thumb" [alt]="project.name" />
+          <div class="design-info">
+            <span class="designer-name">{{ user?.name }}</span>
+            <span class="design-title">{{ project.name }}</span>
+            <span class="design-price">S/ 45.00</span>
+            <button class="add-to-cart-btn">Add to cart</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+</div>
