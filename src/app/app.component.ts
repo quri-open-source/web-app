@@ -10,6 +10,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs';
+import { UserService } from './shared/services/user.service';
+import { User } from './core/model/user.entity';
+import { CommonModule } from '@angular/common';
 
 export interface AppRoute {
   path: string;
@@ -20,6 +23,7 @@ export interface AppRoute {
 @Component({
   selector: 'app-root',
   imports: [
+    CommonModule,
     RouterOutlet,
     MatSidenavModule,
     RouterLinkActive,
@@ -33,7 +37,9 @@ export interface AppRoute {
 export class AppComponent {
   title = 'open-source-web-app-TEST';
   currentPage = '';
-  currentPath = '';  routes: AppRoute[] = [
+  currentPath = '';
+  user: User | null = null;
+  routes: AppRoute[] = [
     {
       path: 'home',
       label: 'Home',
@@ -53,7 +59,8 @@ export class AppComponent {
       path: 'favorites',
       label: 'Favorites',
       icon: 'favorite',
-    },    {
+    },
+    {
       path: 'explore',
       label: 'Explore',
       icon: 'explore',
@@ -74,7 +81,7 @@ export class AppComponent {
       icon: 'settings',
     },
   ];
-  constructor(private router: Router) {
+  constructor(private router: Router, private userService: UserService) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -85,5 +92,9 @@ export class AppComponent {
         );
         this.currentPage = currentPage ? currentPage.label : '';
       });
+    // Load user avatar for toolbar
+    this.userService.getCurrentUser().subscribe((user) => {
+      this.user = user;
+    });
   }
 }
