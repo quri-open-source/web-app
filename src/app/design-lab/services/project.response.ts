@@ -16,6 +16,9 @@ export interface ProjectResponse {
     last_modified: string;
     canvas: CanvasResponse;
     layers: LayerResponse[];
+    project_privacy: string;
+    price: number;
+    likes: number;
 }
 
 export interface CanvasResponse {
