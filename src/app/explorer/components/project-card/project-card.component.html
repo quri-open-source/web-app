@@ -1,1 +1,14 @@
-<p>project-card works!</p>
+<mat-card class="project-card">
+    <img mat-card-image [src]="project.preview_image_url" [alt]="project.name">
+    <mat-card-content>
+        <p> {{ project.user_id }}</p>
+        <p> {{ project.likes }} </p>
+        <h3 mat-card-title>{{ project.name }}</h3>
+        <p> {{ project.price }} </p>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-icon-button>
+            <mat-icon>favorite</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>
