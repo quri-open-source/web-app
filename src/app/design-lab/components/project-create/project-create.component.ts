@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCommonModule } from '@angular/material/core';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
 
@@ -33,6 +34,7 @@ interface GarmentColor {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatCommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
