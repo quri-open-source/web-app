@@ -1,12 +1,19 @@
 .project-card {
-  max-width: 400px;
-  margin: 16px;
+  background-color: #F6F6F6;
   transition: transform 0.2s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .project-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Golos Text', sans-serif;
 }
 
 .project-details {
@@ -17,9 +24,44 @@
   margin: 8px 0;
 }
 
-mat-card-actions {
-  padding: 8px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+.project-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 8px 0;
 }
+
+.project-price {
+  font-size: 1.1em;
+  font-weight: 400;
+  margin: 8px 0;
+}
+
+.add-to-cart-button {
+  width: 100%;
+  background-color: #202020 !important;
+  color: #ffffff !important;
+}
+
+.content_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.content_header_right {
+  display:flex;
+  align-items: center;
+}
+
+.favorite_icon {
+  font-size: 18px;
+  position: relative;
+  top: 2px;
+}
+
+.likes-count {
+  font-size: 14px;
+
+}
+
