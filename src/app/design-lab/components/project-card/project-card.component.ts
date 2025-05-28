@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { MatCommonModule } from '@angular/material/core';
 import { Project } from '../../model/project.entity';
 
 @Component({
@@ -15,6 +16,7 @@ import { Project } from '../../model/project.entity';
     MatButtonModule,
     MatIconModule,
     RouterLink,
+    MatCommonModule,
   ],
   template: `
     <mat-card class="project-card" [routerLink]="['/design-lab', project.id]">
@@ -43,7 +45,7 @@ import { Project } from '../../model/project.entity';
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button color="primary" (click)="$event.stopPropagation()">
+        <button *ngIf="isEditable" mat-button color="primary" (click)="$event.stopPropagation()">
           <mat-icon>edit</mat-icon>
           Edit
         </button>
@@ -129,6 +131,28 @@ import { Project } from '../../model/project.entity';
     `,
   ],
 })
-export class ProjectCardComponent {
+export class ProjectCardComponent implements OnChanges {
   @Input() project!: Project;
+  @Input() currentUserId?: string;
+
+  get isEditable(): boolean {
+    if (!this.currentUserId || !this.project) return false;
+    // Accept both camelCase and snake_case for robustness
+    return (
+      this.project.userId === this.currentUserId ||
+      (this.project as any).user_id === this.currentUserId
+    );
+  }
+
+  ngOnChanges() {
+    // Defensive: ensure date is always a Date object for the pipe
+    if (this.project) {
+      if (typeof this.project.lastModified === 'string') {
+        this.project.lastModified = new Date(this.project.lastModified);
+      }
+      if (typeof this.project.createdAt === 'string') {
+        this.project.createdAt = new Date(this.project.createdAt);
+      }
+    }
+  }
 }
