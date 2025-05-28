@@ -133,3 +133,65 @@
   align-items: center;
   gap: 8px;
 }
+.color-dot {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+.color-edit-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+.color-edit-panel input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  padding: 0;
+  margin-right: 4px;
+}
+.project-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.error-message {
+  background: #ffeaea;
+  color: #b71c1c;
+  border: 1px solid #f44336;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.edit-field {
+  max-width: 140px;
+  min-width: 0;
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+.color-picker-field input[type="color"] {
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+}
+.mat-form-field {
+  margin-bottom: 0;
+}
+.project-card mat-form-field {
+  width: 120px;
+  min-width: 0;
+  display: inline-block;
+  vertical-align: middle;
+}

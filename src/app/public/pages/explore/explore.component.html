@@ -1,8 +1,8 @@
 <div class="explore-container">
     <div class="search-bar-container">
-        <app-search-bar />
+        <app-search-bar (search)="onSearchChange($event)" />
     </div>
     <div class="projects-view-container">
-        <app-projects-view />
+        <app-projects-view [searchText]="searchText" />
     </div>
 </div>

@@ -5,21 +5,43 @@ import { Project } from '../../../design-lab/model/project.entity';
 import { User } from '../../../core/model/user.entity';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+export interface EditableProject extends Project {
+  editingName: boolean;
+  editingGenre: boolean;
+  editingSize: boolean;
+  editingColor: boolean;
+}
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
+  ]
 })
 export class UserProfileComponent implements OnInit {
   user: User | null = null;
-  projects: Project[] = [];
+  projects: EditableProject[] = [];
   editingName = false;
   editedName = '';
   editingBio = false;
   editedBio = '';
+  selectedStatus: string = 'all';
+  error: string | null = null;
 
   constructor(
     private userService: UserService,
@@ -31,18 +53,50 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadUser(): void {
-    this.userService.getCurrentUser().subscribe((user: User) => {
-      this.user = user;
-      this.editedName = user.name;
-      this.editedBio = user.bio;
-      this.loadProjects();
+    this.userService.getCurrentUser().subscribe({
+      next: (user: User) => {
+        this.user = user;
+        this.editedName = user.name;
+        this.editedBio = user.bio;
+        this.loadProjects();
+      },
+      error: (err) => {
+        this.error = 'Failed to load user data. Please check your connection or try again later.';
+      }
     });
   }
 
   loadProjects(): void {
     if (!this.user) return;
-    this.projectService.getAllById(this.user.id).subscribe((projects: Project[]) => {
-      this.projects = projects;
+    this.projectService.getAllById(this.user.id).subscribe({
+      next: (projects: any[]) => {
+        this.projects = projects.map(p => {
+          // Normalize all possible field names to camelCase
+          const normalized: EditableProject = {
+            ...p,
+            id: p.id,
+            userId: p.userId || p.user_id,
+            createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
+            lastModified: p.lastModified ? new Date(p.lastModified) : (p.last_modified ? new Date(p.last_modified) : new Date()),
+            status: p.status,
+            name: p.name,
+            genre: p.genre,
+            previewImageUrl: p.previewImageUrl || p.preview_image_url || '',
+            garmentColor: p.garmentColor || p.tshirt_color || p.garment_color || '',
+            garmentSize: p.garmentSize || p.tshirt_size || p.garment_size || '',
+            // Canvas and other fields can be mapped similarly if needed
+            editingName: false,
+            editingGenre: false,
+            editingSize: false,
+            editingColor: false
+          };
+          return normalized;
+        });
+        this.error = null;
+      },
+      error: (err) => {
+        this.error = 'Failed to load projects. Please check your connection or try again later.';
+      }
     });
   }
 
@@ -86,12 +140,28 @@ export class UserProfileComponent implements OnInit {
     this.editingBio = false;
   }
 
-  getBlueprints(): Project[] {
-    return this.projects.filter(p => p.status === 'blueprint');
+  getBlueprints(): EditableProject[] {
+    if (!this.user) return [];
+    const blueprints = this.projects.filter(
+      p =>
+        typeof p.status === 'string' &&
+        p.status.trim().toLowerCase() === 'blueprint' &&
+        (p.userId === this.user!.id || (p as any).user_id === this.user!.id)
+    );
+    console.log('Blueprints filtrados:', blueprints);
+    return blueprints;
   }
 
-  getDesigns(): Project[] {
-    return this.projects.filter(p => p.status === 'designed-garment' as any);
+  getDesigns(): EditableProject[] {
+    if (!this.user) return [];
+    const designs = this.projects.filter(
+      p =>
+        typeof p.status === 'string' &&
+        p.status.trim().toLowerCase() !== 'blueprint' &&
+        (p.userId === this.user!.id || (p as any).user_id === this.user!.id)
+    );
+    console.log('Designs filtrados:', designs);
+    return designs;
   }
 
   triggerAvatarInput(input: HTMLInputElement): void {
@@ -111,5 +181,31 @@ export class UserProfileComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // Agrega la función para guardar cambios inline
+  saveProject(project: any): void {
+    project.editingName = false;
+    project.editingGenre = false;
+    project.editingSize = false;
+    project.editingColor = false;
+    this.projectService.update(project.id, project).subscribe();
+  }
+
+  getAllUserProjects(): EditableProject[] {
+    if (!this.user) return [];
+    return this.projects.filter(
+      p => p.userId === this.user!.id || (p as any).user_id === this.user!.id
+    );
+  }
+
+  getFilteredProjects(): EditableProject[] {
+    if (this.selectedStatus === 'all') {
+      return this.getAllUserProjects();
+    }
+    return this.getAllUserProjects().filter(p =>
+      typeof p.status === 'string' &&
+      p.status.trim().toLowerCase() === this.selectedStatus
+    );
   }
 }

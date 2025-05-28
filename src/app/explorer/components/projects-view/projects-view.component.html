@@ -1,3 +1,8 @@
-<div class="cards-list">
-    <app-project-card *ngFor="let project of projects" [project]="project"></app-project-card>
+<div *ngIf="error" class="error-message mat-elevation-z2">
+  <mat-icon color="warn">error_outline</mat-icon>
+  <p>{{ error }}</p>
+  <button mat-raised-button color="primary" (click)="ngOnInit()">Retry</button>
+</div>
+<div *ngIf="!error" class="cards-list">
+    <app-project-card *ngFor="let project of filteredProjects" [project]="project"></app-project-card>
 </div>
