@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCommonModule } from '@angular/material/core';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
 
@@ -20,6 +21,7 @@ import { Project } from '../../model/project.entity';
     MatIconModule,
     MatProgressSpinnerModule,
     RouterLink,
+    MatCommonModule,
   ],
   template: `
     <div class="project-detail-container">
@@ -299,7 +301,12 @@ export class ProjectDetailComponent implements OnInit {
 
     this.projectService.getById(this.projectId).subscribe({
       next: (project) => {
-        this.project = project;
+        // Ensure date fields are always Date objects
+        this.project = {
+          ...project,
+          createdAt: project.createdAt ? new Date(project.createdAt) : new Date(),
+          lastModified: project.lastModified ? new Date(project.lastModified) : new Date(),
+        };
         this.loading = false;
       },
       error: (err) => {

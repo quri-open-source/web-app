@@ -23,28 +23,71 @@
   <hr />
 
   <section>
-    <h2>Your Projects</h2>
-    <div class="projects-list">
-      <ng-container *ngFor="let project of getBlueprints()">
-        <img [src]="project.previewImageUrl" class="project-thumb" [alt]="project.name" />
-      </ng-container>
+    <h2>My Projects</h2>
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button mat-button color="primary" (click)="loadUser()">Retry</button>
     </div>
-  </section>
-
-  <section>
-    <h2>Designs</h2>
-    <div class="designs-list">
-      <ng-container *ngFor="let project of getDesigns()">
-        <div class="design-card">
-          <img [src]="project.previewImageUrl" class="design-thumb" [alt]="project.name" />
-          <div class="design-info">
-            <span class="designer-name">{{ user?.name }}</span>
-            <span class="design-title">{{ project.name }}</span>
-            <span class="design-price">S/ 45.00</span>
-            <button class="add-to-cart-btn">Add to cart</button>
-          </div>
-        </div>
-      </ng-container>
+    <div *ngIf="!error">
+      <div class="project-filters">
+        <button mat-button [color]="selectedStatus === 'all' ? 'primary' : ''" (click)="selectedStatus = 'all'">All</button>
+        <button mat-button [color]="selectedStatus === 'blueprint' ? 'primary' : ''" (click)="selectedStatus = 'blueprint'">Blueprints</button>
+        <button mat-button [color]="selectedStatus === 'designed-garment' ? 'primary' : ''" (click)="selectedStatus = 'designed-garment'">Finished Designs</button>
+        <!-- Add more filters as needed -->
+      </div>
+      <div class="projects-list">
+        <ng-container *ngFor="let project of getFilteredProjects()">
+          <mat-card class="project-card">
+            <div class="project-preview">
+              <img [src]="project.previewImageUrl" class="project-thumb" [alt]="project.name" />
+            </div>
+            <mat-card-content>
+              <h3>
+                <span *ngIf="!project.editingName" (dblclick)="project.editingName = true">{{ project.name }}</span>
+                <mat-form-field *ngIf="project.editingName" appearance="outline" class="edit-field">
+                  <input matInput [(ngModel)]="project.name" (blur)="saveProject(project)" (keydown.enter)="saveProject(project)" (keydown.esc)="project.editingName = false" />
+                  <button mat-icon-button matSuffix (click)="saveProject(project)"><mat-icon>check</mat-icon></button>
+                  <button mat-icon-button matSuffix (click)="project.editingName = false"><mat-icon>close</mat-icon></button>
+                </mat-form-field>
+              </h3>
+              <p>
+                <strong>Genre:</strong>
+                <span *ngIf="!project.editingGenre" (dblclick)="project.editingGenre = true">{{ project.genre }}</span>
+                <mat-form-field *ngIf="project.editingGenre" appearance="outline" class="edit-field">
+                  <input matInput [(ngModel)]="project.genre" (blur)="saveProject(project)" (keydown.enter)="saveProject(project)" (keydown.esc)="project.editingGenre = false" />
+                  <button mat-icon-button matSuffix (click)="saveProject(project)"><mat-icon>check</mat-icon></button>
+                  <button mat-icon-button matSuffix (click)="project.editingGenre = false"><mat-icon>close</mat-icon></button>
+                </mat-form-field>
+              </p>
+              <p>
+                <strong>Size:</strong>
+                <span *ngIf="!project.editingSize" (dblclick)="project.editingSize = true">{{ project.garmentSize }}</span>
+                <mat-form-field *ngIf="project.editingSize" appearance="outline" class="edit-field">
+                  <input matInput [(ngModel)]="project.garmentSize" (blur)="saveProject(project)" (keydown.enter)="saveProject(project)" (keydown.esc)="project.editingSize = false" />
+                  <button mat-icon-button matSuffix (click)="saveProject(project)"><mat-icon>check</mat-icon></button>
+                  <button mat-icon-button matSuffix (click)="project.editingSize = false"><mat-icon>close</mat-icon></button>
+                </mat-form-field>
+              </p>
+              <p>
+                <strong>Color:</strong>
+                <span [style.background]="project.garmentColor" class="color-dot"></span>
+                <span>{{ project.garmentColor }}</span>
+                <button mat-icon-button type="button" (click)="project.editingColor = true" *ngIf="!project.editingColor">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <span *ngIf="project.editingColor" class="color-edit-panel">
+                  <mat-form-field appearance="outline" class="edit-field color-picker-field">
+                    <input matInput type="color" [(ngModel)]="project.garmentColor" />
+                  </mat-form-field>
+                  <button mat-icon-button color="primary" (click)="saveProject(project)"><mat-icon>check</mat-icon></button>
+                  <button mat-icon-button (click)="project.editingColor = false"><mat-icon>close</mat-icon></button>
+                </span>
+              </p>
+              <p><strong>Last modified:</strong> {{ project.lastModified | date:'short' }}</p>
+            </mat-card-content>
+          </mat-card>
+        </ng-container>
+      </div>
     </div>
   </section>
 </div>

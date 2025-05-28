@@ -15,6 +15,7 @@ import { Layer, TextContent, ImageContent } from '../../model/layer.entity';
 import { EditorContainerComponent } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
+import { MatCommonModule } from '@angular/material/core';
 
 interface GarmentColor {
   label: string;
@@ -35,6 +36,7 @@ interface GarmentColor {
     MatProgressSpinnerModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatCommonModule,
     EditorContainerComponent,
   ],
   template: `

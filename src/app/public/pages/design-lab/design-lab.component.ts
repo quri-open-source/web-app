@@ -8,6 +8,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
+import { UserService } from '../../../shared/services/user.service';
+import { User } from '../../../core/model/user.entity';
 
 @Component({
   selector: 'app-design-lab',
@@ -28,22 +30,33 @@ export class DesignLabComponent implements OnInit {
   projects: Project[] = [];
   loading = true;
   error: string | null = null;
+  user: User | null = null;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService, private userService: UserService) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.user = user;
+        this.loadProjects();
+      },
+      error: (err) => {
+        this.error = 'Failed to load user.';
+        this.loading = false;
+      }
+    });
   }
 
   loadProjects(): void {
-    // For demo purposes, using a hardcoded user ID
-    // In a real app, you would get this from an auth service
-    const userId = 'user-001';
-    console.log(this.projectService.getURL());
-
-    this.projectService.getAllById(userId).subscribe({
+    if (!this.user) return;
+    this.projectService.getAllById(this.user.id).subscribe({
       next: (projects) => {
-        this.projects = projects;
+        // Ensure all date fields are Date objects
+        this.projects = projects.map(p => ({
+          ...p,
+          createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
+          lastModified: p.lastModified ? new Date(p.lastModified) : new Date(),
+        }));
         this.loading = false;
       },
       error: (err) => {
