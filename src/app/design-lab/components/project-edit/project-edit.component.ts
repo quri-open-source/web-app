@@ -15,7 +15,6 @@ import { Layer, TextContent, ImageContent } from '../../model/layer.entity';
 import { EditorContainerComponent } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
-import { MatCommonModule } from '@angular/material/core';
 
 interface GarmentColor {
   label: string;
@@ -36,7 +35,6 @@ interface GarmentColor {
     MatProgressSpinnerModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatCommonModule,
     EditorContainerComponent,
   ],
   template: `
@@ -56,112 +54,105 @@ interface GarmentColor {
       </mat-toolbar>
 
       <!-- Loading Spinner -->
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Loading project...</p>
-      </div>
-
-      <!-- Error Message -->
-      <div *ngIf="error" class="error-container">
-        <p>{{ error }}</p>
-        <button mat-button color="primary" (click)="loadProject()">
-          Retry
-        </button>
-      </div>
-      <!-- Editor Content -->
-      <div *ngIf="!loading && !error && project" class="editor-content">
-        <div class="editor-layout">
-          <!-- Preview Panel -->
-          <div class="preview-panel">
-            <h3>Preview</h3>
-            <div class="tshirt-preview">
-              <div class="tshirt-container">
-                <div class="tshirt-image">
-                  <div
-                    class="cropped-image"
-                    [style.background-image]="'url(' + garmentColorImages + ')'"
-                    [style.background-position]="
-                      getBackgroundPosition(project.garmentColor)
-                    "
-                  >
-                    <!-- Text Layers -->
-                    <div
-                      *ngFor="let layer of textLayers"
-                      class="text-layer"
-                      [style.color]="getTextContent(layer).color"
-                      [style.font-family]="getTextContent(layer).fontFamily"
-                      [style.font-size.px]="getTextContent(layer).fontSize"
-                      [style.font-weight]="getTextContent(layer).fontWeight"
-                      [style.font-style]="
-                        getTextContent(layer).italic ? 'italic' : 'normal'
-                      "
-                      [style.text-decoration]="
-                        getTextContent(layer).underline ? 'underline' : 'none'
-                      "
-                      [style.text-align]="getTextContent(layer).textAlign"
-                      [style.left.px]="layer.content.x"
-                      [style.top.px]="layer.content.y"
-                      [style.background-color]="
-                        getTextContent(layer).color === '#ffffff'
-                          ? 'rgba(0,0,0,0.1)'
-                          : 'transparent'
-                      "
-                      (mousedown)="startDrag($event, layer)"
-                    >
-                      <div
-                        class="delete-button"
-                        (mousedown)="$event.stopPropagation()"
-                        (click)="deleteLayer($event, layer, 'text')"
-                      >
-                        ×
+      @if (loading) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading project...</p>
+        </div>
+      } @else {
+        @if (error) {
+          <!-- Error Message -->
+          <div class="error-container">
+            <p>{{ error }}</p>
+            <button mat-button color="primary" (click)="loadProject()">
+              Retry
+            </button>
+          </div>
+        } @else {
+          @if (project) {
+            <!-- Editor Content -->
+            <div class="editor-content">
+              <div class="editor-layout">
+                <!-- Preview Panel -->
+                <div class="preview-panel">
+                  <h3>Preview</h3>
+                  <div class="tshirt-preview">
+                    <div class="tshirt-container">
+                      <div class="tshirt-image">
+                        <div
+                          class="cropped-image"
+                          [style.background-image]="'url(' + garmentColorImages + ')'"
+                          [style.background-position]="getBackgroundPosition(project.garmentColor)"
+                        >
+                          <!-- Text Layers -->
+                          @for (layer of textLayers; track layer.id) {
+                            <div
+                              class="text-layer"
+                              [style.color]="getTextContent(layer).color"
+                              [style.font-family]="getTextContent(layer).fontFamily"
+                              [style.font-size.px]="getTextContent(layer).fontSize"
+                              [style.font-weight]="getTextContent(layer).fontWeight"
+                              [style.font-style]="getTextContent(layer).italic ? 'italic' : 'normal'"
+                              [style.text-decoration]="getTextContent(layer).underline ? 'underline' : 'none'"
+                              [style.text-align]="getTextContent(layer).textAlign"
+                              [style.left.px]="layer.content.x"
+                              [style.top.px]="layer.content.y"
+                              [style.background-color]="getTextContent(layer).color === '#ffffff' ? 'rgba(0,0,0,0.1)' : 'transparent'"
+                              (mousedown)="startDrag($event, layer)"
+                            >
+                              <div
+                                class="delete-button"
+                                (mousedown)="$event.stopPropagation()"
+                                (click)="deleteLayer($event, layer, 'text')"
+                              >
+                                ×
+                              </div>
+                              {{ getTextContent(layer).text }}
+                            </div>
+                          }
+                          <!-- Image Layers -->
+                          @for (layer of imageLayers; track layer.id) {
+                            <div
+                              class="image-layer"
+                              [style.left.px]="layer.content.x"
+                              [style.top.px]="layer.content.y"
+                              (mousedown)="startDrag($event, layer)"
+                            >
+                              <div
+                                class="delete-button"
+                                (mousedown)="$event.stopPropagation()"
+                                (click)="deleteLayer($event, layer, 'image')"
+                              >
+                                ×
+                              </div>
+                              <img
+                                [src]="getImageContent(layer).imageUrl"
+                                [style.width.px]="getImageContent(layer).width * getImageContent(layer).scale"
+                                [style.height.px]="getImageContent(layer).height * getImageContent(layer).scale"
+                              />
+                            </div>
+                          }
+                        </div>
                       </div>
-                      {{ getTextContent(layer).text }}
-                    </div>
-                    <!-- Image Layers -->
-                    <div
-                      *ngFor="let layer of imageLayers"
-                      class="image-layer"
-                      [style.left.px]="layer.content.x"
-                      [style.top.px]="layer.content.y"
-                      (mousedown)="startDrag($event, layer)"
-                    >
-                      <div
-                        class="delete-button"
-                        (mousedown)="$event.stopPropagation()"
-                        (click)="deleteLayer($event, layer, 'image')"
-                      >
-                        ×
-                      </div>
-                      <img
-                        [src]="getImageContent(layer).imageUrl"
-                        [style.width.px]="
-                          getImageContent(layer).width *
-                          getImageContent(layer).scale
-                        "
-                        [style.height.px]="
-                          getImageContent(layer).height *
-                          getImageContent(layer).scale
-                        "
-                      />
                     </div>
                   </div>
                 </div>
+
+                <!-- Tools Panel -->
+                <div class="tools-panel">
+                  <app-editor-container
+                    [currentColor]="project.garmentColor"
+                    (colorSelected)="selectColor($event)"
+                    (textAdded)="handleTextAdded($event)"
+                    (imageAdded)="handleImageAdded($event)"
+                  >
+                  </app-editor-container>
+                </div>
               </div>
             </div>
-          </div>
-
-          <!-- Tools Panel -->
-          <div class="tools-panel">
-            <app-editor-container
-              [currentColor]="project.garmentColor"
-              (colorSelected)="selectColor($event)"
-              (textAdded)="handleTextAdded($event)"
-              (imageAdded)="handleImageAdded($event)"
-            >
-            </app-editor-container>
-          </div>
-        </div>
-      </div>
+          }
+        }
+      }
     </div>
   `,
   styles: [

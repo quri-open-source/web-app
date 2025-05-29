@@ -5,23 +5,40 @@ import {
     ProjectStatus,
     GarmentSize,
 } from './project.response';
+import { Canvas } from '../model/canvas.entity';
 
 export class ProjectAssembler {
     static ToEntityFromResponse(response: any): Project {
-        // Accept both camelCase and snake_case for robustness
-        return {
-            id: response.id,
-            userId: response.userId || response.user_id,
-            createdAt: response.createdAt ? new Date(response.createdAt) : (response.created_at ? new Date(response.created_at) : new Date()),
-            status: response.status as ProjectStatus,
-            previewImageUrl: response.previewImageUrl || response.preview_image_url || '',
-            genre: response.genre,
-            name: response.name,
-            garmentColor: response.garmentColor || response.tshirt_color || response.garment_color || '',
-            garmentSize: response.garmentSize || response.tshirt_size || response.garment_size || '',
-            lastModified: response.lastModified ? new Date(response.lastModified) : (response.last_modified ? new Date(response.last_modified) : new Date()),
-            canvas: CanvasAssembler.toEntityFromResponse(response.canvas),
-        };
+        // Normaliza todos los campos a camelCase y asegura tipos correctos
+        const id = response.id;
+        const userId = response.user_id || response.userId || '';
+        const createdAtRaw = response.created_at || response.createdAt;
+        const createdAt = createdAtRaw ? new Date(createdAtRaw) : new Date();
+        const status = response.status;
+        const previewImageUrl = response.preview_image_url || response.previewImageUrl || '';
+        const genre = response.genre || '';
+        const name = response.name || '';
+        const garmentColor = response.tshirt_color || response.garmentColor || '';
+        const garmentSize = response.tshirt_size || response.garmentSize || '';
+        const lastModifiedRaw = response.last_modified || response.lastModified;
+        const lastModified = lastModifiedRaw ? new Date(lastModifiedRaw) : createdAt;
+        const canvas = response.canvas ? CanvasAssembler.toEntityFromResponse(response.canvas) : new Canvas();
+
+        // Usa el constructor para garantizar defaults y consistencia
+        const project = new Project(
+            userId,
+            name,
+            genre,
+            garmentSize,
+            garmentColor,
+            previewImageUrl,
+            lastModified,
+            status
+        );
+        project.id = id;
+        project.createdAt = createdAt;
+        project.canvas = canvas;
+        return project;
     }
 
     static ToEntitiesFromResponse(response: ProjectResponse[]): Project[] {

@@ -31,13 +31,8 @@
           <button mat-icon-button color="primary" aria-label="Shopping cart">
             <mat-icon>shopping_cart</mat-icon>
           </button>
-          <button mat-icon-button color="primary" aria-label="User profile" [routerLink]="'/user-profile'">
-            <ng-container *ngIf="user?.avatar_url; else defaultAvatar">
-              <img [src]="user!.avatar_url" alt="User avatar" class="toolbar-avatar" />
-            </ng-container>
-            <ng-template #defaultAvatar>
-              <mat-icon>person</mat-icon>
-            </ng-template>
+          <button mat-icon-button color="primary" aria-label="User profile" [routerLink]="['/profile']">
+            <mat-icon>person</mat-icon>
           </button>
         </div>
       </div>

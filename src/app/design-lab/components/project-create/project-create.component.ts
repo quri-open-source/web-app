@@ -16,9 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatCommonModule } from '@angular/material/core';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
+import { environment } from '../../../../environments/environment';
 
 interface GarmentColor {
   label: string;
@@ -34,7 +34,6 @@ interface GarmentColor {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatCommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -397,8 +396,8 @@ export class ProjectCreateComponent {
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       genre: ['men', Validators.required],
-      garmentSize: ['M', Validators.required],
-      garmentColor: ['#EDEDED', Validators.required],
+      garmentSize: [environment.defaultGarmentSize, Validators.required],
+      garmentColor: [environment.defaultGarmentColor, Validators.required],
     });
   }
 

@@ -15,15 +15,14 @@ export class ProjectService extends BaseService<Project> {
 
   public getAllById(id: string): Observable<Project[]> {
     return this.http
-      .get<ProjectResponse[]>(`${this.resourcePath()}`)
+      .get<ProjectResponse[]>(`${this.resourcePath()}`, {
+        params: {
+          user_id: id,
+        },
+      })
       .pipe(
         map((response) => {
-          // Filter by user_id or userId in the frontend for robustness
-          const filtered = response.filter(
-            (p) => p.user_id === id || (p as any).userId === id
-          );
-          // If nothing matches, try to fallback to all projects (for debugging)
-          return ProjectAssembler.ToEntitiesFromResponse(filtered.length ? filtered : response);
+          return ProjectAssembler.ToEntitiesFromResponse(response);
         })
       );
   }

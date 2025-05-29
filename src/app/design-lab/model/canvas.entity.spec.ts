@@ -1,7 +1,7 @@
-import { CanvasEntity } from './canvas.entity';
+import { Canvas } from './canvas.entity';
 
-describe('CanvasEntity', () => {
+describe('Canvas', () => {
   it('should create an instance', () => {
-    expect(new CanvasEntity()).toBeTruthy();
+    expect(new Canvas()).toBeTruthy();
   });
 });

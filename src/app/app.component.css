@@ -99,19 +99,6 @@
   gap: 8px;
 }
 
-.toolbar-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto;
-  /* Remove border and shadow for icon consistency */
-  border: none;
-  box-shadow: none;
-  background: none;
-}
-
 .main-content {
   padding: 16px 0;
 }

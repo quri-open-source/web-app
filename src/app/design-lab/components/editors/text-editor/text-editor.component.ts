@@ -124,13 +124,14 @@ export interface TextProperties {
           <div class="color-picker">
             <label>Text Color:</label>
             <div class="color-options">
-              <div
-                *ngFor="let color of textColors"
-                class="color-option"
-                [style.background-color]="color"
-                [class.selected]="textProps.color === color"
-                (click)="selectColor(color)"
-              ></div>
+              @for (color of textColors; track color) {
+                <div
+                  class="color-option"
+                  [style.background-color]="color"
+                  [class.selected]="textProps.color === color"
+                  (click)="selectColor(color)"
+                ></div>
+              }
             </div>
           </div>          <div class="add-text-button-container">
             <button

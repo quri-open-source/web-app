@@ -6,175 +6,14 @@
   },
   "projects": [
     {
-      "id": "proj-001",
-      "user_id": "user-001",
-      "created_at": "2025-05-08T10:00:00Z",
-      "status": "blueprint",
-      "project_privacy": "public",
-      "price": 45,
-      "likes": 190,
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Summer Collection T-Shirt",
-      "garmentColor": "#E94B3C",
-      "garmentSize": "XL",
-      "last_modified": "2025-05-08T15:30:00Z",
-      "genre": "women",
-      "canvas": {
-        "id": "canvas-001",
-        "project_id": "proj-001",
-        "background_color": "#FFFFFF",
-        "created_at": "2025-05-08T10:00:00Z",
-        "last_modified": "2025-05-08T15:30:00Z",
-        "layers": [
-          {
-            "id": "layer-001",
-            "canvas_id": "canvas-001",
-            "type": "text",
-            "z_index": 1,
-            "content": {
-              "text": "Summer Vibes",
-              "x": 100,
-              "y": 150,
-              "font_family": "Arial",
-              "font_size": 24,
-              "font_weight": 700,
-              "color": "#000000",
-              "rotation": 0,
-              "text_align": "center",
-              "opacity": 1
-            },
-            "is_visible": true,
-            "created_at": "2025-05-08T10:05:00Z",
-            "last_modified": "2025-05-08T15:30:00Z"
-          },
-          {
-            "id": "layer-002",
-            "canvas_id": "canvas-001",
-            "type": "image",
-            "z_index": 2,
-            "content": {
-              "image_url": "https://example.com/images/summer-icon.png",
-              "width": 200,
-              "height": 200,
-              "x": 150,
-              "y": 200,
-              "rotation": 0,
-              "opacity": 1,
-              "scale": 1,
-              "maintain_aspect_ratio": true
-            },
-            "is_visible": true,
-            "created_at": "2025-05-08T10:10:00Z",
-            "last_modified": "2025-05-08T15:30:00Z"
-          }
-        ]
-      },
-      "createdAt": "2025-05-29T00:58:06.708Z",
-      "lastModified": "2025-05-29T00:58:06.708Z"
-    },
-    {
-      "id": "proj-002",
-      "user_id": "user-001",
-      "created_at": "2025-05-07T14:20:00Z",
-      "status": "designed-garment",
-      "project_privacy": "public",
-      "price": 55,
-      "likes": 220,
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Urban Style Design",
-      "garmentColor": "#161615",
-      "garmentSize": "L",
-      "last_modified": "2025-05-08T09:15:00Z",
-      "genre": "women",
-      "canvas": {
-        "id": "canvas-002",
-        "project_id": "proj-002",
-        "background_color": "#000000",
-        "created_at": "2025-05-07T14:20:00Z",
-        "last_modified": "2025-05-08T09:15:00Z",
-        "layers": [
-          {
-            "id": "layer-003",
-            "canvas_id": "canvas-002",
-            "type": "text",
-            "z_index": 1,
-            "content": {
-              "text": "Urban Style",
-              "x": 100,
-              "y": 150,
-              "font_family": "Helvetica",
-              "font_size": 32,
-              "font_weight": 800,
-              "color": "#FFFFFF",
-              "rotation": 0,
-              "text_align": "center",
-              "opacity": 1
-            },
-            "is_visible": true,
-            "created_at": "2025-05-07T14:25:00Z",
-            "last_modified": "2025-05-08T09:15:00Z"
-          }
-        ]
-      }
-    },
-    {
-      "id": "proj-003",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T08:00:00Z",
-      "status": "blueprint",
-      "project_privacy": "public",
-      "price": 39,
-      "likes": 150,
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Beach Party Design",
-      "garmentColor": "#FECD08",
-      "garmentSize": "S",
-      "last_modified": "2025-05-09T08:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-003",
-        "project_id": "proj-003",
-        "background_color": "#FFD700",
-        "created_at": "2025-05-09T08:00:00Z",
-        "last_modified": "2025-05-09T08:30:00Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "proj-004",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T09:00:00Z",
-      "status": "designed-garment",
-      "project_privacy": "public",
-      "price": 49,
-      "likes": 170,
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Winter Wonderland",
-      "garmentColor": "#EDEDED",
-      "garmentSize": "L",
-      "last_modified": "2025-05-09T09:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-004",
-        "project_id": "proj-004",
-        "background_color": "#FFFFFF",
-        "created_at": "2025-05-09T09:00:00Z",
-        "last_modified": "2025-05-09T09:30:00Z",
-        "layers": []
-      }
-    },
-    {
       "id": "proj-005",
       "user_id": "user-002",
       "created_at": "2025-05-09T10:00:00Z",
       "status": "blueprint",
-      "project_privacy": "public",
-      "price": 49,
-      "likes": 170,
       "preview_image_url": "https://picsum.photos/150/150",
       "name": "Spring Blossom",
-      "garmentColor": "#F459B0",
-      "garmentSize": "M",
+      "tshirt_color": "#FF69B4",
+      "tshirt_size": "M",
       "last_modified": "2025-05-09T10:30:00Z",
       "genre": "men",
       "canvas": {
@@ -187,95 +26,80 @@
       }
     },
     {
-      "id": "proj-006",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T11:00:00Z",
-      "status": "designed-garment",
-      "project_privacy": "public",
-      "price": 39,
-      "likes": 170,
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Autumn Leaves",
-      "garmentColor": "#F2AB00",
-      "garmentSize": "XL",
-      "last_modified": "2025-05-09T11:30:00Z",
+      "id": "fab6a087-e825-402c-95fe-6652f523da02",
+      "userId": "user-001",
+      "createdAt": "2025-05-29T07:45:07.233Z",
+      "status": "blueprint",
       "genre": "men",
+      "previewImageUrl": "https://picsum.photos/150/150",
+      "name": "Project2",
+      "garmentColor": "#000000",
+      "garmentSize": "M",
+      "lastModified": "2025-05-29T07:45:07.233Z",
       "canvas": {
-        "id": "canvas-006",
-        "project_id": "proj-006",
-        "background_color": "#FFA500",
-        "created_at": "2025-05-09T11:00:00Z",
-        "last_modified": "2025-05-09T11:30:00Z",
+        "id": "",
+        "createdAt": null,
+        "lastModified": null,
         "layers": []
       }
     },
     {
-      "id": "9a5cb46d-8aa3-4851-9289-45ec8fa4dcf5",
-      "user_id": "user-001",
-      "created_at": "2025-05-12T05:41:06.956Z",
+      "id": "a782af78-c821-4793-9305-ab18b7949765",
+      "userId": "user-001",
+      "createdAt": "2025-05-29T12:37:29.482Z",
       "status": "blueprint",
-      "project_privacy": "public",
-      "price": 45,
-      "likes": 193,
       "genre": "men",
-      "preview_image_url": "",
-      "name": "Mateo",
-      "garmentColor": "#403D3B",
+      "previewImageUrl": "https://picsum.photos/150/150",
+      "name": "Project3",
+      "garmentColor": "#FFFFFF",
       "garmentSize": "M",
-      "last_modified": "2025-05-12T05:41:06.956Z",
+      "lastModified": "2025-05-29T12:37:29.482Z",
       "canvas": {
         "id": "",
-        "project_id": "",
-        "background_color": "",
-        "created_at": "2025-05-12T05:41:06.956Z",
-        "last_modified": "2025-05-12T05:41:06.956Z",
-        "layers": []
-      },
-      "createdAt": "2025-05-29T00:54:27.807Z",
-      "lastModified": "2025-05-29T00:54:27.807Z"
-    },
-    {
-      "id": "3f281b94-8d87-493f-8490-d663a3a4d9ee",
-      "user_id": "user-001",
-      "created_at": "2025-05-13T03:07:44.139Z",
-      "status": "blueprint",
-      "project_privacy": "public",
-      "price": 55,
-      "likes": 220,
-      "genre": "men",
-      "preview_image_url": "",
-      "name": "Fabri",
-      "garmentColor": "#1B3D92",
-      "last_modified": "2025-05-13T03:07:44.139Z",
-      "canvas": {
-        "id": "",
-        "project_id": "",
-        "background_color": "",
-        "created_at": "2025-05-13T03:07:44.139Z",
-        "last_modified": "2025-05-13T03:07:44.139Z",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-29T12:37:29.482Z",
+        "lastModified": "2025-05-29T12:37:29.482Z",
         "layers": []
       }
     },
     {
-      "id": "0c521a95-cfad-46c2-9328-adb01bae6bcc",
-      "user_id": "user-001",
-      "created_at": "2025-05-13T03:37:40.347Z",
+      "id": "1f187123-86d4-445d-8186-fb208fb85573",
+      "userId": "user-001",
+      "createdAt": "2025-05-29T18:26:28.501Z",
       "status": "blueprint",
-      "project_privacy": "public",
-      "price": 35,
-      "likes": 120,
       "genre": "men",
-      "preview_image_url": "",
-      "name": "sdfsdf",
-      "garmentColor": "#693FA0",
+      "previewImageUrl": "https://picsum.photos/150/150",
+      "name": "MATEO UWU",
+      "garmentColor": "#F459B0",
       "garmentSize": "M",
-      "last_modified": "2025-05-13T03:37:40.347Z",
+      "lastModified": "2025-05-29T18:26:28.501Z",
       "canvas": {
         "id": "",
-        "project_id": "",
-        "background_color": "",
-        "created_at": "2025-05-13T03:37:40.347Z",
-        "last_modified": "2025-05-13T03:37:40.347Z",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-29T18:26:28.501Z",
+        "lastModified": "2025-05-29T18:26:28.501Z",
+        "layers": []
+      }
+    },
+    {
+      "id": "68601743-2c79-4c17-8824-f6956cde2fed",
+      "userId": "user-001",
+      "createdAt": "2025-05-29T18:27:49.954Z",
+      "status": "blueprint",
+      "genre": "men",
+      "previewImageUrl": "https://picsum.photos/150/150",
+      "name": "SOY HOMBRE",
+      "garmentColor": "#FFFFFF",
+      "garmentSize": "M",
+      "lastModified": "2025-05-29T18:27:49.954Z",
+      "canvas": {
+        "id": "",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-29T18:27:49.954Z",
+        "lastModified": "2025-05-29T18:27:49.954Z",
         "layers": []
       }
     }
@@ -286,30 +110,23 @@
   "users": [
     {
       "id": "user-001",
-      "email": "user@example.com",
-      "name": "User1",
-      "username": "Michael69",
-      "avatar_url": "https://fastly.picsum.photos/id/806/150/150.jpg?hmac=rKfZRAsl_IxcRIMmOOCA6koCpqAxzapKc0Z6TIguVDs",
-      "bio": "Description1212121\n\n\n",
-      "created_at": "2024-03-19T00:00:00Z"
-    },
-    {
-      "id": "user-002",
-      "email": "renzoluquem@icloud.com",
-      "name": "Renzo Luque",
-      "username": "renzoluquem",
-      "avatar_url": "https://fastly.picsum.photos/id/1011/150/150.jpg?hmac=abc123",
-      "bio": "Fashion enthusiast and designer.",
-      "created_at": "2024-04-10T00:00:00Z"
-    },
-    {
-      "id": "user-003",
-      "email": "alex.smith@example.com",
-      "name": "Alex Smith",
-      "username": "AlexS",
-      "avatar_url": "https://fastly.picsum.photos/id/1027/150/150.jpg?hmac=def456",
-      "bio": "Lover of art and t-shirt design.",
-      "created_at": "2024-05-01T00:00:00Z"
+      "email": "Angel@GMAIL.COM",
+      "name": "Angel",
+      "created_at": "2024-03-19T00:00:00Z",
+      "projects": [
+        {
+          "id": "017da007-1653-430c-896b-8024567a1321",
+          "name": "Project1"
+        },
+        {
+          "id": "fab6a087-e825-402c-95fe-6652f523da02",
+          "name": "Project2"
+        },
+        {
+          "id": "a782af78-c821-4793-9305-ab18b7949765",
+          "name": "Project3"
+        }
+      ]
     }
   ],
   "analytics": [
@@ -319,7 +136,7 @@
       "project_id": "proj-001",
       "garment_size": "M",
       "garment_color": "#FFFFFF",
-      "created_at": "2025-05-08T15:30:00Z",
+      "created_at": "2025-05-08T15:30:00aZ",
       "last_modified": "2025-05-12T11:00:00Z",
       "page_views": 245,
       "total_likes": 78,

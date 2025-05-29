@@ -1,67 +1,35 @@
-<div class="profile-container">
-  <div class="profile-header">
-    <div class="avatar-edit-container">
-      <img [src]="user?.avatar_url" class="profile-avatar" alt="Avatar" (dblclick)="triggerAvatarInput(avatarInput)" />
-      <input type="file" accept="image/*" #avatarInput style="display:none" (change)="onAvatarSelected($event)" />
-      <span class="edit-avatar-hint">Double click to change</span>
-    </div>
-    <div class="profile-info">
-      <div class="profile-name">
-        <span *ngIf="!editingName" (dblclick)="enableEditName()">{{ user?.name }}</span>
-        <input *ngIf="editingName" [(ngModel)]="editedName" (blur)="saveName()" (keydown.enter)="saveName()" (keydown.esc)="cancelEditName()"
-          class="edit-input name-input" />
-        <span class="verified-badge">&#10003;</span>
-      </div>
-      <div class="profile-bio">
-        <span *ngIf="!editingBio" (dblclick)="enableEditBio()">{{ user?.bio }}</span>
-        <textarea *ngIf="editingBio" [(ngModel)]="editedBio" (blur)="saveBio()" (keydown.enter)="saveBio()" (keydown.esc)="cancelEditBio()"
-          class="edit-input bio-input"></textarea>
-      </div>
-    </div>
-  </div>
+<!-- User Profile Page (Design Lab style) -->
+<div class="design-lab-container">
+  <!-- User info header -->
+  @if (user) {
+    <header class="page-header">
+      <app-user-info [user]="user"></app-user-info>
+    </header>
+  }
 
-  <hr />
+  <section class="projects-section">
+    <!-- Section header -->
+    <div class="section-header">
+      <h2>My Projects</h2>
+    </div>
 
-  <section>
-    <h2>My Projects</h2>
-    <div *ngIf="error" class="error-message">
-      <p>{{ error }}</p>
-      <button mat-button color="primary" (click)="loadUser()">Retry</button>
-    </div>
-    <div *ngIf="!error">
-      <div class="project-filters">
-        <button mat-button [color]="selectedStatus === 'all' ? 'primary' : ''" (click)="selectedStatus = 'all'">All</button>
-        <button mat-button [color]="selectedStatus === 'blueprint' ? 'primary' : ''" (click)="selectedStatus = 'blueprint'">Blueprints</button>
-        <button mat-button [color]="selectedStatus === 'designed-garment' ? 'primary' : ''" (click)="selectedStatus = 'designed-garment'">Finished Designs</button>
-        <!-- Add more filters as needed -->
+    @if (!user) {
+      <div>
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading user...</p>
       </div>
-      <div class="projects-list">
-        <ng-container *ngFor="let project of getFilteredProjects()">
-          <mat-card class="project-card">
-            <div class="project-preview">
-              <img [src]="project.previewImageUrl" class="project-thumb" [alt]="project.name" />
-            </div>
-            <mat-card-content>
-              <h3>{{ project.name }}</h3>
-              <p><strong>Genre:</strong> {{ project.genre | titlecase }}</p>
-              <p><strong>Size:</strong> {{ project.garmentSize }}</p>
-              <p>
-                <strong>Color:</strong>
-                <span [style.background]="project.garmentColor" class="color-dot" style="display:inline-block;width:18px;height:18px;border-radius:50%;margin-right:8px;vertical-align:middle;"></span>
-                <span>{{ project.garmentColor }}</span>
-              </p>
-              <p><strong>Last modified:</strong> {{ project.lastModified | date:'short' }}</p>
-              <button mat-stroked-button color="primary" [routerLink]="['/design-lab', project.id]" style="margin-top:8px; margin-right:8px;">
-                <mat-icon>edit</mat-icon> Edit Data
-              </button>
-              <button mat-stroked-button color="accent" [routerLink]="['/design-lab', project.id, 'edit']" style="margin-top:8px;">
-                <mat-icon>brush</mat-icon> Edit Design
-              </button>
-              <p><strong>Last modified:</strong> {{ project.lastModified | date:'short' }}</p>
-            </mat-card-content>
-          </mat-card>
-        </ng-container>
-      </div>
-    </div>
+    } @else {
+      @if (projects.length === 0) {
+        <div class="empty-container">
+          <p>You don't have any projects yet.</p>
+        </div>
+      } @else {
+        <div class="projects-grid">
+          @for (project of projects; track project.id) {
+            <app-project-card [project]="project" (edited)="onProjectEdited($event)"></app-project-card>
+          }
+        </div>
+      }
+    }
   </section>
 </div>

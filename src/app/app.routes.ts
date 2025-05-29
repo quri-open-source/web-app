@@ -49,7 +49,7 @@ export const routes: Routes = [  {
     loadComponent: () => import('./design-lab/components/project-edit/project-edit.component').then(m => m.ProjectEditComponent)
   },
   {
-    path: 'user-profile',
+    path: 'profile',
     loadComponent: () => import('./public/pages/user-profile/user-profile.component').then(m => m.UserProfileComponent)
   }
 ];

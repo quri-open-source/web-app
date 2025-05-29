@@ -6,32 +6,45 @@
 
   <section class="projects-section">
     <div class="section-header">
-      <h2>Your Projects</h2>      <button mat-raised-button color="primary" routerLink="/design-lab/new">
+      <h2>Your Projects</h2>
+      <button mat-raised-button color="primary" routerLink="/design-lab/new">
         <mat-icon>add</mat-icon>
         New Project
       </button>
     </div>
 
-    <div *ngIf="loading" class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading projects...</p>
-    </div>
-
-    <div *ngIf="error" class="error-container mat-elevation-z2">
-      <mat-icon color="warn">error_outline</mat-icon>
-      <p>{{ error }}</p>
-      <button mat-raised-button color="primary" (click)="loadProjects()">Retry</button>
-    </div>
-
-    <div *ngIf="!loading && !error && projects.length === 0" class="empty-container">
-      <p>You don't have any projects yet.</p>      <button mat-raised-button color="primary" routerLink="/design-lab/new">
-        <mat-icon>add</mat-icon>
-        Create Your First Project
-      </button>
-    </div>    <div *ngIf="!loading && !error && projects.length > 0" class="projects-grid">
-      @for (project of projects; track project.id) {
-        <app-project-card [project]="project" [currentUserId]="user?.id"></app-project-card>
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading projects...</p>
+      </div>
+    } @else {
+      <!-- Error State -->
+      @if (error) {
+        <div class="error-container">
+          <p>{{ error }}</p>
+          <button mat-button color="primary" (click)="loadProjects()">Retry</button>
+        </div>
+      } @else {
+        <!-- Empty State -->
+        @if (projects.length === 0) {
+          <div class="empty-container">
+            <p>You don't have any projects yet.</p>
+            <button mat-raised-button color="primary" routerLink="/design-lab/new">
+              <mat-icon>add</mat-icon>
+              Create Your First Project
+            </button>
+          </div>
+        } @else {
+          <!-- Projects Grid -->
+          <div class="projects-grid">
+            @for (project of projects; track project.id) {
+              <app-project-card [project]="project" (deleted)="onProjectDeleted($event)"></app-project-card>
+            }
+          </div>
+        }
       }
-    </div>
+    }
   </section>
 </div>
