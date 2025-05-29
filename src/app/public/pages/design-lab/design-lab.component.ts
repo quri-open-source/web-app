@@ -8,8 +8,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
-import { UserService } from '../../../shared/services/user.service';
-import { User } from '../../../core/model/user.entity';
 
 @Component({
   selector: 'app-design-lab',
@@ -30,45 +28,22 @@ export class DesignLabComponent implements OnInit {
   projects: Project[] = [];
   loading = true;
   error: string | null = null;
-  user: User | null = null;
 
-  constructor(private projectService: ProjectService, private userService: UserService) {}
+  constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.user = user;
-        this.loadProjects();
-      },
-      error: (err) => {
-        this.error = 'Failed to load user.';
-        this.loading = false;
-      }
-    });
+    this.loadProjects();
   }
 
   loadProjects(): void {
-    if (!this.user) return;
-    this.projectService.getAllById(this.user.id).subscribe({
-      next: (projects: any[]) => {
-        // Normaliza todos los campos relevantes a camelCase para robustez
-        this.projects = projects.map(p => ({
-          ...p,
-          id: p.id,
-          userId: p.userId || p.user_id,
-          createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
-          lastModified: p.lastModified ? new Date(p.lastModified) : (p.last_modified ? new Date(p.last_modified) : new Date()),
-          status: p.status,
-          name: p.name,
-          genre: p.genre,
-          previewImageUrl: p.previewImageUrl || p.preview_image_url || '',
-          garmentColor: p.garmentColor || p.tshirt_color || p.garment_color || '',
-          garmentSize: p.garmentSize || p.tshirt_size || p.garment_size || '',
-          projectPrivacy: p.projectPrivacy || p.project_privacy || '',
-          price: p.price,
-          likes: p.likes,
-          canvas: p.canvas
-        }));
+    // For demo purposes, using a hardcoded user ID
+    // In a real app, you would get this from an auth service
+    const userId = 'user-001';
+    console.log(this.projectService.getURL());
+
+    this.projectService.getAllById(userId).subscribe({
+      next: (projects) => {
+        this.projects = projects;
         this.loading = false;
       },
       error: (err) => {
@@ -77,5 +52,9 @@ export class DesignLabComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onProjectDeleted(deletedProjectId: string): void {
+    this.projects = this.projects.filter(project => project.id !== deletedProjectId);
   }
 }

@@ -3,81 +3,92 @@
 
   <div class="view-toggle">
     <button class="toggle-btn active" (click)="loadAnalytics()">All Projects</button>
-    <button class="toggle-btn" *ngFor="let project of topProjects" (click)="loadAnalyticsByProject(project.projectId)">
-      {{ project.projectId }}
-    </button>
+    @for (project of topProjects; track project.projectId) {
+      <button class="toggle-btn" (click)="loadAnalyticsByProject(project.projectId)">
+        {{ project.projectId }}
+      </button>
+    }
   </div>
 
-  <div class="analytics-overview" *ngIf="(analytics$ | async) as analytics">
-    <div class="summary-cards">
-      <div class="card">
-        <h3>Total Page Views</h3>
-        <div class="card-value">{{ getTotalPageViews(analytics) }}</div>
-      </div>
-      <div class="card">
-        <h3>Total Likes</h3>
-        <div class="card-value">{{ getTotalLikes(analytics) }}</div>
-      </div>
-      <div class="card">
-        <h3>Total Clicks</h3>
-        <div class="card-value">{{ getTotalClicks(analytics) }}</div>
-      </div>
-      <div class="card">
-        <h3>Avg. Conversion Rate</h3>
-        <div class="card-value">{{ getAverageConversionRate(analytics) | percent:'1.1-2' }}</div>
-      </div>
-    </div>
-
-    <div class="top-performers">
-      <h2>Top Performing Projects</h2>
-      <div class="performer-cards">
-        <div class="performer-card" *ngIf="getMostViewedProject(analytics)">
-          <h3>Most Viewed Project</h3>
-          <div class="project-info">
-            <span class="project-name">{{ getMostViewedProject(analytics)?.projectId }}</span>
-            <span class="project-stat">{{ getMostViewedProject(analytics)?.pageViews }} views</span>
-          </div>
+  <ng-container *ngIf="analytics$ | async as analytics">
+    <div class="analytics-overview">
+      <div class="summary-cards">
+        <div class="card">
+          <h3>Total Page Views</h3>
+          <div class="card-value">{{ getTotalPageViews(analytics) }}</div>
         </div>
-        <div class="performer-card" *ngIf="getMostLikedProject(analytics)">
-          <h3>Most Liked Project</h3>
-          <div class="project-info">
-            <span class="project-name">{{ getMostLikedProject(analytics)?.projectId }}</span>
-            <span class="project-stat">{{ getMostLikedProject(analytics)?.totalLikes }} likes</span>
-          </div>
+        <div class="card">
+          <h3>Total Likes</h3>
+          <div class="card-value">{{ getTotalLikes(analytics) }}</div>
+        </div>
+        <div class="card">
+          <h3>Total Clicks</h3>
+          <div class="card-value">{{ getTotalClicks(analytics) }}</div>
+        </div>
+        <div class="card">
+          <h3>Avg. Conversion Rate</h3>
+          <div class="card-value">{{ getAverageConversionRate(analytics) | percent:'1.1-2' }}</div>
         </div>
       </div>
-    </div>
 
-    <div class="analytics-table">
-      <h2>Project Analytics</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Project ID</th>
-            <th>Garment Size</th>
-            <th>Garment Color</th>
-            <th>Page Views</th>
-            <th>Likes</th>
-            <th>Clicks</th>
-            <th>Conversion Rate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of analytics">
-            <td>{{ item.projectId }}</td>
-            <td>{{ item.garmentSize }}</td>
-            <td>{{ item.garmentColor }}</td>
-            <td>{{ item.pageViews }}</td>
-            <td>{{ item.totalLikes }}</td>
-            <td>{{ item.clickCount }}</td>
-            <td>{{ item.conversionRate | percent:'1.1-2' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="top-performers">
+        <h2>Top Performing Projects</h2>
+        <div class="performer-cards">
+          @if (getMostViewedProject(analytics)) {
+            <div class="performer-card">
+              <h3>Most Viewed Project</h3>
+              <div class="project-info">
+                <span class="project-name">{{ getMostViewedProject(analytics)?.projectId }}</span>
+                <span class="project-stat">{{ getMostViewedProject(analytics)?.pageViews }} views</span>
+              </div>
+            </div>
+          }
+          @if (getMostLikedProject(analytics)) {
+            <div class="performer-card">
+              <h3>Most Liked Project</h3>
+              <div class="project-info">
+                <span class="project-name">{{ getMostLikedProject(analytics)?.projectId }}</span>
+                <span class="project-stat">{{ getMostLikedProject(analytics)?.totalLikes }} likes</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
 
-    <div class="no-data-message" *ngIf="analytics.length === 0">
-      <p>No analytics data available. Create projects and share them to start collecting analytics!</p>
+      <div class="analytics-table">
+        <h2>Project Analytics</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Project ID</th>
+              <th>Garment Size</th>
+              <th>Garment Color</th>
+              <th>Page Views</th>
+              <th>Likes</th>
+              <th>Clicks</th>
+              <th>Conversion Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of analytics; track item.projectId) {
+              <tr>
+                <td>{{ item.projectId }}</td>
+                <td>{{ item.garmentSize }}</td>
+                <td>{{ item.garmentColor }}</td>
+                <td>{{ item.pageViews }}</td>
+                <td>{{ item.totalLikes }}</td>
+                <td>{{ item.clickCount }}</td>
+                <td>{{ item.conversionRate | percent:'1.1-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (analytics.length === 0) {
+        <div class="no-data-message">
+          <p>No analytics data available. Create projects and share them to start collecting analytics!</p>
+        </div>
+      }
     </div>
-  </div>
+  </ng-container>
 </div>

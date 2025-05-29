@@ -37,57 +37,61 @@ export interface ImageProperties {
       <mat-card-content>
         <div class="image-editor-container">
           <h4 class="section-title">Upload Image</h4>
-          <div class="upload-section" *ngIf="!previewImageUrl">
-            <div class="upload-placeholder" (click)="fileInput.click()">
-              <mat-icon>cloud_upload</mat-icon>
-              <p>Click to upload an image</p>
-              <input
-                type="file"
-                hidden
-                #fileInput
-                (change)="onFileSelected($event)"
-                accept="image/*"
-              />
+          @if (!previewImageUrl) {
+            <div class="upload-section">
+              <div class="upload-placeholder" (click)="fileInput.click()">
+                <mat-icon>cloud_upload</mat-icon>
+                <p>Click to upload an image</p>
+                <input
+                  type="file"
+                  hidden
+                  #fileInput
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                />
+              </div>
+              <p class="file-hint">Supported formats: JPG, PNG, GIF</p>
             </div>
-            <p class="file-hint">Supported formats: JPG, PNG, GIF</p>
-          </div>
-          <div *ngIf="previewImageUrl" class="preview-section">
-            <h4 class="section-title">Preview &amp; Settings</h4>
-            <div class="image-preview">
-              <img [src]="previewImageUrl" alt="Preview" />
-            </div>
+          } @else {
+            <div class="preview-section">
+              <h4 class="section-title">Preview &amp; Settings</h4>
+              <div class="image-preview">
+                <img [src]="previewImageUrl" alt="Preview" />
+              </div>
 
-            <div class="image-controls">
-              <h5>Scale</h5>
-              <mat-slider
-                min="0.5"
-                max="2"
-                step="0.1"
-                discrete
-                [displayWith]="formatLabel"
-                class="scale-slider"
-              >
-                <input matSliderThumb [(ngModel)]="imageScale" />
-              </mat-slider>
-              <span class="scale-value">{{ imageScale }}x</span>
-            </div>
+              <div class="image-controls">
+                <h5>Scale</h5>
+                <mat-slider
+                  min="0.5"
+                  max="2"
+                  step="0.1"
+                  discrete
+                  [displayWith]="formatLabel"
+                  class="scale-slider"
+                >
+                  <input matSliderThumb [(ngModel)]="imageScale" />
+                </mat-slider>
+                <span class="scale-value">{{ imageScale }}x</span>
+              </div>
 
-            <div class="image-options">
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="removeImage()"
-                matTooltip="Remove Image"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
+              <div class="image-options">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="removeImage()"
+                  matTooltip="Remove Image"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div *ngIf="uploading" class="upload-progress">
-            <p>Uploading...</p>
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-          </div>
+          }
+          @if (uploading) {
+            <div class="upload-progress">
+              <p>Uploading...</p>
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          }
 
           <button
             mat-raised-button
@@ -100,7 +104,8 @@ export interface ImageProperties {
         </div>
       </mat-card-content>
     </mat-card>
-  `,  styles: [
+  `,
+  styles: [
     `
       .image-editor-container {
         display: flex;

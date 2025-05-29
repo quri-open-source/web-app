@@ -1,197 +1,54 @@
-.profile-container {
+.user-profile {
+  margin: 0 auto;
+}
+
+.design-lab-container {
+  padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
 }
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 32px;
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: left;
 }
-.avatar-edit-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.profile-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  border: 2px solid #3b82f6;
-  transition: box-shadow 0.2s;
-}
-.profile-avatar:hover {
-  box-shadow: 0 0 0 4px #dbeafe;
-}
-.edit-avatar-hint {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 4px;
-  user-select: none;
-}
-.profile-info {
-  flex: 1;
-}
-.profile-name {
-  font-size: 2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.verified-badge {
-  color: #3b82f6;
-  font-size: 1.5rem;
-}
-.profile-bio {
-  color: #666;
-  margin-top: 8px;
-}
-.projects-list, .designs-list {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin: 16px 0;
-}
-.project-thumb, .design-thumb {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #f3f3f3;
-}
-.design-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 12px;
-  width: 180px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.design-info {
-  text-align: center;
-  margin-top: 8px;
-}
-.designer-name {
-  font-size: 0.9rem;
-  color: #888;
-}
-.design-title {
-  font-weight: bold;
-  margin: 4px 0;
-}
-.design-price {
-  color: #222;
-  font-size: 1.1rem;
+
+.page-header h1 {
+  font-size: 2.5rem;
   margin-bottom: 8px;
-  display: block;
+  color: #333;
 }
-.add-to-cart-btn {
-  background: #222;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
-  cursor: pointer;
-  font-weight: 500;
-}
-.edit-input {
-  font-size: 2rem;
-  font-weight: bold;
-  border: none;
-  border-bottom: 2px solid #3b82f6;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  color: #222;
-  padding: 2px 4px;
-  border-radius: 4px;
-  transition: border-color 0.2s;
-}
-.name-input {
-  height: 2.5rem;
-  line-height: 2.5rem;
-}
-.bio-input {
+
+.page-header p {
   font-size: 1.1rem;
-  font-weight: normal;
-  min-height: 2.2rem;
-  resize: none;
-  margin-top: 8px;
+  color: #666;
 }
-.edit-input:focus {
-  border-color: #2563eb;
-  background: #f0f6ff;
-}
-.profile-name, .profile-bio {
+
+.section-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  margin-bottom: 24px;
 }
-.color-dot {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin-right: 8px;
-  border: 1px solid #ccc;
-  vertical-align: middle;
+
+.section-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
 }
-.color-edit-panel {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
+
+.projects-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px 16px; 
 }
-.color-edit-panel input[type="color"] {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: none;
-  padding: 0;
-  margin-right: 4px;
-}
-.project-filters {
+
+.loading-container, .error-container, .empty-container {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.error-message {
-  background: #ffeaea;
-  color: #b71c1c;
-  border: 1px solid #f44336;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
   text-align: center;
-}
-.edit-field {
-  max-width: 140px;
-  min-width: 0;
-  width: 100%;
-  display: inline-block;
-  vertical-align: middle;
-}
-.color-picker-field input[type="color"] {
-  width: 32px;
-  min-width: 32px;
-  max-width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  background: none;
-}
-.mat-form-field {
-  margin-bottom: 0;
-}
-.project-card mat-form-field {
-  width: 120px;
-  min-width: 0;
-  display: inline-block;
-  vertical-align: middle;
+  background-color: #f5f5f5;
 }

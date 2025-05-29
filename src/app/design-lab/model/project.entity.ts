@@ -1,5 +1,10 @@
 import { ProjectStatus, GarmentSize } from "../services/project.response";
 import { Canvas } from "./canvas.entity";
+import { environment } from "../../../environments/environment";
+
+function withDefault<T>(value: T | undefined | null | '', fallback: T): T {
+    return value === undefined || value === null || value === '' ? fallback : value;
+}
 
 export class Project {
     id: string;
@@ -16,17 +21,26 @@ export class Project {
     canvas: Canvas;
 
 
-    constructor(userId: string, name: string, genre: string, garmentSize: GarmentSize, color: string) {
+    constructor(
+        userId: string,
+        name: string,
+        genre: string,
+        garmentSize?: GarmentSize,
+        color?: string,
+        previewImageUrl?: string,
+        lastModified?: Date,
+        status?: ProjectStatus
+    ) {
         this.id = crypto.randomUUID();
         this.userId = userId;
         this.createdAt = new Date();
-        this.status = 'blueprint';
-        this.previewImageUrl = '';
+        this.status = withDefault(status, environment.defaultProjectStatus as ProjectStatus);
         this.name = name;
-        this.garmentColor = color;
-        this.garmentSize = garmentSize;
         this.genre = genre;
-        this.lastModified = new Date();
+        this.garmentSize = withDefault(garmentSize, environment.defaultGarmentSize as GarmentSize);
+        this.garmentColor = withDefault(color, environment.defaultGarmentColor);
+        this.previewImageUrl = withDefault(previewImageUrl, environment.defaultPreviewImageUrl);
+        this.lastModified = lastModified ?? this.createdAt;
         this.canvas = new Canvas();
     }
 }
