@@ -50,12 +50,24 @@ export class DesignLabComponent implements OnInit {
   loadProjects(): void {
     if (!this.user) return;
     this.projectService.getAllById(this.user.id).subscribe({
-      next: (projects) => {
-        // Ensure all date fields are Date objects
+      next: (projects: any[]) => {
+        // Normaliza todos los campos relevantes a camelCase para robustez
         this.projects = projects.map(p => ({
           ...p,
-          createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
-          lastModified: p.lastModified ? new Date(p.lastModified) : new Date(),
+          id: p.id,
+          userId: p.userId || p.user_id,
+          createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
+          lastModified: p.lastModified ? new Date(p.lastModified) : (p.last_modified ? new Date(p.last_modified) : new Date()),
+          status: p.status,
+          name: p.name,
+          genre: p.genre,
+          previewImageUrl: p.previewImageUrl || p.preview_image_url || '',
+          garmentColor: p.garmentColor || p.tshirt_color || p.garment_color || '',
+          garmentSize: p.garmentSize || p.tshirt_size || p.garment_size || '',
+          projectPrivacy: p.projectPrivacy || p.project_privacy || '',
+          price: p.price,
+          likes: p.likes,
+          canvas: p.canvas
         }));
         this.loading = false;
       },
