@@ -10,6 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { RouterLink } from '@angular/router';
 
 export interface EditableProject extends Project {
   editingName: boolean;
@@ -30,7 +33,10 @@ export interface EditableProject extends Project {
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    RouterLink
   ]
 })
 export class UserProfileComponent implements OnInit {
@@ -42,6 +48,12 @@ export class UserProfileComponent implements OnInit {
   editedBio = '';
   selectedStatus: string = 'all';
   error: string | null = null;
+
+  // Opciones válidas para size y género
+  readonly sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  readonly genreOptions = ['men', 'women', 'kid', 'other'];
+  // Para restaurar color si se cancela
+  private previousColor: { [id: string]: string } = {};
 
   constructor(
     private userService: UserService,
@@ -71,7 +83,7 @@ export class UserProfileComponent implements OnInit {
     this.projectService.getAllById(this.user.id).subscribe({
       next: (projects: any[]) => {
         this.projects = projects.map(p => {
-          // Normalize all possible field names to camelCase
+          // Canonical normalization: always prefer camelCase, fallback to explorer-style
           const normalized: EditableProject = {
             ...p,
             id: p.id,
@@ -84,7 +96,11 @@ export class UserProfileComponent implements OnInit {
             previewImageUrl: p.previewImageUrl || p.preview_image_url || '',
             garmentColor: p.garmentColor || p.tshirt_color || p.garment_color || '',
             garmentSize: p.garmentSize || p.tshirt_size || p.garment_size || '',
-            // Canvas and other fields can be mapped similarly if needed
+            projectPrivacy: p.projectPrivacy || p.project_privacy || '',
+            price: p.price,
+            likes: p.likes,
+            canvas: p.canvas,
+            // Defensive: always ensure all fields are present and in canonical form
             editingName: false,
             editingGenre: false,
             editingSize: false,
@@ -183,13 +199,43 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  // Agrega la función para guardar cambios inline
+  // Validación y guardado de proyecto
   saveProject(project: any): void {
+    // Validar size y género
+    if (!this.sizeOptions.includes(project.garmentSize)) {
+      project.garmentSize = this.sizeOptions[0];
+    }
+    if (!this.genreOptions.includes(project.genre)) {
+      project.genre = this.genreOptions[0];
+    }
+    // Validar color (simple: debe ser string tipo #xxxxxx)
+    if (!/^#[0-9A-Fa-f]{6}$/.test(project.garmentColor)) {
+      project.garmentColor = this.previousColor[project.id] || '#EDEDED';
+    }
     project.editingName = false;
     project.editingGenre = false;
     project.editingSize = false;
     project.editingColor = false;
-    this.projectService.update(project.id, project).subscribe();
+    this.projectService.update(project.id, project).subscribe({
+      next: () => {
+        this.loadProjects();
+      },
+      error: (err) => {
+        // Optionally handle error (e.g., show a message)
+      }
+    });
+  }
+
+  // Guardar color anterior antes de editar
+  startEditColor(project: any): void {
+    this.previousColor[project.id] = project.garmentColor;
+    project.editingColor = true;
+  }
+
+  // Cancelar edición de color y restaurar
+  cancelEditColor(project: any): void {
+    project.garmentColor = this.previousColor[project.id] || '#EDEDED';
+    project.editingColor = false;
   }
 
   getAllUserProjects(): EditableProject[] {
