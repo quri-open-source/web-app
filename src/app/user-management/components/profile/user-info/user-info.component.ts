@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
-import { UserEntity } from '../../../model/user.entity';
+import { User } from '../../../model/user.entity';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,7 +42,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './user-info.component.css',
 })
 export class UserInfoComponent {
-  @Input() user: UserEntity | any;
+  @Input() user: User | any;
   editUser: any = {};
   private userService = inject(UserService);
   private snackBar = inject(MatSnackBar);

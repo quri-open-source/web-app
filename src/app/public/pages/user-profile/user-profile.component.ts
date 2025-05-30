@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { UserInfoComponent } from '../../../user-management/components/profile/user-info/user-info.component';
 import { UserService } from '../../../user-management/services/user.service';
 import { ProjectService } from '../../../design-lab/services/project.service';
-import { UserProfileAssembler } from '../../../user-management/services/user-profile.assembler'
+import { UserAssembler } from '../../../user-management/services/user-profile.assembler'
 import { AuthService } from '../../../user-management/services/auth.service';
-import { UserEntity } from '../../../user-management/model/user.entity';
+import { User } from '../../../user-management/model/user.entity';
 import { Project } from '../../../design-lab/model/project.entity';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
@@ -30,12 +30,11 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit() {
     const userId = this.authService.getCurrentUserId();
-    const assembler = new UserProfileAssembler();
-    this.userService.getUsers().subscribe((users: UserEntity[]) => {
+    this.userService.getUsers().subscribe((users: User[]) => {
       this.projectService.getAll().subscribe((projects: Project[]) => {
         const user = users.find(u => u.id === userId) || null;
         const userProjects = projects.filter(p => p.userId === userId);
-        this.user = assembler.getUserProfile(user, userProjects, users);
+        this.user = UserAssembler.toEntityFromResponse(user, userProjects, users);
         this.projects = userProjects;
       });
     });
