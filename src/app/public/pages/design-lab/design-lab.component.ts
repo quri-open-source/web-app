@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
+import { AuthService } from '../../../user-management/services/auth.service';
 
 @Component({
   selector: 'app-design-lab',
@@ -29,21 +30,21 @@ export class DesignLabComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    private projectService: ProjectService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadProjects();
   }
 
   loadProjects(): void {
-    // For demo purposes, using a hardcoded user ID
-    // In a real app, you would get this from an auth service
-    const userId = 'user-001';
-    console.log(this.projectService.getURL());
-
+    const userId = this.authService.getCurrentUserId();
     this.projectService.getAllById(userId).subscribe({
       next: (projects) => {
-        this.projects = projects;
+        // Filter by userId in frontend for extra safety
+        this.projects = projects.filter(project => project.userId === userId);
         this.loading = false;
       },
       error: (err) => {

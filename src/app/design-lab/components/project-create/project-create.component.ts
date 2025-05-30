@@ -19,6 +19,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../user-management/services/auth.service';
 
 interface GarmentColor {
   label: string;
@@ -75,10 +76,7 @@ interface GarmentColor {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Genre</mat-label>
                     <mat-select formControlName="genre">
-                      <mat-option value="women">Women</mat-option>
-                      <mat-option value="men">Men</mat-option>
-                      <mat-option value="kid">Kid</mat-option>
-                      <mat-option value="other">Other</mat-option>
+                      <mat-option *ngFor="let genre of genres" [value]="genre.value">{{ genre.label }}</mat-option>
                     </mat-select>
                     <mat-error
                       *ngIf="projectForm.get('genre')?.hasError('required')"
@@ -90,11 +88,7 @@ interface GarmentColor {
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Size</mat-label>
                     <mat-select formControlName="garmentSize">
-                      <mat-option value="S">S</mat-option>
-                      <mat-option value="M">M</mat-option>
-                      <mat-option value="L">L</mat-option>
-                      <mat-option value="XL">XL</mat-option>
-                      <mat-option value="XXL">XXL</mat-option>
+                      <mat-option *ngFor="let size of garmentSizes" [value]="size.value">{{ size.label }}</mat-option>
                     </mat-select>
                     <mat-error
                       *ngIf="
@@ -365,39 +359,46 @@ export class ProjectCreateComponent {
   isSubmitting = false;
 
   // Garment colors configuration
-  garmentColors: GarmentColor[] = [
-    { label: 'black', value: '#161615' }, // row 0, col 0
-    { label: 'gray', value: '#403D3B' }, // row 0, col 1
-    { label: 'light-gray', value: '#B3B1AF' }, // row 0, col 2
-    { label: 'white', value: '#EDEDED' }, // row 0, col 3
-    { label: 'red', value: '#B51B14' }, // row 1, col 0
-    { label: 'pink', value: '#F459B0' }, // row 1, col 1
-    { label: 'light-purple', value: '#D890E4' }, // row 1, col 2
-    { label: 'purple', value: '#693FA0' }, // row 1, col 3
-    { label: 'light-blue', value: '#00A5BC' }, // row 2, col 0
-    { label: 'cyan', value: '#31B7C9' }, // row 2, col 1
-    { label: 'sky-blue', value: '#3F9BDC' }, // row 2, col 2
-    { label: 'blue', value: '#1B3D92' }, // row 2, col 3
-    { label: 'green', value: '#1B8937' }, // row 3, col 0
-    { label: 'light-green', value: '#5BBE65' }, // row 3, col 1
-    { label: 'yellow', value: '#FECD08' }, // row 3, col 2
-    { label: 'dark-yellow', value: '#F2AB00' }, // row 3, col 3
-  ];
+  genres: { label: string, value: string }[] = [];
+  garmentSizes: { label: string, value: string }[] = [];
+  garmentColors: GarmentColor[] = [];
 
-  garmentColorImages =
-    'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
+  garmentColorImages = environment.garmentColorImagesUrl;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private projectService: ProjectService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) {
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
-      genre: ['men', Validators.required],
-      garmentSize: [environment.defaultGarmentSize, Validators.required],
-      garmentColor: [environment.defaultGarmentColor, Validators.required],
+      genre: ['', Validators.required],
+      garmentSize: ['', Validators.required],
+      garmentColor: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {
+    this.projectService.getAllGenres().subscribe((genres) => {
+      this.genres = genres;
+      // Set default if available
+      if (genres.length && !this.projectForm.get('genre')?.value) {
+        this.projectForm.get('genre')?.setValue(genres[0].value);
+      }
+    });
+    this.projectService.getAllGarmentSizes().subscribe((sizes) => {
+      this.garmentSizes = sizes;
+      if (sizes.length && !this.projectForm.get('garmentSize')?.value) {
+        this.projectForm.get('garmentSize')?.setValue(sizes[0].value);
+      }
+    });
+    this.projectService.getAllGarmentColors().subscribe((colors) => {
+      this.garmentColors = colors;
+      if (colors.length && !this.projectForm.get('garmentColor')?.value) {
+        this.projectForm.get('garmentColor')?.setValue(colors[0].value);
+      }
     });
   }
 
@@ -405,13 +406,8 @@ export class ProjectCreateComponent {
     this.projectForm.get('garmentColor')?.setValue(colorValue);
   }
   getGenreLabel(value: string): string {
-    const genreMap: { [key: string]: string } = {
-      women: 'Women',
-      men: 'Men',
-      kid: 'Kid',
-      other: 'Other',
-    };
-    return genreMap[value] || value;
+    const found = this.genres.find((genre) => genre.value === value);
+    return found ? found.label : value;
   }
   getColorLabel(value: string): string {
     const foundColor = this.garmentColors.find(
@@ -446,7 +442,7 @@ export class ProjectCreateComponent {
 
     this.isSubmitting = true;
 
-    const userId = 'user-001'; // In a real app, get this from auth service
+    const userId = this.authService.getCurrentUserId();
     const formValue = this.projectForm.value;
 
     // Create a new project

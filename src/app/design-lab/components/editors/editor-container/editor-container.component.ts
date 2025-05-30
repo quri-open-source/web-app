@@ -14,7 +14,9 @@ import {
   ImageProperties,
 } from '../image-editor/image-editor.component';
 
-export type EditorTab = 'color' | 'text' | 'image';
+
+
+
 
 @Component({
   selector: 'app-editor-container',
@@ -41,6 +43,7 @@ export type EditorTab = 'color' | 'text' | 'image';
           </ng-template>
           <app-tshirt-color-editor
             [selectedColor]="currentColor"
+            [garmentColors]="garmentColors"
             (colorSelected)="onColorSelected($event)"
           >
           </app-tshirt-color-editor>
@@ -100,7 +103,8 @@ export type EditorTab = 'color' | 'text' | 'image';
 })
 export class EditorContainerComponent {
   @Input() currentColor: string = '';
-  @Input() initialTab: EditorTab = 'color';
+  @Input() initialTab: 'color' | 'text' | 'image' = 'color';
+  @Input() garmentColors: any[] = [];
 
   @Output() colorSelected = new EventEmitter<string>();
   @Output() textAdded = new EventEmitter<TextProperties>();

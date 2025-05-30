@@ -1,12 +1,15 @@
+
+
 import { Injectable } from '@angular/core';
-import { UserEntity } from '../model/user.entity';
-import { CreateUserDto } from '../dtos/create-user.dto';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserEntity } from '../model/user.entity';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/users'; // Ajusta si tu endpoint es diferente
+  private apiUrl = `${environment.apiBaseUrl}/users`;
 
   constructor(private http: HttpClient) {}
 
