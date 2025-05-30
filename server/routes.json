@@ -1,4 +1,6 @@
 {
+  "/api/garmentColors": "/garmentColors",
+  "/api/genres": "/genres",
   "/api/*": "/$1",
   "/settings": "/settings",
   "/settings/:id": "/settings/:id",

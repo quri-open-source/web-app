@@ -4,102 +4,195 @@
     "language": "en",
     "notifications": true
   },
+  "garmentColors": [
+    {
+      "label": "black",
+      "value": "#161615",
+      "id": "baa8"
+    },
+    {
+      "label": "gray",
+      "value": "#403D3B",
+      "id": "c635"
+    },
+    {
+      "label": "light-gray",
+      "value": "#B3B1AF",
+      "id": "e0aa"
+    },
+    {
+      "label": "white",
+      "value": "#EDEDED",
+      "id": "368d"
+    },
+    {
+      "label": "red",
+      "value": "#B51B14",
+      "id": "3941"
+    },
+    {
+      "label": "pink",
+      "value": "#F459B0",
+      "id": "7a76"
+    },
+    {
+      "label": "light-purple",
+      "value": "#D890E4",
+      "id": "418f"
+    },
+    {
+      "label": "purple",
+      "value": "#693FA0",
+      "id": "aafd"
+    },
+    {
+      "label": "light-blue",
+      "value": "#00A5BC",
+      "id": "5b17"
+    },
+    {
+      "label": "cyan",
+      "value": "#31B7C9",
+      "id": "a85a"
+    },
+    {
+      "label": "sky-blue",
+      "value": "#3F9BDC",
+      "id": "86fb"
+    },
+    {
+      "label": "blue",
+      "value": "#1B3D92",
+      "id": "d448"
+    },
+    {
+      "label": "green",
+      "value": "#1B8937",
+      "id": "2b4c"
+    },
+    {
+      "label": "light-green",
+      "value": "#5BBE65",
+      "id": "f0a6"
+    },
+    {
+      "label": "yellow",
+      "value": "#FECD08",
+      "id": "da82"
+    },
+    {
+      "label": "dark-yellow",
+      "value": "#F2AB00",
+      "id": "b24b"
+    }
+  ],
+  "garmentSizes": [
+    {
+      "label": "XS",
+      "value": "XS",
+      "id": "size-xs"
+    },
+    {
+      "label": "S",
+      "value": "S",
+      "id": "size-s"
+    },
+    {
+      "label": "M",
+      "value": "M",
+      "id": "size-m"
+    },
+    {
+      "label": "L",
+      "value": "L",
+      "id": "size-l"
+    },
+    {
+      "label": "XL",
+      "value": "XL",
+      "id": "size-xl"
+    },
+    {
+      "label": "XXL",
+      "value": "XXL",
+      "id": "size-xxl"
+    }
+  ],
+  "projectStatus": [
+    {
+      "label": "In Progress",
+      "value": "in progress",
+      "id": "status-in-progress"
+    },
+    {
+      "label": "Blueprint",
+      "value": "blueprint",
+      "id": "status-blueprint"
+    },
+    {
+      "label": "Completed",
+      "value": "completed",
+      "id": "status-completed"
+    }
+  ],
+  "genres": [
+    {
+      "label": "men",
+      "value": "men",
+      "id": "8dd0"
+    },
+    {
+      "label": "women",
+      "value": "women",
+      "id": "b5b5"
+    },
+    {
+      "label": "unisex",
+      "value": "unisex",
+      "id": "f624"
+    },
+    {
+      "label": "kids",
+      "value": "kids",
+      "id": "6643"
+    }
+  ],
   "projects": [
     {
-      "id": "proj-005",
-      "user_id": "user-002",
-      "created_at": "2025-05-09T10:00:00Z",
+      "id": "bb9b1fa7-4fea-4868-953e-b46fba25dc3f",
+      "userId": "user-002",
+      "createdAt": "2025-05-29T20:40:47.478Z",
       "status": "blueprint",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Spring Blossom",
-      "tshirt_color": "#FF69B4",
-      "tshirt_size": "M",
-      "last_modified": "2025-05-09T10:30:00Z",
       "genre": "men",
+      "previewImageUrl": "https://picsum.photos/150/150",
+      "name": "1213",
+      "garmentColor": "#1B8937",
+      "garmentSize": "M",
+      "lastModified": "2025-05-29T20:40:47.478Z",
       "canvas": {
-        "id": "canvas-005",
-        "project_id": "proj-005",
-        "background_color": "#FF69B4",
-        "created_at": "2025-05-09T10:00:00Z",
-        "last_modified": "2025-05-09T10:30:00Z",
+        "id": "",
+        "projectId": "",
+        "backgroundColor": "",
+        "createdAt": "2025-05-29T20:40:47.478Z",
+        "lastModified": "2025-05-29T20:40:47.478Z",
         "layers": []
       }
     },
     {
-      "id": "fab6a087-e825-402c-95fe-6652f523da02",
+      "id": "fd85e09b-c6f0-42a0-8b96-daea64f1b738",
       "userId": "user-001",
-      "createdAt": "2025-05-29T07:45:07.233Z",
+      "createdAt": "2025-05-29T22:11:26.114Z",
       "status": "blueprint",
-      "genre": "men",
+      "genre": "women",
       "previewImageUrl": "https://picsum.photos/150/150",
-      "name": "Project2",
-      "garmentColor": "#000000",
-      "garmentSize": "M",
-      "lastModified": "2025-05-29T07:45:07.233Z",
+      "name": "Project",
+      "garmentColor": "#161615",
+      "garmentSize": "S",
+      "lastModified": "2025-05-29T22:11:26.114Z",
       "canvas": {
         "id": "",
         "createdAt": null,
         "lastModified": null,
-        "layers": []
-      }
-    },
-    {
-      "id": "a782af78-c821-4793-9305-ab18b7949765",
-      "userId": "user-001",
-      "createdAt": "2025-05-29T12:37:29.482Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "https://picsum.photos/150/150",
-      "name": "Project3",
-      "garmentColor": "#FFFFFF",
-      "garmentSize": "M",
-      "lastModified": "2025-05-29T12:37:29.482Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-29T12:37:29.482Z",
-        "lastModified": "2025-05-29T12:37:29.482Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "1f187123-86d4-445d-8186-fb208fb85573",
-      "userId": "user-001",
-      "createdAt": "2025-05-29T18:26:28.501Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "https://picsum.photos/150/150",
-      "name": "MATEO UWU",
-      "garmentColor": "#F459B0",
-      "garmentSize": "M",
-      "lastModified": "2025-05-29T18:26:28.501Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-29T18:26:28.501Z",
-        "lastModified": "2025-05-29T18:26:28.501Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "68601743-2c79-4c17-8824-f6956cde2fed",
-      "userId": "user-001",
-      "createdAt": "2025-05-29T18:27:49.954Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "https://picsum.photos/150/150",
-      "name": "SOY HOMBRE",
-      "garmentColor": "#FFFFFF",
-      "garmentSize": "M",
-      "lastModified": "2025-05-29T18:27:49.954Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-29T18:27:49.954Z",
-        "lastModified": "2025-05-29T18:27:49.954Z",
         "layers": []
       }
     }
@@ -115,16 +208,32 @@
       "created_at": "2024-03-19T00:00:00Z",
       "projects": [
         {
-          "id": "017da007-1653-430c-896b-8024567a1321",
-          "name": "Project1"
-        },
-        {
           "id": "fab6a087-e825-402c-95fe-6652f523da02",
           "name": "Project2"
         },
         {
           "id": "a782af78-c821-4793-9305-ab18b7949765",
           "name": "Project3"
+        },
+        {
+          "id": "1f187123-86d4-445d-8186-fb208fb85573",
+          "name": "MATEO UWU"
+        },
+        {
+          "id": "68601743-2c79-4c17-8824-f6956cde2fed",
+          "name": "SOY HOMBRE"
+        }
+      ]
+    },
+    {
+      "id": "user-002",
+      "email": "user2@example.com",
+      "name": "Jonatan",
+      "created_at": "2025-05-09T10:00:00Z",
+      "projects": [
+        {
+          "id": "bb9b1fa7-4fea-4868-953e-b46fba25dc3f",
+          "name": "1213"
         }
       ]
     }
