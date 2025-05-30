@@ -4,7 +4,7 @@ import { UserInfoComponent } from '../../../user-management/components/profile/u
 import { UserService } from '../../../user-management/services/user.service';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { UserProfileAssembler } from '../../../user-management/services/user-profile.assembler'
-import { environment } from '../../../../environments/environment.development';
+import { AuthService } from '../../../user-management/services/auth.service';
 import { UserEntity } from '../../../user-management/model/user.entity';
 import { Project } from '../../../design-lab/model/project.entity';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -24,11 +24,12 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    const userId = environment.defaultUserId;
+    const userId = this.authService.getCurrentUserId();
     const assembler = new UserProfileAssembler();
     this.userService.getUsers().subscribe((users: UserEntity[]) => {
       this.projectService.getAll().subscribe((projects: Project[]) => {

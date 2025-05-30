@@ -142,6 +142,7 @@ interface GarmentColor {
                 <div class="tools-panel">
                   <app-editor-container
                     [currentColor]="project.garmentColor"
+                    [garmentColors]="garmentColors"
                     (colorSelected)="selectColor($event)"
                     (textAdded)="handleTextAdded($event)"
                     (imageAdded)="handleImageAdded($event)"
@@ -318,6 +319,15 @@ interface GarmentColor {
         gap: 16px;
       }
 
+
+      .color-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+        gap: 12px;
+        width: 100%;
+        max-width: 260px;
+      }
+
       .color-swatch {
         width: 36px;
         height: 36px;
@@ -325,6 +335,7 @@ interface GarmentColor {
         cursor: pointer;
         border: 2px solid transparent;
         transition: transform 0.2s, border-color 0.2s;
+        box-sizing: border-box;
       }
 
       .color-swatch:hover {
@@ -334,6 +345,7 @@ interface GarmentColor {
       .color-swatch.selected {
         border-color: #3f51b5;
         transform: scale(1.1);
+        box-shadow: 0 0 0 2px #3f51b533;
       }
 
       .size-selector {
@@ -369,25 +381,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   private boundMouseMove: any;
   private boundMouseUp: any;
 
-  // Garment colors configuration
-  garmentColors: GarmentColor[] = [
-    { label: 'black', value: '#161615' }, // row 0, col 0
-    { label: 'gray', value: '#403D3B' }, // row 0, col 1
-    { label: 'light-gray', value: '#B3B1AF' }, // row 0, col 2
-    { label: 'white', value: '#EDEDED' }, // row 0, col 3
-    { label: 'red', value: '#B51B14' }, // row 1, col 0
-    { label: 'pink', value: '#F459B0' }, // row 1, col 1
-    { label: 'light-purple', value: '#D890E4' }, // row 1, col 2
-    { label: 'purple', value: '#693FA0' }, // row 1, col 3
-    { label: 'light-blue', value: '#00A5BC' }, // row 2, col 0
-    { label: 'cyan', value: '#31B7C9' }, // row 2, col 1
-    { label: 'sky-blue', value: '#3F9BDC' }, // row 2, col 2
-    { label: 'blue', value: '#1B3D92' }, // row 2, col 3
-    { label: 'green', value: '#1B8937' }, // row 3, col 0
-    { label: 'light-green', value: '#5BBE65' }, // row 3, col 1
-    { label: 'yellow', value: '#FECD08' }, // row 3, col 2
-    { label: 'dark-yellow', value: '#F2AB00' }, // row 3, col 3
-  ];
+  garmentColors: GarmentColor[] = [];
 
   garmentColorImages =
     'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
@@ -401,6 +395,17 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params) => {
       this.projectId = params['id'];
       this.loadProject();
+    });
+
+    // Fetch garment colors dynamically from the backend
+    this.projectService.getAllGarmentColors().subscribe({
+      next: (colors) => {
+        this.garmentColors = colors;
+      },
+      error: (err) => {
+        console.error('Error fetching garment colors:', err);
+        this.garmentColors = [];
+      }
     });
 
     // Bind the methods once to ensure we use the same reference when adding and removing

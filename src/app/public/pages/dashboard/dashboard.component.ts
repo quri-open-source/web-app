@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AnalyticsService } from '../../../analytics/services/analytics.service';
+import { AuthService } from '../../../user-management/services/auth.service';
 import { Analytics } from '../../../analytics/model/analytics.entity';
 import { Observable, tap } from 'rxjs';
 
@@ -13,12 +14,16 @@ import { Observable, tap } from 'rxjs';
 })
 export class AnalyticsDashboardComponent implements OnInit {
   analytics$: Observable<Analytics[]> = new Observable<Analytics[]>();
-  currentUserId = 'user-001'; // Using a specific user ID for demonstration
+  currentUserId = '';
   topProjects: Analytics[] = [];
 
-  constructor(private analyticsService: AnalyticsService) { }
+  constructor(
+    private analyticsService: AnalyticsService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.currentUserId = this.authService.getCurrentUserId();
     this.loadAnalytics();
   }
 

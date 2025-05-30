@@ -1,11 +1,62 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProjectService } from '../../../design-lab/services/project.service';
+import { Project } from '../../../design-lab/model/project.entity';
+import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
+import { AuthService } from '../../../user-management/services/auth.service';
 
 @Component({
   selector: 'app-projects',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    ProjectCardComponent,
+    RouterLink
+  ],
   templateUrl: './projects.component.html',
-  styleUrl: './projects.component.css'
+  styleUrl: './projects.component.css',
+  providers: [ProjectService]
 })
-export class ProjectsComponent {
+export class ProjectsComponent implements OnInit {
+  projects: Project[] = [];
+  loading = true;
+  error: string | null = null;
 
+  constructor(
+    private projectService: ProjectService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProjects();
+  }
+
+  loadProjects(): void {
+    const userId = this.authService.getCurrentUserId();
+    this.projectService.getAllById(userId).subscribe({
+      next: (projects) => {
+        // Filtra por userId en frontend por seguridad
+        this.projects = projects.filter(project => project.userId === userId);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching projects:', err);
+        this.error = 'Failed to load projects. Please try again later.';
+        this.loading = false;
+      }
+    });
+  }
+
+  onProjectDeleted(deletedProjectId: string): void {
+    this.projects = this.projects.filter(project => project.id !== deletedProjectId);
+  }
 }
