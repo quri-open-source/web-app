@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { UserInfoComponent } from '../../../user-management/components/profile/user-info/user-info.component';
 import { UserService } from '../../../user-management/services/user.service';
 import { ProjectService } from '../../../design-lab/services/project.service';
-import { UserAssembler } from '../../../user-management/services/user-profile.assembler'
 import { AuthService } from '../../../user-management/services/auth.service';
 import { User } from '../../../user-management/model/user.entity';
 import { Project } from '../../../design-lab/model/project.entity';
@@ -19,7 +18,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
-  user: any = null;
+  user: User | null = null;
   projects: any[] = [];
 
   constructor(
@@ -34,7 +33,13 @@ export class UserProfileComponent implements OnInit {
       this.projectService.getAll().subscribe((projects: Project[]) => {
         const user = users.find(u => u.id === userId) || null;
         const userProjects = projects.filter(p => p.userId === userId);
-        this.user = UserAssembler.toEntityFromResponse(user, userProjects, users);
+
+        if (!user) {
+          console.error('User not found');
+          return;
+        }
+
+        this.user = user
         this.projects = userProjects;
       });
     });
