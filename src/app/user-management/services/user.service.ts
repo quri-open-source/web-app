@@ -1,27 +1,30 @@
-
-
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { UserEntity } from '../model/user.entity';
-import { CreateUserDto } from '../dtos/create-user.dto';
 import { environment } from '../../../environments/environment';
+import { BaseService } from '../../shared/services/base.service';
+import { UserResponse } from './user.response';
+import { map } from 'rxjs';
+import { UserAssembler } from './user.assembler';
 
-@Injectable({ providedIn: 'root' })
-export class UserService {
-  private apiUrl = `${environment.apiBaseUrl}/users`;
+const USER_WITH_PROFILE = (id: string) =>
+    `http://localhost:3000/userWithProfile?id=${id}`;
 
-  constructor(private http: HttpClient) {}
+@Injectable({
+    providedIn: 'root',
+})
+export class UserService extends BaseService<UserResponse> {
+    private userId: string = environment.devUser;
+    constructor() {
+        super('users');
+    }
 
-  createUser(dto: CreateUserDto): Observable<UserEntity> {
-    return this.http.post<UserEntity>(this.apiUrl, dto);
-  }
+    // Define user properties and methods here
+    getSessionUserId(): string {
+        return this.userId;
+    }
 
-  getUsers(): Observable<UserEntity[]> {
-    return this.http.get<UserEntity[]>(this.apiUrl);
-  }
-
-  updateUser(user: Partial<UserEntity> & { id: string }): Observable<UserEntity> {
-    return this.http.patch<UserEntity>(`${this.apiUrl}/${user.id}`, user);
-  }
+    getCurrentUser() {
+        return this.http
+            .get<UserResponse[]>(USER_WITH_PROFILE(this.userId))
+            .pipe(map((response) => UserAssembler.toEntityFromResponse(response[0])));
+    }
 }

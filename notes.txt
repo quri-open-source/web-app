@@ -1,0 +1,13 @@
+1. We are redifining the project entity to clean it up
+Now the layers are not grouped by the "canvas" object anymore, its the project itself.
+2. Policies
+when a project is sold or published as a blueprint, then the project is blocked from being modified.
+
+3. a transaction only represents the payment transaction
+applied_discounts, commission.
+
+4. an order could have a null transaction_id if it is not paid yet. this means
+that the manufacturer does not know about this order yet. only when the order is paid, the transaction_id is set.
+and the manufacturer is notified about the order.
+
+5. db json shows only the response from the server.

@@ -1,94 +1,61 @@
-
-import { Injectable } from '@angular/core';
-import { BaseService } from '../../shared/services/base.service';
-import { Project } from '../model/project.entity';
-import { map, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { map } from 'rxjs';
+import { UserService } from '../../user-management/services/user.service';
 import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { BaseService } from '../../shared/services/base.service';
+
+// this must be removed when the backend is ready
+const GET_ALL_USER_BLUEPRINTS = (id: string) =>
+    `http://localhost:3000/projects?status=blueprint&user_id=${id}`;
+
+const GET_USER_BLUEPRINT_BY_ID = (id: string, userId: string) =>
+    `http://localhost:3000/projects?id=${id}&status=blueprint&user_id=${userId}`;
+
+const GET_PROJECT_BY_ID = (id: string) =>
+    `http://localhost:3000/projects?id=${id}`;
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
-export class ProjectService extends BaseService<Project> {
+export class ProjectService extends BaseService<ProjectResponse> {
+    protected userService = inject(UserService);
 
-  constructor() {
-    super('/projects');
-  }
+    constructor() {
+        super('projects');
+    }
 
-  /**
-   * Get all available garment sizes from backend (db.json)
-   */
-  public getAllGarmentSizes(): Observable<{ label: string, value: string }[]> {
-    return this.http.get<any[]>(`${environment.apiBaseUrl}/garmentSizes`).pipe(
-      map((sizes: any[]) => Array.isArray(sizes) ? sizes.map(({ label, value }) => ({ label, value })) : []),
-      catchError(err => {
-        console.error('Error in getAllGarmentSizes', err);
-        return of([]);
-      })
-    );
-  }
+    getUserBlueprints() {
+        const userId = this.userService.getSessionUserId();
+        return this.http
+            .get<ProjectResponse[]>(GET_ALL_USER_BLUEPRINTS(userId))
+            .pipe(
+                map((projects) =>
+                    ProjectAssembler.toEntitiesFromResponse(projects)
+                )
+            );
+    }
 
-  /**
-   * Get all available project status options from backend (db.json)
-   */
-  public getAllProjectStatus(): Observable<{ label: string, value: string }[]> {
-    return this.http.get<any[]>(`${environment.apiBaseUrl}/projectStatus`).pipe(
-      map((statuses: any[]) => Array.isArray(statuses) ? statuses.map(({ label, value }) => ({ label, value })) : []),
-      catchError(err => {
-        console.error('Error in getAllProjectStatus', err);
-        return of([]);
-      })
-    );
-  }
+    getUserBlueprintById(id: string) {
+        return this.http
+            .get<ProjectResponse>(GET_USER_BLUEPRINT_BY_ID(id, this.userService.getSessionUserId()))
+            .pipe(
+                map((project) =>
+                    ProjectAssembler.toEntityFromResponse(project)
+                )
+            );
+    }
 
-  public getAllById(id: string): Observable<Project[]> {
-    return this.http
-      .get<ProjectResponse[]>(`${this.resourcePath()}`, {
-        params: {
-          user_id: id,
-        },
-      })
-      .pipe(
-        map((response) => {
-          return ProjectAssembler.ToEntitiesFromResponse(response);
-        })
-      );
-  }
-
-  public createProject(project: Project): Observable<Project> {
-    return this.create(project).pipe(
-      map((response: any) => {
-        return ProjectAssembler.ToEntityFromResponse(response);
-      })
-    );
-  }
-
-  /**
-   * Get all available garment colors from backend (db.json)
-   */
-  public getAllGarmentColors(): Observable<{ label: string, value: string }[]> {
-    return this.http.get<any[]>(`${environment.apiBaseUrl}/garmentColors`).pipe(
-      map(colors => Array.isArray(colors) ? colors.map(({ label, value }) => ({ label, value })) : []),
-      catchError(err => {
-        console.error('Error in getAllGarmentColors', err);
-        return of([]);
-      })
-    );
-  }
-
-  /**
-   * Get all available genres from backend (db.json)
-   */
-  public getAllGenres(): Observable<{ label: string, value: string }[]> {
-    return this.http.get<any[]>(`${environment.apiBaseUrl}/genres`).pipe(
-      map(genres => Array.isArray(genres) ? genres.map(({ label, value }) => ({ label, value })) : []),
-      catchError(err => {
-        console.error('Error in getAllGenres', err);
-        return of([]);
-      })
-    );
-  }
+    getProjectById(id: string) {
+        return this.http
+            .get<ProjectResponse[]>(GET_PROJECT_BY_ID(id))
+            .pipe(
+                map((projects) => {
+                    if (projects && projects.length > 0) {
+                        return ProjectAssembler.toEntityFromResponse(projects[0]);
+                    }
+                    throw new Error('Project not found');
+                })
+            );
+    }
 }

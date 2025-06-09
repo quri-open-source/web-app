@@ -1,0 +1,101 @@
+<div class="project-preview-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading project...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <mat-icon>error</mat-icon>
+      <h2>Error</h2>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" routerLink="/design-lab">
+        Back to Projects
+      </button>
+    </div>
+  } @else if (project) {
+    <div class="project-header">
+      <h1>{{ project.name }}</h1>
+      <div class="project-meta">
+        <mat-chip-listbox>
+          <mat-chip>{{ project.status | titlecase }}</mat-chip>
+          <mat-chip>{{ project.gender | titlecase }}</mat-chip>
+          <mat-chip>Size: {{ project.garmentSize }}</mat-chip>
+        </mat-chip-listbox>
+      </div>
+    </div>
+
+    <div class="project-content">
+      <div class="project-preview-area">
+        @if (project.previewImageUrl) {
+          <img [src]="project.previewImageUrl" [alt]="project.name" class="preview-image" />
+        } @else {
+          <div class="no-preview">
+            <mat-icon>image</mat-icon>
+            <span>No preview available</span>
+          </div>
+        }
+      </div>
+
+      <div class="project-details">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Project Details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="detail-row">
+              <strong>Status:</strong> {{ project.status | titlecase }}
+            </div>
+            <div class="detail-row">
+              <strong>Gender:</strong> {{ project.gender | titlecase }}
+            </div>
+            <div class="detail-row">
+              <strong>Garment Color:</strong>
+              <span class="color-indicator" [style.background-color]="project.garmentColor"></span>
+              {{ project.garmentColor }}
+            </div>
+            <div class="detail-row">
+              <strong>Size:</strong> {{ project.garmentSize }}
+            </div>
+            <div class="detail-row">
+              <strong>Created:</strong> {{ project.createdAt | date:'medium' }}
+            </div>
+            <div class="detail-row">
+              <strong>Last Modified:</strong> {{ project.lastModified | date:'medium' }}
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        @if (project.layers && project.layers.length > 0) {
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Layers ({{ project.layers.length }})</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @for (layer of project.layers; track layer.id) {
+                <div class="layer-item">
+                  <mat-icon>{{ layer.type === 'image' ? 'image' : 'text_fields' }}</mat-icon>
+                  <span>{{ layer.type | titlecase }} Layer</span>
+                  @if (layer.type === 'text') {
+                    <span class="layer-content">- "{{ layer.getContent() }}"</span>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button mat-raised-button color="primary">
+        <mat-icon>edit</mat-icon>
+        Edit Project
+      </button>
+      <button mat-stroked-button routerLink="/design-lab">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Projects
+      </button>
+    </div>
+  }
+</div>

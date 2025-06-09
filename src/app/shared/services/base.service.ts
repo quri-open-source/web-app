@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 
 export abstract class BaseService<T> {
   protected http = inject(HttpClient);
-  protected apiUrl = environment.serverBaseUrl;
+  protected apiUrl = environment.apiBaseUrl;
   protected path: string;
 
   constructor(path: string) {

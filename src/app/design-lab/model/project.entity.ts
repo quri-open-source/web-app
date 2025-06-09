@@ -1,46 +1,48 @@
-import { ProjectStatus, GarmentSize } from "../services/project.response";
-import { Canvas } from "./canvas.entity";
-import { environment } from "../../../environments/environment";
-
-function withDefault<T>(value: T | undefined | null | '', fallback: T): T {
-    return value === undefined || value === null || value === '' ? fallback : value;
-}
+import {
+    GARMENT_COLOR,
+    GARMENT_SIZE,
+    PROJECT_GENDER,
+    PROJECT_STATUS,
+} from '../../const';
+import { Layer } from './layer.entity';
 
 export class Project {
     id: string;
     userId: string;
-    createdAt: Date;
-    status: ProjectStatus;
-
-    genre: string;
-    previewImageUrl: string;
     name: string;
-    garmentColor: string;
-    garmentSize: GarmentSize;
+    previewImageUrl: string;
+    status: PROJECT_STATUS;
+    gender: PROJECT_GENDER;
+    garmentColor: GARMENT_COLOR;
+    garmentSize: GARMENT_SIZE;
     lastModified: Date;
-    canvas: Canvas;
+    createdAt: Date;
 
+    layers: Layer[];
 
     constructor(
+        id: string,
         userId: string,
         name: string,
-        genre: string,
-        garmentSize?: GarmentSize,
-        color?: string,
-        previewImageUrl?: string,
-        lastModified?: Date,
-        status?: ProjectStatus
+        previewImageUrl: string,
+        status: PROJECT_STATUS,
+        gender: PROJECT_GENDER,
+        garmentColor: GARMENT_COLOR,
+        garmentSize: GARMENT_SIZE,
+        lastModified: Date,
+        createdAt: Date,
+        layers: Layer[]
     ) {
-        this.id = crypto.randomUUID();
+        this.id = id;
         this.userId = userId;
-        this.createdAt = new Date();
-        this.status = withDefault(status, environment.defaultProjectStatus as ProjectStatus);
         this.name = name;
-        this.genre = genre;
-        this.garmentSize = withDefault(garmentSize, environment.defaultGarmentSize as GarmentSize);
-        this.garmentColor = withDefault(color, environment.defaultGarmentColor);
-        this.previewImageUrl = withDefault(previewImageUrl, environment.defaultPreviewImageUrl);
-        this.lastModified = lastModified ?? this.createdAt;
-        this.canvas = new Canvas();
+        this.previewImageUrl = previewImageUrl;
+        this.status = status;
+        this.gender = gender;
+        this.garmentColor = garmentColor;
+        this.garmentSize = garmentSize;
+        this.lastModified = lastModified;
+        this.createdAt = createdAt;
+        this.layers = layers;
     }
 }
