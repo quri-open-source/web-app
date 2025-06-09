@@ -1,9 +1,4 @@
 <div class="design-lab-container">
-  <header class="page-header">
-    <h1>Design Lab</h1>
-    <p>View and manage your design projects</p>
-  </header>
-
   <section class="projects-section">
     <div class="section-header">
       <h2>My Projects</h2>
@@ -40,7 +35,7 @@
           <!-- Projects Grid -->
           <div class="projects-grid">
             @for (project of projects; track project.id) {
-              <app-project-card [project]="project" (deleted)="onProjectDeleted($event)"></app-project-card>
+              <app-project-card [project]="project" (deleted)="onProjectDeleted(project.id)"></app-project-card>
             }
           </div>
         }
