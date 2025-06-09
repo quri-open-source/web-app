@@ -1,0 +1,131 @@
+<div class="profile-container">
+    <!-- User Header Card -->
+    <mat-card class="user-header-card">
+        <mat-card-header>
+            <div mat-card-avatar class="user-avatar">
+                <mat-icon>person</mat-icon>
+            </div>
+            <mat-card-title>{{
+                this.user.profile.getFullName()
+            }}</mat-card-title>
+            <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="user-role">
+                <mat-chip-listbox>
+                    <mat-chip>{{ user.rol | titlecase }}</mat-chip>
+                </mat-chip-listbox>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Personal Information Card -->
+    <mat-card class="info-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>person</mat-icon>
+                Personal Information
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="form-grid">
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>First Name</mat-label>
+                    <input
+                        matInput
+                        [(ngModel)]="editUser.profile.firstName"
+                        placeholder="Enter first name"
+                    />
+                    <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Last Name</mat-label>
+                    <input
+                        matInput
+                        [(ngModel)]="editUser.profile.lastName"
+                        placeholder="Enter last name"
+                    />
+                    <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Email</mat-label>
+                    <input
+                        matInput
+                        type="email"
+                        [(ngModel)]="editUser.email"
+                        placeholder="Enter email address"
+                    />
+                    <mat-icon matSuffix>email</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Gender</mat-label>
+                    <mat-select [(ngModel)]="editUser.profile.gender">
+                        <mat-option value="men">Men</mat-option>
+                        <mat-option value="women">Women</mat-option>
+                        <mat-option value="unisex">Unisex</mat-option>
+                        <mat-option value="kids">Kids</mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>wc</mat-icon>
+                </mat-form-field>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Addresses Card -->
+    <mat-card class="info-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>location_on</mat-icon>
+                Registered Addresses
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            @if (user.profile.addresses.length > 0) {
+            <mat-list>
+                @for (address of user.profile.addresses; track address.id; let i
+                = $index) {
+                <mat-list-item>
+                    <div class="address">
+                        <mat-icon>home</mat-icon>
+                        <span> Address {{ i + 1 }} </span>
+                    </div>
+                </mat-list-item>
+                <mat-list-item>
+                    {{ address.formatAddress() }}
+                </mat-list-item>
+                @if (i < user.profile.addresses.length - 1) {
+                <mat-divider></mat-divider>
+                } }
+            </mat-list>
+            } @else {
+            <div class="empty-addresses">
+                <mat-icon>location_off</mat-icon>
+                <p>No addresses registered</p>
+                <button mat-stroked-button color="primary">
+                    <mat-icon>add</mat-icon>
+                    Add Address
+                </button>
+            </div>
+            }
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button mat-raised-button color="primary" (click)="onUpdate()">
+            <mat-icon>save</mat-icon>
+            Update Profile
+        </button>
+
+        <button mat-stroked-button>
+            <mat-icon>cancel</mat-icon>
+            Cancel
+        </button>
+    </div>
+</div>
