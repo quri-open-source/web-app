@@ -1,0 +1,108 @@
+.text-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-format-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.text-style-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.format-toggle-group {
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.format-toggle {
+  min-width: 48px;
+  padding: 0 12px;
+}
+
+::ng-deep .mdc-button-toggle-button {
+  height: 36px !important;
+}
+
+::ng-deep .mat-button-toggle-checked {
+  background-color: rgba(63, 81, 181, 0.15);
+  color: #3f51b5;
+}
+
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.color-picker label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #3f51b5;
+  transform: scale(1.1);
+}
+
+.section-title {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.add-text-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 36px;
+  transition: transform 0.2s;
+}
+
+.add-button:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
