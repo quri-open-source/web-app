@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-content>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+      <!-- T-shirt Color Editor Tab -->
+      <mat-tab label="Color">
+        <app-tshirt-color-editor 
+          [selectedColor]="currentColor"
+          (colorSelected)="onColorSelected($event)">
+        </app-tshirt-color-editor>
+      </mat-tab>
+      
+      <!-- Text Editor Tab -->
+      <mat-tab label="Text">
+        <app-text-editor 
+          [initialText]="initialTextProps"
+          (textAdded)="onTextAdded($event)">
+        </app-text-editor>
+      </mat-tab>
+      
+      <!-- Image Editor Tab -->
+      <mat-tab label="Image">
+        <app-image-editor
+          (imageAdded)="onImageAdded($event)">
+        </app-image-editor>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
