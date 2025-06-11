@@ -1,0 +1,107 @@
+<div class="project-edit-container">
+  <!-- Toolbar -->
+  <mat-toolbar color="primary" class="edit-toolbar">
+    <button mat-icon-button (click)="goBack()" matTooltip="Back to Project">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="toolbar-spacer"></span>
+    <span *ngIf="project">Editing: {{ project.name }}</span>
+    <span class="toolbar-spacer"></span>
+    <button mat-raised-button color="accent" (click)="saveProject()">
+      <mat-icon>save</mat-icon>
+      Save
+    </button>
+  </mat-toolbar>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading project...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button mat-button color="primary" (click)="loadProject()">
+      Retry
+    </button>
+  </div>
+  <!-- Editor Content -->
+  <div *ngIf="!loading && !error && project" class="editor-content">
+    <div class="editor-layout">
+      <!-- Preview Panel -->
+      <div class="preview-panel">
+        <h3>Preview</h3>
+        <div class="tshirt-preview">
+          <div class="tshirt-container">
+            <div class="tshirt-image">
+              <div
+                class="cropped-image"
+                [style.background-image]="'url(' + garmentColorImages + ')'"
+                [style.background-position]="getBackgroundPosition(project.garmentColor)"
+              >
+                <!-- Text Layers -->
+                <div
+                  *ngFor="let layer of textLayers"
+                  class="text-layer"
+                  [style.color]="layer.fontColor"
+                  [style.font-family]="layer.fontFamily"
+                  [style.font-size.px]="layer.fontSize"
+                  [style.font-weight]="layer.bold ? 700 : 400"
+                  [style.font-style]="layer.italic ? 'italic' : 'normal'"
+                  [style.text-decoration]="layer.underline ? 'underline' : 'none'"
+                  [style.left.px]="layer.x"
+                  [style.top.px]="layer.y"
+                  [style.opacity]="layer.opacity"
+                  [style.visibility]="layer.visible ? 'visible' : 'hidden'"
+                  [style.z-index]="layer.zIndex"
+                  (mousedown)="startDrag($event, layer)"
+                >
+                  <div
+                    class="delete-button"
+                    (mousedown)="$event.stopPropagation()"
+                    (click)="deleteLayer($event, layer, 'text')"
+                  >
+                    ×
+                  </div>
+                  {{ layer.textContent }}
+                </div>
+                <!-- Image Layers -->
+                <div
+                  *ngFor="let layer of imageLayers"
+                  class="image-layer"
+                  [style.left.px]="layer.x"
+                  [style.top.px]="layer.y"
+                  [style.opacity]="layer.opacity"
+                  [style.visibility]="layer.visible ? 'visible' : 'hidden'"
+                  [style.z-index]="layer.zIndex"
+                  (mousedown)="startDrag($event, layer)"
+                >
+                  <div
+                    class="delete-button"
+                    (mousedown)="$event.stopPropagation()"
+                    (click)="deleteLayer($event, layer, 'image')"
+                  >
+                    ×
+                  </div>
+                  <img [src]="layer.imageUrl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Panel -->
+      <div class="tools-panel">
+        <app-editor-container
+          [currentColor]="project.garmentColor"
+          (colorSelected)="selectColor($event)"
+          (textAdded)="handleTextAdded($event)"
+          (imageAdded)="handleImageAdded($event)"
+        >
+        </app-editor-container>
+      </div>
+    </div>
+  </div>
+</div>
