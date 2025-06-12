@@ -90,15 +90,21 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Tools Panel -->
+      </div>      <!-- Tools Panel -->
       <div class="tools-panel">
         <app-editor-container
           [currentColor]="project.garmentColor"
+          [project]="project"
+          [textLayers]="textLayers"
+          [imageLayers]="imageLayers"
+          [config]="editorConfig"
           (colorSelected)="selectColor($event)"
+          (garmentColorChanged)="handleGarmentColorChanged($event)"
           (textAdded)="handleTextAdded($event)"
+          (textLayerCreated)="handleTextLayerCreated($event)"
           (imageAdded)="handleImageAdded($event)"
+          (imageLayerCreated)="handleImageLayerCreated($event)"
+          (layerAdded)="handleLayerAdded($event)"
         >
         </app-editor-container>
       </div>

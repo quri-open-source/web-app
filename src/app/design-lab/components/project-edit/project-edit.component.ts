@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
-import { EditorContainerComponent } from '../editors/editor-container/editor-container.component';
+import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
 import { GARMENT_COLOR, GARMENT_SIZE, LayerType } from '../../../const';
@@ -51,13 +51,29 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   projectId: string = '';
   textLayers: TextLayer[] = [];
   imageLayers: ImageLayer[] = [];
-
   // For dragging functionality
   private draggedLayer: Layer | null = null;
   private startX: number = 0;
   private startY: number = 0;
   private boundMouseMove: any;
   private boundMouseUp: any;
+
+  // Editor container configuration
+  editorConfig: EditorContainerConfig = {
+    textEditor: {
+      defaultPosition: { x: 160, y: 150 },
+      centerTextCalculation: true,
+      defaultZIndex: 1
+    },
+    imageEditor: {
+      defaultPosition: { x: 100, y: 100 },
+      maxImageSize: { width: 300, height: 300 },
+      defaultZIndex: 1,
+      allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+      maxFileSize: 5 * 1024 * 1024 // 5MB
+    },
+    enableLayerManagement: true
+  };
 
   // Garment colors configuration
   garmentColors: GarmentColorOption[] = [
@@ -116,11 +132,9 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
 
     this.loading = true;
-    this.error = null;
-
-    this.projectService.getById(this.projectId).subscribe({
+    this.error = null;    this.projectService.getProjectById(this.projectId).subscribe({
       next: (project) => {
-        this.project = ProjectAssembler.toEntityFromResponse(project);
+        this.project = project;
         
         // Extract text and image layers from the project
         if (this.project.layers) {
@@ -140,11 +154,9 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  selectColor(colorValue: any): void {
+  selectColor(colorValue: GARMENT_COLOR): void {
     if (this.project) {
-      // Ensure we're using the correct GARMENT_COLOR enum value
-      this.project.garmentColor = colorValue as GARMENT_COLOR;
+      this.project.garmentColor = colorValue;
     }
   }
 
@@ -154,15 +166,38 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleTextAdded(textProps: TextProperties): void {
-    console.log('Text added:', textProps);
+  // Enhanced event handlers using the new entity-aware approach
+  handleGarmentColorChanged(color: GARMENT_COLOR): void {
+    this.selectColor(color);
+  }
 
-    // Create a new TextLayer
+  handleTextLayerCreated(textLayer: TextLayer): void {
+    console.log('Text layer created:', textLayer);
+    this.textLayers.push(textLayer);
+  }
+
+  handleImageLayerCreated(imageLayer: ImageLayer): void {
+    console.log('Image layer created:', imageLayer);
+    this.imageLayers.push(imageLayer);
+  }
+
+  handleLayerAdded(layer: Layer): void {
+    console.log('Layer added:', layer);
+    // Additional logic for any layer type can be added here
+  }
+
+  // Legacy handlers for backward compatibility
+  handleTextAdded(textProps: TextProperties): void {
+    console.log('Text added (legacy):', textProps);
+
+    // Create a new TextLayer for backward compatibility
     const textLayer = new TextLayer(
       'text_' + Date.now(), // id
-      160 - (textProps.text.length * textProps.fontSize) / 6, // x - Center position horizontally based on text length
-      150, // y
-      this.textLayers.length + 1, // zIndex
+      this.editorConfig.textEditor.centerTextCalculation 
+        ? this.editorConfig.textEditor.defaultPosition.x - (textProps.text.length * textProps.fontSize) / 6
+        : this.editorConfig.textEditor.defaultPosition.x, // x
+      this.editorConfig.textEditor.defaultPosition.y, // y
+      this.textLayers.length + this.editorConfig.textEditor.defaultZIndex, // zIndex
       1, // opacity
       true, // visible
       textProps.text, // textContent
@@ -174,24 +209,21 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       textProps.underline || false // underline
     );
 
-    // Add the layer to the text layers array
     this.textLayers.push(textLayer);
-  }
-  handleImageAdded(imageProps: ImageProperties): void {
-    console.log('Image added:', imageProps);
+  }  handleImageAdded(imageProps: ImageProperties): void {
+    console.log('Image added (legacy):', imageProps);
 
-    // Create a new ImageLayer
+    // Create a new ImageLayer for backward compatibility
     const imageLayer = new ImageLayer(
       'img_' + Date.now(), // id
-      100, // x - Default position
-      100, // y
-      this.imageLayers.length + 1, // zIndex
+      this.editorConfig.imageEditor.defaultPosition.x, // x
+      this.editorConfig.imageEditor.defaultPosition.y, // y
+      this.imageLayers.length + this.editorConfig.imageEditor.defaultZIndex, // zIndex
       1, // opacity
       true, // visible
       imageProps.imageUrl // imageUrl
     );
 
-    // Add the layer to the image layers array
     this.imageLayers.push(imageLayer);
   }
   getBackgroundPosition(colorValue: string): string {
@@ -294,7 +326,6 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       return baseLayerResponse;
     });
   }
-
   goBack(): void {
     this.router.navigate(['/design-lab', this.projectId]);
   }
