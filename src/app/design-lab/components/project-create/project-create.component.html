@@ -1,0 +1,152 @@
+<div class="create-project-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Create New Project</h1>
+  </div>
+
+  <div class="create-form-container">
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+      <mat-card>
+        <mat-card-content>
+          <div class="form-layout">
+            <div class="form-fields">
+              <h2>Project Details</h2>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Project Name</mat-label>
+                <input
+                  matInput
+                  formControlName="name"
+                  placeholder="Enter project name"
+                />
+                <mat-error
+                  *ngIf="projectForm.get('name')?.hasError('required')"
+                >
+                  Name is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option value="women">Women</mat-option>
+                  <mat-option value="men">Men</mat-option>
+                  <mat-option value="kids">Kids</mat-option>
+                  <mat-option value="unisex">Unisex</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="projectForm.get('gender')?.hasError('required')"
+                >
+                  Gender is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Size</mat-label>
+                <mat-select formControlName="garmentSize">
+                  <mat-option value="XS">XS</mat-option>
+                  <mat-option value="S">S</mat-option>
+                  <mat-option value="M">M</mat-option>
+                  <mat-option value="L">L</mat-option>
+                  <mat-option value="XL">XL</mat-option>
+                  <mat-option value="XXL">XXL</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    projectForm.get('garmentSize')?.hasError('required')
+                  "
+                >
+                  Size is required
+                </mat-error>
+              </mat-form-field>
+
+              <h3>T-Shirt Color</h3>
+              <div class="color-grid-container">
+                <mat-grid-list cols="4" rowHeight="50px">
+                  @for (color of garmentColors; track color.value) {
+                  <mat-grid-tile>
+                    <div
+                      class="color-swatch"
+                      [style.background-color]="color.value"
+                      [class.selected]="
+                        projectForm.get('garmentColor')?.value ===
+                        color.value
+                      "
+                      (click)="selectColor(color.value)"
+                      [matTooltip]="color.label"
+                    ></div>
+                  </mat-grid-tile>
+                  }
+                </mat-grid-list>
+              </div>
+            </div>
+            
+            <div class="preview-container">
+              <h2>Preview</h2>
+              <div class="tshirt-preview">
+                <div class="tshirt-container">
+                  <div class="tshirt-image">
+                    <div
+                      class="cropped-image"
+                      [style.background-image]="
+                        'url(' + garmentColorImages + ')'
+                      "
+                      [style.background-position]="
+                        getBackgroundPosition(
+                          projectForm.get('garmentColor')?.value
+                        )
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="preview-details"
+                *ngIf="projectForm.get('name')?.value"
+              >
+                <h3>{{ projectForm.get('name')?.value }}</h3>
+                <p *ngIf="projectForm.get('gender')?.value">
+                  Gender:
+                  {{ getGenderLabel(projectForm.get('gender')?.value) }}
+                </p>
+                <p *ngIf="projectForm.get('garmentSize')?.value">
+                  Size: {{ projectForm.get('garmentSize')?.value }}
+                </p>
+                <p>
+                  Color:
+                  <span class="color-name">{{
+                    getColorLabel(projectForm.get('garmentColor')?.value)
+                  }}</span>
+                  <span
+                    class="color-preview"
+                    [style.background-color]="
+                      projectForm.get('garmentColor')?.value
+                    "
+                  ></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <button mat-button type="button" (click)="goBack()">
+            CANCEL
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="projectForm.invalid || isSubmitting"
+          >
+            <mat-icon>save</mat-icon>
+            CREATE PROJECT
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>

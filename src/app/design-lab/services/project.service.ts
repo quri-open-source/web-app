@@ -44,9 +44,7 @@ export class ProjectService extends BaseService<ProjectResponse> {
                     ProjectAssembler.toEntityFromResponse(project)
                 )
             );
-    }
-
-    getProjectById(id: string) {
+    }    getProjectById(id: string) {
         return this.http
             .get<ProjectResponse[]>(GET_PROJECT_BY_ID(id))
             .pipe(
@@ -56,6 +54,15 @@ export class ProjectService extends BaseService<ProjectResponse> {
                     }
                     throw new Error('Project not found');
                 })
+            );
+    }
+
+    // Method to create project and return Project entity
+    createProject(projectResponse: ProjectResponse) {
+        return this.http
+            .post<ProjectResponse>(this.resourcePath(), projectResponse)
+            .pipe(
+                map((response) => ProjectAssembler.toEntityFromResponse(response))
             );
     }
 }
