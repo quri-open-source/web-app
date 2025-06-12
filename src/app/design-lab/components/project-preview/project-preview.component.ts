@@ -24,7 +24,7 @@ import { Project } from '../../model/project.entity';
   templateUrl: './project-preview.component.html',
   styleUrl: './project-preview.component.css',
 })
-export class ProjectPreview implements OnInit {
+export class ProjectPreviewComponent implements OnInit {
     private projectService = inject(ProjectService);
     private route = inject(ActivatedRoute);
 
