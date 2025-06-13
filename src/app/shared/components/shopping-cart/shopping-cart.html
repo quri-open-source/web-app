@@ -1,7 +1,10 @@
 <div class="cart-grid">
   <div class="cart-items-section">
     <h2>Shopping Cart</h2>
-    <div *ngIf="orders.length">
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+    <div *ngIf="orders.length && !error">
       <div *ngFor="let order of orders" class="cart-order">
         <h3>Order #{{ order.id }}</h3>
         <div *ngFor="let item of order.items" class="cart-item">
@@ -11,7 +14,7 @@
             <div class="cart-item-desc">{{ item.projectDescription || 'No description' }}</div>
             <div class="cart-item-row">
               <span class="cart-item-label">Unit price: </span>
-              <span class="cart-item-value">S/ {{ item.unit_price }}</span>
+              <span class="cart-item-value">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
             </div>
           </div>
           <div class="cart-item-qty">
@@ -22,15 +25,15 @@
           <div class="cart-order-summary">
             <div class="cart-summary-row">
               <span class="cart-summary-label"><b>Order subtotal:</b></span>
-              <span class="cart-summary-value">S/ {{ order.subtotal }}</span>
+              <span class="cart-summary-value">{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
             </div>
             <div class="cart-summary-row" *ngIf="order.discountPolicy">
               <span class="cart-summary-label">- Discount:</span>
-              <span class="cart-summary-value">S/ {{ order.discount | number:'1.2-2' }} ({{ order.discountPolicy.discount_percentage }}%)</span>
+              <span class="cart-summary-value">{{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }} ({{ order.discountPolicy.discount_percentage }}%)</span>
             </div>
             <div class="cart-summary-row">
               <span class="cart-summary-label"><b>Order total:</b></span>
-              <span class="cart-summary-value">S/ {{ order.total }}</span>
+              <span class="cart-summary-value">{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
             </div>
           </div>
         </div>        
@@ -38,7 +41,7 @@
       </div>
     </div>
   </div>
-  <div class="cart-summary-container" *ngIf="orders.length">
+  <div class="cart-summary-container" *ngIf="orders.length && !error">
     <div class="cart-summary-shipping-section">
       <mat-card class="cart-shipping-card">
         <mat-card-title>Shipping Address</mat-card-title>
@@ -62,19 +65,19 @@
         <mat-card-content>
           <div class="cart-summary-row">
             <span class="cart-summary-label">Subtotal:</span>
-            <span class="cart-summary-value">S/ {{ summarySubtotal }}</span>
+            <span class="cart-summary-value">{{ summarySubtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
           <div class="cart-summary-row">
             <span class="cart-summary-label">Shipping:</span>
-            <span class="cart-summary-value">S/ 15</span>
+            <span class="cart-summary-value">{{ 15 | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
           <div class="cart-summary-row">
             <span class="cart-summary-label">Discount:</span>
-            <span class="cart-summary-value">- S/ {{ summaryDiscount | number:'1.2-2' }}</span>
+            <span class="cart-summary-value">- {{ summaryDiscount | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
           <div class="cart-summary-row total">
             <span class="cart-summary-label">Total:</span>
-            <span class="cart-summary-value">S/ {{ summaryTotal | number:'1.2-2' }}</span>
+            <span class="cart-summary-value">{{ summaryTotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
         </mat-card-content>
         <mat-card-actions>
