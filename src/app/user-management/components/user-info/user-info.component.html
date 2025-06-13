@@ -86,33 +86,42 @@
         </mat-card-header>
 
         <mat-card-content>
-            @if (user.profile.addresses.length > 0) {
-            <mat-list>
-                @for (address of user.profile.addresses; track address.id; let i
-                = $index) {
-                <mat-list-item>
-                    <div class="address">
-                        <mat-icon>home</mat-icon>
-                        <span> Address {{ i + 1 }} </span>
-                    </div>
-                </mat-list-item>
-                <mat-list-item>
-                    {{ address.formatAddress() }}
-                </mat-list-item>
-                @if (i < user.profile.addresses.length - 1) {
-                <mat-divider></mat-divider>
-                } }
-            </mat-list>
-            } @else {
-            <div class="empty-addresses">
-                <mat-icon>location_off</mat-icon>
-                <p>No addresses registered</p>
-                <button mat-stroked-button color="primary">
-                    <mat-icon>add</mat-icon>
-                    Add Address
-                </button>
-            </div>
-            }
+            <ng-container *ngIf="errorLoadingAddresses; else loadedAddresses">
+                <div class="error-message">
+                    <mat-icon color="warn">error</mat-icon>
+                    Failed to load addresses. Please try again later.
+                </div>
+            </ng-container>
+            <ng-template #loadedAddresses>
+                <ng-container *ngIf="addressesLoaded">
+                    <ng-container *ngIf="user.profile && user.profile.addresses && user.profile.addresses.length > 0; else noAddresses">
+                        <mat-list>
+                            <ng-container *ngFor="let address of user.profile.addresses; let i = index">
+                                <mat-list-item>
+                                    <div class="address">
+                                        <mat-icon>home</mat-icon>
+                                        <span> Address {{ i + 1 }} </span>
+                                    </div>
+                                </mat-list-item>
+                                <mat-list-item>
+                                    {{ address.formatAddress() }}
+                                </mat-list-item>
+                                <mat-divider *ngIf="i < user.profile.addresses.length - 1"></mat-divider>
+                            </ng-container>
+                        </mat-list>
+                    </ng-container>
+                    <ng-template #noAddresses>
+                        <div class="empty-addresses">
+                            <mat-icon>location_off</mat-icon>
+                            <p>No addresses registered</p>
+                            <button mat-stroked-button color="primary">
+                                <mat-icon>add</mat-icon>
+                                Add Address
+                            </button>
+                        </div>
+                    </ng-template>
+                </ng-container>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 
