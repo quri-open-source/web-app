@@ -7,5 +7,6 @@ export const environment = {
   defaultGarmentColor: '#FFFFFF',
   garmentColorImagesUrl: 'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp',
   // Base URL for the projects API https://68230d7eb342dce800507517.mockapi.io
-  devUser : "user-1",
+  devUser: 'user-1',
+  currencyCode: 'PEN',
 };

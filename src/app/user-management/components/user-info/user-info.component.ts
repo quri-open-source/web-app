@@ -14,6 +14,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user.entity';
+import { of, throwError } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 @Component({
     selector: 'app-user-info',
@@ -42,6 +44,10 @@ export class UserInfoComponent implements OnInit {
     private userService = inject(UserService);
     private snackBar = inject(MatSnackBar);
 
+    // Address loading and error state
+    addressesLoaded = false;
+    errorLoadingAddresses = false;
+
     ngOnInit() {
         console.log('UserInfoComponent initialized with user:', this.user);
         console.log("addresses", this.user?.profile?.addresses || []);
@@ -49,6 +55,33 @@ export class UserInfoComponent implements OnInit {
         if (this.user?.profile) {
             this.editUser.profile = { ...this.user.profile };
         }
+        this.loadAddresses();
+    }
+
+    loadAddresses() {
+        // Simulación: Cambia a throwError para probar el error de API
+        // of(this.user.profile).pipe(delay(1000)).subscribe({
+        //     next: (profile) => {
+        //         this.user.profile = profile;
+        //         this.addressesLoaded = true;
+        //         this.errorLoadingAddresses = false;
+        //     },
+        //     error: () => {
+        //         this.errorLoadingAddresses = true;
+        //         this.addressesLoaded = true;
+        //     }
+        // });
+        // Para probar el error de API, descomenta la siguiente línea y comenta la de arriba:
+        // throwError(() => new Error('API error')).pipe(delay(1000)).subscribe({
+        //     next: () => {},
+        //     error: () => {
+        //         this.errorLoadingAddresses = true;
+        //         this.addressesLoaded = true;
+        //     }
+        // });
+        // Por defecto, simula carga exitosa:
+        this.addressesLoaded = true;
+        this.errorLoadingAddresses = false;
     }
 
     onUpdate() {

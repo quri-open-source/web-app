@@ -231,18 +231,11 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     const colorIndex = this.garmentColors.findIndex(
       (color) => color.value === colorValue
     );
-
     if (colorIndex === -1) return '0% 0%'; // Default to first position if not found
-
-    // Calculate row and column (0-3) based on the index
     const row = Math.floor(colorIndex / 4);
     const col = colorIndex % 4;
-
-    // Each cell is 25% of the image width/height
-    // Multiply by 100/3 to get percentage (33.33%)
     const xPos = col * (100 / 3);
     const yPos = row * (100 / 3);
-
     return `${xPos}% ${yPos}%`;
   }
 
