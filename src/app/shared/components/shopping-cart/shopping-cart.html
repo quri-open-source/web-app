@@ -2,43 +2,52 @@
   <div class="cart-items-section">
     <h2>Shopping Cart</h2>
     <div *ngIf="error" class="error-message">
+      <mat-icon color="warn">error</mat-icon>
       {{ error }}
     </div>
-    <div *ngIf="orders.length && !error">
-      <div *ngFor="let order of orders" class="cart-order">
-        <h3>Order #{{ order.id }}</h3>
-        <div *ngFor="let item of order.items" class="cart-item">
-          <img [src]="item.projectImage || 'https://placehold.co/80x80'" alt="Product" class="cart-item-img" />
-          <div class="cart-item-info">
-            <div class="cart-item-title">{{ item.projectName || item.project_id }}</div>
-            <div class="cart-item-desc">{{ item.projectDescription || 'No description' }}</div>
-            <div class="cart-item-row">
-              <span class="cart-item-label">Unit price: </span>
-              <span class="cart-item-value">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+    <div *ngIf="!error">
+      <ng-container *ngIf="orders.length > 0; else emptyCart">
+        <div *ngFor="let order of orders" class="cart-order">
+          <h3>Order #{{ order.id }}</h3>
+          <div *ngFor="let item of order.items" class="cart-item">
+            <img [src]="item.projectImage || 'https://placehold.co/80x80'" alt="Product" class="cart-item-img" />
+            <div class="cart-item-info">
+              <div class="cart-item-title">{{ item.projectName || item.project_id }}</div>
+              <div class="cart-item-desc">{{ item.projectDescription || 'No description' }}</div>
+              <div class="cart-item-row">
+                <span class="cart-item-label">Unit price: </span>
+                <span class="cart-item-value">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+              </div>
             </div>
-          </div>
-          <div class="cart-item-qty">
-            <button mat-icon-button><mat-icon>remove</mat-icon></button>
-            <span>{{ item.quantity }}</span>
-            <button mat-icon-button><mat-icon>add</mat-icon></button>
-          </div>
-          <div class="cart-order-summary">
-            <div class="cart-summary-row">
-              <span class="cart-summary-label"><b>Order subtotal:</b></span>
-              <span class="cart-summary-value">{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+            <div class="cart-item-qty">
+              <button mat-icon-button><mat-icon>remove</mat-icon></button>
+              <span>{{ item.quantity }}</span>
+              <button mat-icon-button><mat-icon>add</mat-icon></button>
             </div>
-            <div class="cart-summary-row" *ngIf="order.discountPolicy">
-              <span class="cart-summary-label">- Discount:</span>
-              <span class="cart-summary-value">{{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }} ({{ order.discountPolicy.discount_percentage }}%)</span>
+            <div class="cart-order-summary">
+              <div class="cart-summary-row">
+                <span class="cart-summary-label"><b>Order subtotal:</b></span>
+                <span class="cart-summary-value">{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="cart-summary-row" *ngIf="order.discountPolicy">
+                <span class="cart-summary-label">- Discount:</span>
+                <span class="cart-summary-value">{{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }} ({{ order.discountPolicy.discount_percentage }}%)</span>
+              </div>
+              <div class="cart-summary-row">
+                <span class="cart-summary-label"><b>Order total:</b></span>
+                <span class="cart-summary-value">{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+              </div>
             </div>
-            <div class="cart-summary-row">
-              <span class="cart-summary-label"><b>Order total:</b></span>
-              <span class="cart-summary-value">{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
-            </div>
-          </div>
-        </div>        
-        <hr />
-      </div>
+          </div>        
+          <hr />
+        </div>
+      </ng-container>
+      <ng-template #emptyCart>
+        <div class="empty-cart-message">
+          <mat-icon>remove_shopping_cart</mat-icon>
+          <p>No items in cart</p>
+        </div>
+      </ng-template>
     </div>
   </div>
   <div class="cart-summary-container" *ngIf="orders.length && !error">
