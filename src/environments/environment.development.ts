@@ -1,5 +1,5 @@
 export const environment = {
-  production : false,
+  production: false,
   apiBaseUrl: 'http://localhost:3000',
   projectsApiBaseUrl: 'http://localhost:3000/projects',
   cloudinaryApiBaseUrl: 'https://api.cloudinary.com/v1_1/dkkfv72vo/image',
