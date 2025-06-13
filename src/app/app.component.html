@@ -53,9 +53,14 @@
                         mat-icon-button
                         color="primary"
                         aria-label="Shopping cart"
+                        [matMenuTriggerFor]="cartMenu"
                     >
                         <mat-icon>shopping_cart</mat-icon>
-                    </button>
+                    </button>            
+                    
+                    <mat-menu #cartMenu="matMenu" class="cart-menu">
+                        <app-shopping-cart-popover></app-shopping-cart-popover>
+                    </mat-menu>
                     <button
                         mat-icon-button
                         color="primary"

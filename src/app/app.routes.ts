@@ -33,5 +33,12 @@ export const routes: Routes = [
             import('./public/pages/profile/profile.component').then(
                 (m) => m.ProfileComponent
             ),
+    },
+    {
+        path: 'shopping-cart',
+        loadComponent: () =>
+            import('./shared/components/shopping-cart/shopping-cart').then(
+                (m) => m.ShoppingCart
+            ),
     }
 ];
