@@ -23,7 +23,6 @@ export class TshirtColorEditorComponent {
   @Input() selectedColor: GARMENT_COLOR | null = null;
   @Output() colorSelected = new EventEmitter<GARMENT_COLOR>();
 
-
   garmentColors: GarmentColorOption[] = [
     { label: 'black', value: GARMENT_COLOR.BLACK, hexValue: '#161615' },
     { label: 'gray', value: GARMENT_COLOR.GRAY, hexValue: '#403D3B' },
@@ -53,7 +52,7 @@ export class TshirtColorEditorComponent {
     return colorOption ? colorOption.hexValue : '#000000';
   }
   getBackgroundPosition(colorValue: GARMENT_COLOR): string {
-    // Find the index of the color in the garmentColors array
+    // Find the index of the color in the garment-colors array
     const colorIndex = this.garmentColors.findIndex(
       (color) => color.value === colorValue
     );
