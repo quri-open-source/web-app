@@ -1,8 +1,7 @@
 <div class="design-lab-container">
   <section class="projects-section">
     <div class="section-header">
-      <h2>My Projects</h2>
-      <button mat-raised-button color="primary" routerLink="/design-lab/new">
+      <h2>My Projects</h2>      <button mat-raised-button color="primary" routerLink="/design-lab/create">
         <mat-icon>add</mat-icon>
         New Project
       </button>
@@ -25,8 +24,7 @@
         <!-- Empty State -->
         @if (projects.length === 0) {
           <div class="empty-container">
-            <p>You don't have any projects yet.</p>
-            <button mat-raised-button color="primary" routerLink="/design-lab/new">
+            <p>You don't have any projects yet.</p><button mat-raised-button color="primary" routerLink="/design-lab/create">
               <mat-icon>add</mat-icon>
               Create Your First Project
             </button>
