@@ -7,18 +7,16 @@
         <div class="cart-item-info">
           <div class="cart-item-title">{{ item.project_id }}</div>
           <div class="cart-item-qty">
-            <span>Cantidad: {{ item.quantity }}</span>
+            <span>Amount: {{ item.quantity }}</span>
           </div>
-          <div class="cart-item-price">S/ {{ item.unit_price }}</div>
+          <div class="cart-item-price">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</div>
         </div>
       </div>
     </div>
     <div class="cart-summary">
-      <div>Subtotal: <span>S/ {{ order.subtotal }}</span></div>
-      <div>Discount: <span>- S/ {{ order.discount }}</span>
-        
-      </div>
-      <div><b>Total: <span>S/ {{ order.total }}</span></b></div>
+      <div>Subtotal: <span>{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+      <div>Discount: <span>- {{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+      <div><b>Total: <span>{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></b></div>
     </div>
     <hr />
   </div>
