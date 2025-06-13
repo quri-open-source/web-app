@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 })
 export class ShoppingCartPopoverComponent implements OnInit {
   orders: any[] = [];
+  environment = environment;
 
   constructor(
     private orderService: OrderService,
