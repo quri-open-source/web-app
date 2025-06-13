@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { MatMenuModule } from '@angular/material/menu';
+import { ShoppingCartPopoverComponent } from './shared/components/shopping-cart-popover/shopping-cart-popover.component';
 
 export interface AppRoute {
     path: string;
@@ -23,6 +25,8 @@ export interface AppRoute {
         RouterLink,
         MatButtonModule,
         MatIconModule,
+        MatMenuModule,
+        ShoppingCartPopoverComponent,
     ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
