@@ -65,7 +65,7 @@
               <h3>T-Shirt Color</h3>
               <div class="color-grid-container">
                 <mat-grid-list cols="4" rowHeight="50px">
-                  @for (color of garmentColors; track color.value) {
+                  <ng-container *ngFor="let color of garmentColors">
                   <mat-grid-tile>
                     <div
                       class="color-swatch"
@@ -78,7 +78,7 @@
                       [matTooltip]="color.label"
                     ></div>
                   </mat-grid-tile>
-                  }
+                  </ng-container>
                 </mat-grid-list>
               </div>
             </div>
