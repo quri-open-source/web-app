@@ -1,480 +1,537 @@
 {
-    "users": [
+  "users": [
+    {
+      "id": "user-1",
+      "email": "alice@example.com",
+      "password": "password",
+      "rol": "customer"
+    },
+    {
+      "id": "user-2",
+      "email": "bob@example.com",
+      "password": "password",
+      "rol": "manufacturer"
+    },
+    {
+      "id": "user-3",
+      "email": "charlie@example.com",
+      "password": "password",
+      "rol": "customer"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "profile-1",
+      "user_id": "user-1",
+      "first_name": "Alice",
+      "last_name": "Smith",
+      "gender": "men",
+      "addresses": [
         {
-            "id": "user-1",
-            "email": "alice@example.com",
-            "password": "password",
-            "rol": "customer"
-        },
-        {
-            "id": "user-2",
-            "email": "bob@example.com",
-            "password": "password",
-            "rol": "manufacturer"
-        },
-        {
-            "id": "user-3",
-            "email": "charlie@example.com",
-            "password": "password",
-            "rol": "customer"
+          "id": "address-1",
+          "profile_id": "profile-1",
+          "address": "123 Main St",
+          "city": "Anytown",
+          "country": "USA",
+          "state": "CA",
+          "zip": "12345"
         }
-    ],
-    "profiles": [
+      ]
+    },
+    {
+      "id": "profile-2",
+      "user_id": "user-3",
+      "first_name": "Charlie",
+      "last_name": "Johnson",
+      "gender": "women",
+      "addresses": [
         {
-            "id": "profile-1",
-            "user_id": "user-1",
-            "first_name": "Alice",
-            "last_name": "Smith",
-            "gender": "men",
-            "addresses": [
-                {
-                    "id": "address-1",
-                    "profile_id": "profile-1",
-                    "address": "123 Main St",
-                    "city": "Anytown",
-                    "country": "USA",
-                    "state": "CA",
-                    "zip": "12345"
-                }
-            ]
-        },
-        {
-            "id": "profile-2",
-            "user_id": "user-3",
-            "first_name": "Charlie",
-            "last_name": "Johnson",
-            "gender": "women",
-            "addresses": [
-                {
-                    "id": "address-2",
-                    "profile_id": "profile-2",
-                    "address": "789 Pine St",
-                    "city": "Springfield",
-                    "country": "USA",
-                    "state": "TX",
-                    "zip": "75001"
-                }
-            ]
+          "id": "address-2",
+          "profile_id": "profile-2",
+          "address": "789 Pine St",
+          "city": "Springfield",
+          "country": "USA",
+          "state": "TX",
+          "zip": "75001"
         }
-    ],
-
-
-    "projects": [
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "user_id": "user-1",
+      "name": "Project One",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#1B8937",
+      "garment_size": "M",
+      "last_modified": "2025-05-29T20:40:47.478Z",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "layers": [
         {
-            "id": "project-1",
-            "user_id": "user-1",
-            "name": "Project One",
-
-            "preview_image_url": "https://picsum.photos/150/150",
-
-            "status": "blueprint",
-            "gender": "men",
-            "garment_color": "#1B8937",
-            "garment_size": "M",
-
-            "last_modified": "2025-05-29T20:40:47.478Z",
-            "created_at": "2025-05-29T20:40:47.478Z",
-
-            "layers": [
-                {
-                    "id": "layer-1",
-                    "project_id": "project-1",
-                    "type": "image",
-                    "image_url": "https://picsum.photos/200/200",
-                    "visible": true,
-                    "opacity": 1.0,
-                    "z_index": 0,
-                    "x": 50,
-                    "y": 50,
-                    "width": 200,
-                    "height": 200
-                },
-                {
-                    "id": "layer-2",
-                    "project_id": "project-1",
-                    "type": "text",
-                    "text_content": "Sample Text",
-                    "font_size": 16,
-                    "font_color": "#000000",
-                    "font_family": "Arial",
-                    "bold": false,
-                    "italic": false,
-                    "underline": false,
-                    "visible": true,
-                    "opacity": 1.0,
-                    "z_index": 1,
-                    "x": 50,
-                    "y": 50
-                }
-            ]
+          "id": "layer-1",
+          "project_id": "project-1",
+          "type": "image",
+          "image_url": "https://picsum.photos/200/200",
+          "visible": true,
+          "opacity": 1,
+          "z_index": 0,
+          "x": 50,
+          "y": 50,
+          "width": 200,
+          "height": 200
         },
         {
-            "id": "project-2",
-            "user_id": "user-3",
-            "name": "Summer Collection Design",
-
-            "preview_image_url": "https://picsum.photos/150/150",
-
-            "status": "in-progress",
-            "gender": "women",
-            "garment_color": "#F459B0",
-            "garment_size": "L",
-
-            "last_modified": "2025-06-03T10:15:30.000Z",
-            "created_at": "2025-06-02T14:22:15.000Z",
-
-            "layers": [
-                {
-                    "id": "layer-3",
-                    "project_id": "project-2",
-                    "type": "image",
-                    "image_url": "https://picsum.photos/250/250",
-                    "visible": true,
-                    "opacity": 0.8,
-                    "z_index": 0,
-                    "x": 30,
-                    "y": 40,
-                    "width": 250,
-                    "height": 250
-                },
-                {
-                    "id": "layer-4",
-                    "project_id": "project-2",
-                    "type": "text",
-                    "text_content": "Summer Vibes",
-                    "font_size": 20,
-                    "font_color": "#FFFFFF",
-                    "font_family": "Helvetica",
-                    "bold": true,
-                    "italic": false,
-                    "underline": false,
-                    "visible": true,
-                    "opacity": 1.0,
-                    "z_index": 1,
-                    "x": 75,
-                    "y": 30
-                }
-            ]
+          "id": "layer-2",
+          "project_id": "project-1",
+          "type": "text",
+          "text_content": "Sample Text",
+          "font_size": 16,
+          "font_color": "#000000",
+          "font_family": "Arial",
+          "bold": false,
+          "italic": false,
+          "underline": false,
+          "visible": true,
+          "opacity": 1,
+          "z_index": 1,
+          "x": 50,
+          "y": 50
         }
-    ],
-
-    "garmentColors": [
+      ]
+    },
+    {
+      "id": "project-2",
+      "user_id": "user-3",
+      "name": "Summer Collection Design",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "women",
+      "garment_color": "#F459B0",
+      "garment_size": "L",
+      "last_modified": "2025-06-03T10:15:30.000Z",
+      "created_at": "2025-06-02T14:22:15.000Z",
+      "layers": [
         {
-            "label": "black",
-            "value": "#161615",
-            "id": "baa8"
+          "id": "layer-3",
+          "project_id": "project-2",
+          "type": "image",
+          "image_url": "https://picsum.photos/250/250",
+          "visible": true,
+          "opacity": 0.8,
+          "z_index": 0,
+          "x": 30,
+          "y": 40,
+          "width": 250,
+          "height": 250
         },
         {
-            "label": "gray",
-            "value": "#403D3B",
-            "id": "c635"
-        },
-        {
-            "label": "light-gray",
-            "value": "#B3B1AF",
-            "id": "e0aa"
-        },
-        {
-            "label": "white",
-            "value": "#EDEDED",
-            "id": "368d"
-        },
-        {
-            "label": "red",
-            "value": "#B51B14",
-            "id": "3941"
-        },
-        {
-            "label": "pink",
-            "value": "#F459B0",
-            "id": "7a76"
-        },
-        {
-            "label": "light-purple",
-            "value": "#D890E4",
-            "id": "418f"
-        },
-        {
-            "label": "purple",
-            "value": "#693FA0",
-            "id": "aafd"
-        },
-        {
-            "label": "light-blue",
-            "value": "#00A5BC",
-            "id": "5b17"
-        },
-        {
-            "label": "cyan",
-            "value": "#31B7C9",
-            "id": "a85a"
-        },
-        {
-            "label": "sky-blue",
-            "value": "#3F9BDC",
-            "id": "86fb"
-        },
-        {
-            "label": "blue",
-            "value": "#1B3D92",
-            "id": "d448"
-        },
-        {
-            "label": "green",
-            "value": "#1B8937",
-            "id": "2b4c"
-        },
-        {
-            "label": "light-green",
-            "value": "#5BBE65",
-            "id": "f0a6"
-        },
-        {
-            "label": "yellow",
-            "value": "#FECD08",
-            "id": "da82"
-        },
-        {
-            "label": "dark-yellow",
-            "value": "#F2AB00",
-            "id": "b24b"
+          "id": "layer-4",
+          "project_id": "project-2",
+          "type": "text",
+          "text_content": "Summer Vibes",
+          "font_size": 20,
+          "font_color": "#FFFFFF",
+          "font_family": "Helvetica",
+          "bold": true,
+          "italic": false,
+          "underline": false,
+          "visible": true,
+          "opacity": 1,
+          "z_index": 1,
+          "x": 75,
+          "y": 30
         }
-    ],
-    "garmentSizes": [
+      ]
+    },
+    {
+      "id": "project-3",
+      "user_id": "user-2",
+      "name": "Bob's First Project",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#403D3B",
+      "garment_size": "L",
+      "last_modified": "2025-06-13T12:00:00.000Z",
+      "created_at": "2025-06-13T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "61430d53-94d5-4e7a-aa39-47614c438969",
+      "user_id": "user-1",
+      "created_at": "2025-06-13T17:29:42.729Z",
+      "status": "blueprint",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "name": "BlackJacket",
+      "garment_color": "#403D3B",
+      "garment_size": "S",
+      "last_modified": "2025-06-13T21:18:17.425Z",
+      "gender": "men",
+      "layers": []
+    }
+  ],
+  "garment-colors": [
+    {
+      "label": "black",
+      "value": "#161615",
+      "id": "baa8"
+    },
+    {
+      "label": "gray",
+      "value": "#403D3B",
+      "id": "c635"
+    },
+    {
+      "label": "light-gray",
+      "value": "#B3B1AF",
+      "id": "e0aa"
+    },
+    {
+      "label": "white",
+      "value": "#EDEDED",
+      "id": "368d"
+    },
+    {
+      "label": "red",
+      "value": "#B51B14",
+      "id": "3941"
+    },
+    {
+      "label": "pink",
+      "value": "#F459B0",
+      "id": "7a76"
+    },
+    {
+      "label": "light-purple",
+      "value": "#D890E4",
+      "id": "418f"
+    },
+    {
+      "label": "purple",
+      "value": "#693FA0",
+      "id": "aafd"
+    },
+    {
+      "label": "light-blue",
+      "value": "#00A5BC",
+      "id": "5b17"
+    },
+    {
+      "label": "cyan",
+      "value": "#31B7C9",
+      "id": "a85a"
+    },
+    {
+      "label": "sky-blue",
+      "value": "#3F9BDC",
+      "id": "86fb"
+    },
+    {
+      "label": "blue",
+      "value": "#1B3D92",
+      "id": "d448"
+    },
+    {
+      "label": "green",
+      "value": "#1B8937",
+      "id": "2b4c"
+    },
+    {
+      "label": "light-green",
+      "value": "#5BBE65",
+      "id": "f0a6"
+    },
+    {
+      "label": "yellow",
+      "value": "#FECD08",
+      "id": "da82"
+    },
+    {
+      "label": "dark-yellow",
+      "value": "#F2AB00",
+      "id": "b24b"
+    }
+  ],
+  "garment-sizes": [
+    {
+      "label": "XS",
+      "value": "XS",
+      "id": "size-xs"
+    },
+    {
+      "label": "S",
+      "value": "S",
+      "id": "size-s"
+    },
+    {
+      "label": "M",
+      "value": "M",
+      "id": "size-m"
+    },
+    {
+      "label": "L",
+      "value": "L",
+      "id": "size-l"
+    },
+    {
+      "label": "XL",
+      "value": "XL",
+      "id": "size-xl"
+    },
+    {
+      "label": "XXL",
+      "value": "XXL",
+      "id": "size-xxl"
+    }
+  ],
+  "project-status": [
+    {
+      "label": "In Progress",
+      "value": "in-progress",
+      "id": "status-in-progress"
+    },
+    {
+      "label": "Blueprint",
+      "value": "blueprint",
+      "id": "status-blueprint"
+    },
+    {
+      "label": "Completed",
+      "value": "completed",
+      "id": "status-completed"
+    }
+  ],
+  "garment-gender": [
+    {
+      "label": "men",
+      "value": "men",
+      "id": "8dd0"
+    },
+    {
+      "label": "women",
+      "value": "women",
+      "id": "b5b5"
+    },
+    {
+      "label": "unisex",
+      "value": "unisex",
+      "id": "f624"
+    },
+    {
+      "label": "kids",
+      "value": "kids",
+      "id": "6643"
+    }
+  ],
+  "orders": [
+    {
+      "id": "order-1",
+      "user_id": "user-1",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "status": "pending",
+      "total_amount": 100,
+      "transaction_id": null,
+      "description": "Near to the beach",
+      "shipping_address": {
+        "address": "123 Main St",
+        "city": "Anytown",
+        "country": "USA",
+        "state": "CA",
+        "zip": "12345"
+      },
+      "applied_discounts": [
         {
-            "label": "XS",
-            "value": "XS",
-            "id": "size-xs"
-        },
-        {
-            "label": "S",
-            "value": "S",
-            "id": "size-s"
-        },
-        {
-            "label": "M",
-            "value": "M",
-            "id": "size-m"
-        },
-        {
-            "label": "L",
-            "value": "L",
-            "id": "size-l"
-        },
-        {
-            "label": "XL",
-            "value": "XL",
-            "id": "size-xl"
-        },
-        {
-            "label": "XXL",
-            "value": "XXL",
-            "id": "size-xxl"
+          "id": "discount-1"
         }
-    ],
-    "projectStatus": [
+      ],
+      "items": [
         {
-            "label": "In Progress",
-            "value": "in-progress",
-            "id": "status-in-progress"
-        },
-        {
-            "label": "Blueprint",
-            "value": "blueprint",
-            "id": "status-blueprint"
-        },
-        {
-            "label": "Completed",
-            "value": "completed",
-            "id": "status-completed"
+          "id": "item-1",
+          "project_id": "project-1",
+          "quantity": 2,
+          "unit_price": 50
         }
-    ],
-    "genders": [
+      ]
+    },
+    {
+      "id": "order-2",
+      "user_id": "user-1",
+      "created_at": "2025-06-01T15:25:32.178Z",
+      "status": "completed",
+      "total_amount": 150,
+      "transaction_id": "txn-12345",
+      "description": "Office gift",
+      "shipping_address": {
+        "address": "456 Oak Avenue",
+        "city": "Metropolis",
+        "country": "USA",
+        "state": "NY",
+        "zip": "10001"
+      },
+      "applied_discounts": [
         {
-            "label": "men",
-            "value": "men",
-            "id": "8dd0"
-        },
-        {
-            "label": "women",
-            "value": "women",
-            "id": "b5b5"
-        },
-        {
-            "label": "unisex",
-            "value": "unisex",
-            "id": "f624"
-        },
-        {
-            "label": "kids",
-            "value": "kids",
-            "id": "6643"
+          "id": "discount-1"
         }
-    ],
-
-    "orders": [
+      ],
+      "items": [
         {
-            "id": "order-1",
-            "user_id": "user-1",
-
-            "created_at": "2025-05-29T20:40:47.478Z",
-            "status": "pending",
-            "total_amount": 100,
-            "transaction_id": null,
-            "description": "Near to the beach",
-            "shipping_address": {
-                "address": "123 Main St",
-                "city": "Anytown",
-                "country": "USA",
-                "state": "CA",
-                "zip": "12345"
-            },
-            "applied_discounts": [
-                {
-                    "id": "discount-1"
-                }
-            ],
-            "items": [
-                {
-                    "id": "item-1",
-                    "project_id": "project-1",
-                    "quantity": 2,
-                    "unit_price": 50
-                }
-            ]
-        },
-        {
-            "id": "order-2",
-            "user_id": "user-1",
-
-            "created_at": "2025-06-01T15:25:32.178Z",
-            "status": "completed",
-            "total_amount": 150,
-            "transaction_id": "txn-12345",
-            "description": "Office gift",
-            "shipping_address": {
-                "address": "456 Oak Avenue",
-                "city": "Metropolis",
-                "country": "USA",
-                "state": "NY",
-                "zip": "10001"
-            },
-            "applied_discounts": [
-                {
-                    "id": "discount-1"
-                }
-            ],
-            "items": [
-                {
-                    "id": "item-2",
-                    "project_id": "project-1",
-                    "quantity": 3,
-                    "unit_price": 50
-                }
-            ]
+          "id": "item-2",
+          "project_id": "project-1",
+          "quantity": 3,
+          "unit_price": 50
         }
-    ],
-    "discounts_policies": [
+      ]
+    }
+  ],
+  "discounts_policies": [
+    {
+      "id": "discount-1",
+      "name": "Spring Sale",
+      "discount_percentage": 10,
+      "start_date": "2025-05-01",
+      "end_date": "2025-06-01",
+      "coupon_code": "spring-sale-2025",
+      "min_order_amount": 50
+    }
+  ],
+  "fulfillments": [
+    {
+      "id": "fulfillment-1",
+      "order_id": "order-1",
+      "status": "in-progress",
+      "received_date": "2025-05-29T20:40:47.478Z",
+      "shipped_date": null,
+      "manufacturer_id": "manufacturer-1"
+    },
+    {
+      "id": "fulfillment-2",
+      "order_id": "order-1",
+      "status": "shipped",
+      "received_date": "2025-05-29T20:40:47.478Z",
+      "shipped_date": "2025-05-30T20:40:47.478Z",
+      "manufacturer_id": "manufacturer-1"
+    }
+  ],
+  "manufacturers": [
+    {
+      "id": "manufacturer-1",
+      "user_id": "user-2",
+      "name": "Manufacturer One",
+      "address": "123 Main St",
+      "city": "Anytown",
+      "country": "USA",
+      "state": "CA",
+      "zip": "12345"
+    }
+  ],
+  "catalog": [
+    {
+      "id": "product-1",
+      "project_id": "project-1",
+      "manufacturer_id": "manufacturer-1",
+      "price": 50,
+      "tags": [
+        "t-shirt",
+        "cotton"
+      ],
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "gallery": [
+        "https://picsum.photos/200/200",
+        "https://picsum.photos/200/300"
+      ],
+      "rating": 4.5,
+      "status": "available",
+      "comments": [
         {
-            "id": "discount-1",
-            "name": "Spring Sale",
-            "discount_percentage": 10,
-            "start_date": "2025-05-01",
-            "end_date": "2025-06-01",
-            "coupon_code": "spring-sale-2025",
-            "min_order_amount": 50
+          "id": "comment-1",
+          "user_id": "user-1",
+          "text": "This is a comment",
+          "created_at": "2025-05-29T20:40:47.478Z"
         }
-    ],
-
-    "fulfillments": [
-        {
-            "id": "fulfillment-1",
-            "order_id": "order-1",
-            "status": "in-progress",
-            "received_date": "2025-05-29T20:40:47.478Z",
-            "shipped_date": null,
-            "manufacturer_id": "manufacturer-1"
-        },
-        {
-            "id": "fulfillment-2",
-            "order_id": "order-1",
-            "status": "shipped",
-            "received_date": "2025-05-29T20:40:47.478Z",
-            "shipped_date": "2025-05-30T20:40:47.478Z",
-            "manufacturer_id": "manufacturer-1"
-        }
-    ],
-    "manufacturers": [
-        {
-            "id": "manufacturer-1",
-            "user_id": "user-2",
-            "name": "Manufacturer One",
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn-12345",
+      "currency": "USD",
+      "status": "completed",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "total_amount": 118
+    }
+  ],
+  "userWithProfile": [
+    {
+      "id": "user-1",
+      "email": "alice@example.com",
+      "password": "password",
+      "rol": "customer",
+      "profile": {
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "gender": "men",
+        "addresses": [
+          {
+            "id": "address-1",
+            "profile_id": "profile-1",
             "address": "123 Main St",
             "city": "Anytown",
             "country": "USA",
             "state": "CA",
             "zip": "12345"
-        }
-    ],
-
-    "catalog": [
-        {
-            "id": "product-1",
-            "project_id": "project-1",
-            "manufacturer_id": "manufacturer-1",
-            "price": 50,
-            "tags": ["t-shirt", "cotton"],
-            "created_at": "2025-05-29T20:40:47.478Z",
-            "gallery": [
-                "https://picsum.photos/200/200",
-                "https://picsum.photos/200/300"
-            ],
-            "rating": 4.5,
-            "status": "available",
-            "comments": [
-                {
-                    "id": "comment-1",
-                    "user_id": "user-1",
-                    "text": "This is a comment",
-                    "created_at": "2025-05-29T20:40:47.478Z"
-                }
-            ]
-        }
-    ],
-
-    "transactions": [
-        {
-            "id": "txn-12345",
-            "currency": "USD",
-            "status": "completed",
-            "created_at": "2025-05-29T20:40:47.478Z",
-            "total_amount": 118
-        }
-    ],
-
-
-    "userWithProfile": [
-        {
-            "id": "user-1",
-            "email": "alice@example.com",
-            "password": "password",
-            "rol": "customer",
-            "profile": {
-                "first_name": "Alice",
-                "last_name": "Smith",
-                "gender": "men",
-                "addresses": [
-                    {
-                        "id": "address-1",
-                        "profile_id": "profile-1",
-                        "address": "123 Main St",
-                        "city": "Anytown",
-                        "country": "USA",
-                        "state": "CA",
-                        "zip": "12345"
-                    }
-                ]
-            }
-        }
-    ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "user-2",
+      "email": "bob@example.com",
+      "password": "password",
+      "rol": "manufacturer",
+      "profile": {
+        "first_name": "Bob",
+        "last_name": "Builder",
+        "gender": "men",
+        "addresses": []
+      }
+    },
+    {
+      "id": "user-3",
+      "email": "charlie@example.com",
+      "password": "password",
+      "rol": "customer",
+      "profile": {
+        "first_name": "Charlie",
+        "last_name": "Johnson",
+        "gender": "women",
+        "addresses": []
+      }
+    }
+  ],
+  "analytics": [
+    {
+      "user_id": "user-1",
+      "total_projects": 2,
+      "blueprints": 2,
+      "designed_garments": 0,
+      "completed": 0
+    },
+    {
+      "user_id": "user-2",
+      "total_projects": 1,
+      "blueprints": 1,
+      "designed_garments": 0,
+      "completed": 0
+    },
+    {
+      "user_id": "user-3",
+      "total_projects": 1,
+      "blueprints": 0,
+      "designed_garments": 1,
+      "completed": 0
+    }
+  ]
 }
