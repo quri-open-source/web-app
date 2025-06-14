@@ -1,0 +1,26 @@
+<div class="cart-popover">
+  <h3>Shopping Cart</h3>
+  <div class="cart-orders" *ngFor="let order of orders">
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of order.items">
+        <img src="https://placehold.co/48x48" alt="T-shirt" class="cart-item-img" />
+        <div class="cart-item-info">
+          <div class="cart-item-title">{{ item.project_id }}</div>
+          <div class="cart-item-qty">
+            <span>Amount: {{ item.quantity }}</span>
+          </div>
+          <div class="cart-item-price">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="cart-summary">
+      <div>Subtotal: <span>{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+      <div>Discount: <span>- {{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+      <div><b>Total: <span>{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></b></div>
+    </div>
+    <hr />
+  </div>
+  <div class="cart-actions">
+    <button mat-stroked-button (click)="goToCart()">View Details</button>
+  </div>
+</div>
