@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../../services/order.service';
-import { DiscountPolicyService } from '../../services/discount-policy.service';
+import { OrderService } from '../../../../app/orders-fulfillments/services/order.service';
+import { DiscountPolicyService } from '../../../../app/orders-fulfillments/services/discount-policy.service';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -10,7 +10,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
-import { ProjectService } from '../../../design-lab/services/project.service';
+import { ProjectService } from '../../../../app/design-lab/services/project.service';
+import { RouterModule } from '@angular/router'; // <-- add this import
 
 @Component({
   selector: 'app-shopping-cart',
@@ -23,7 +24,8 @@ import { ProjectService } from '../../../design-lab/services/project.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatChipsModule
+    MatChipsModule,
+    RouterModule // <-- add this line
   ],
   templateUrl: './shopping-cart.html',
   styleUrl: './shopping-cart.css'

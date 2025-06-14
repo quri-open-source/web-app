@@ -90,7 +90,16 @@
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="primary" class="checkout-btn">Check Out</button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="checkout-btn"
+            [routerLink]="['/choose-manufacturer']"
+            [queryParams]="{ orderId: orders[0]?.id }"
+            [disabled]="!orders.length"
+          >
+            Make order
+          </button>
         </mat-card-actions>
       </mat-card>
     </div>
