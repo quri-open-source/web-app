@@ -45,6 +45,13 @@ export const routes: Routes = [
                 (m) => m.ProfileComponent
             ),
     },
+    {
+        path: 'shopping-cart',
+        loadComponent: () =>
+            import('./public/pages/shopping-cart/shopping-cart').then(
+                (m) => m.ShoppingCart
+            ),
+    },
 
     {
         path: 'choose-manufacturer',
