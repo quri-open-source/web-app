@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Add Angular Material links here -->
+</head>
+<body>
+<section class="dashboard-page">
+  <h1 class="dashboard-title">Design Lab Dashboard</h1>
+  <app-analytics-dashboard [userId]="userId" *ngIf="!loading" />
+  <div class="projects-section">
+    <div class="table-header">
+      <h2>Your Projects</h2>
+      <button mat-raised-button color="primary" (click)="createNewProject()">
+        <mat-icon>add</mat-icon>
+        Create New Project
+      </button>
+    </div>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <span>Loading projects...</span>
+    </div>
+    <div *ngIf="!loading">
+      <table mat-table [dataSource]="projects" class="mat-elevation-z8 project-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Project Name </th>
+          <td mat-cell *matCellDef="let project">
+            <div class="project-name-cell">
+              <div class="mini-tshirt-preview" [style.backgroundColor]="project.garmentColor"></div>
+              <span>{{ project.name }}</span>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="genre">
+          <th mat-header-cell *matHeaderCellDef> Genre </th>
+          <td mat-cell *matCellDef="let project">{{ project.genre }}</td>
+        </ng-container>
+        <ng-container matColumnDef="garmentColor">
+          <th mat-header-cell *matHeaderCellDef> Color </th>
+          <td mat-cell *matCellDef="let project">
+            <span class="color-swatch" [style.backgroundColor]="project.garmentColor"></span>
+            <span class="color-name">{{ getColorDisplay(project.garmentColor) }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="garmentSize">
+          <th mat-header-cell *matHeaderCellDef> Size </th>
+          <td mat-cell *matCellDef="let project">{{ project.garmentSize }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let project">
+            <span class="status-badge" [ngClass]="project.status">{{ formatStatus(project.status) }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Created </th>
+          <td mat-cell *matCellDef="let project">{{ formatDate(project.createdAt) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="lastModified">
+          <th mat-header-cell *matHeaderCellDef> Last Modified </th>
+          <td mat-cell *matCellDef="let project">{{ formatDate(project.lastModified) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let project">
+            <button mat-icon-button color="primary" (click)="navigateToProject(project)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToProject(row)"></tr>
+      </table>
+      <mat-paginator [length]="projects.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+      <div *ngIf="projects.length === 0" class="no-projects">No projects found.</div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
