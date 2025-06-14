@@ -38,19 +38,19 @@ export const routes: Routes = [
             import('./design-lab/components/project-edit/project-edit.component').then(
                 (m) => m.ProjectEditComponent
             ),
-    },
-    {
+    },    {
         path: 'profile',
         loadComponent: () =>
             import('./public/pages/profile/profile.component').then(
                 (m) => m.ProfileComponent
             ),
     },
+
     {
-        path: 'shopping-cart',
+        path: 'choose-manufacturer',
         loadComponent: () =>
-            import('./shared/components/shopping-cart/shopping-cart').then(
-                (m) => m.ShoppingCart
+            import('./public/pages/choose-manufacturer/choose-manufacturer.component').then(
+                (m) => m.ChooseManufacturerComponent
             ),
     }
 ];

@@ -1,0 +1,254 @@
+/* ChooseManufacturerEmpty - Minimal Design */
+
+/* Empty Container */
+.empty-container {
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+
+/* Empty Card */
+.empty-card {
+  max-width: 480px;
+  width: 100%;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease;
+}
+
+.empty-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Empty Content */
+.status-content {
+  padding: 48px 32px 24px 32px;
+  text-align: center;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.empty-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #374151;
+  letter-spacing: -0.2px;
+}
+
+.empty-content p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+  margin: 0;
+  max-width: 320px;
+}
+
+.empty-subtitle {
+  font-size: 13px !important;
+  color: #9ca3af !important;
+  font-style: italic;
+  margin-top: 4px !important;
+}
+
+/* Empty Suggestions */
+.empty-suggestions {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  max-width: 400px;
+  text-align: left;
+}
+
+.empty-suggestions h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.empty-suggestions h4 mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+.empty-suggestions ul {
+  margin: 0;
+  padding-left: 16px;
+  text-align: left;
+}
+
+.empty-suggestions li {
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+/* Status Actions */
+.status-actions {
+  padding: 0 32px 32px 32px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.status-actions button {
+  min-width: 120px;
+  height: 36px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: none;
+  background: #667eea;
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.status-actions button:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.status-actions button mat-icon {
+  margin-right: 6px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .empty-container {
+    padding: 20px 16px;
+    min-height: 280px;
+  }
+  
+  .status-content {
+    padding: 32px 24px 16px 24px;
+  }
+  
+  .empty-icon {
+    font-size: 56px;
+    width: 56px;
+    height: 56px;
+  }
+  
+  .empty-content h3 {
+    font-size: 16px;
+  }
+  
+  .empty-content p {
+    font-size: 13px;
+  }
+  
+  .status-actions {
+    padding: 0 24px 24px 24px;
+  }
+  
+  .status-actions button {
+    min-width: 100px;
+    height: 34px;
+    font-size: 12px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .empty-container {
+    padding: 16px;
+    min-height: 380px;
+  }
+  
+  .status-content {
+    padding: 32px 24px 16px 24px;
+  }
+  
+  .empty-icon {
+    font-size: 100px;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .empty-content h3 {
+    font-size: 24px;
+  }
+  
+  .empty-content p {
+    font-size: 15px;
+  }
+  
+  .status-actions {
+    padding: 0 24px 24px 24px;
+  }
+  
+  .status-actions button {
+    min-width: 140px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-content {
+    padding: 24px 20px 12px 20px;
+  }
+  
+  .empty-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .empty-content h3 {
+    font-size: 22px;
+  }
+  
+  .empty-content p,
+  .empty-subtitle {
+    font-size: 14px !important;
+  }
+  
+  .status-actions {
+    padding: 0 20px 20px 20px;
+    flex-direction: column;
+  }
+  
+  .status-actions button {
+    width: 100%;
+    min-width: unset;
+    height: 42px;
+  }
+  
+  .empty-suggestions {
+    padding: 16px;
+  }
+  
+  .empty-suggestions li {
+    font-size: 13px;
+  }
+}

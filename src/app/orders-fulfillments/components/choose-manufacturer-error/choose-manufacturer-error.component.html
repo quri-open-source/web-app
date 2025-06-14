@@ -1,0 +1,29 @@
+<div class="error-container">
+  <mat-card class="status-card error-card">
+    <mat-card-header class="status-header">
+      <mat-icon mat-card-avatar>error</mat-icon>
+      <mat-card-title>Error</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="status-content">
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>      <div class="error-details">
+        <h4>
+          <mat-icon>help_outline</mat-icon>
+          What you can try:
+        </h4>
+        <ul>
+          <li>Check internet connection</li>
+          <li>Reload the page</li>
+          <li>Contact support if it persists</li>
+        </ul>
+      </div>
+    </mat-card-content>
+    <mat-card-actions *ngIf="showRetryButton" class="status-actions">
+      <button mat-raised-button (click)="onRetry()">
+        <mat-icon>refresh</mat-icon>
+        {{ retryButtonText }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
