@@ -1,0 +1,316 @@
+/* ChooseManufacturerError - Minimal Design */
+
+.error-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.status-header {
+  background: #fff5f5;
+  padding: 16px 20px !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.status-header mat-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  color: #dc2626;
+  letter-spacing: -0.05px;
+}
+
+.status-header mat-icon[mat-card-avatar] {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  background: #fecaca;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Error Content */
+.status-content {
+  padding: 20px 24px !important;
+  background: #ffffff;
+}
+
+.error-message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 16px 0;
+  font-weight: 400;
+}
+
+/* Error Details */
+.error-details {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.error-details h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.error-details h4 mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+.error-details ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.error-details li {
+  margin-bottom: 4px;
+}
+
+/* Error Actions */
+.status-actions {
+  padding: 0 24px 24px 24px !important;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.status-actions button {
+  min-width: 120px;
+  height: 36px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: none;
+  background: #ef4444;
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.status-actions button:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.status-actions button mat-icon {
+  margin-right: 6px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .error-container {
+    padding: 20px 16px;
+  }
+  
+  .status-header {
+    padding: 20px 20px 12px 20px !important;
+  }
+  
+  .status-content {
+    padding: 16px 20px !important;
+  }
+  
+  .status-actions {
+    padding: 0 20px 20px 20px !important;
+  }
+  
+  .status-actions button {
+    min-width: 100px;
+    height: 34px;
+    font-size: 12px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .error-container {
+    padding: 16px;
+    min-height: 350px;
+  }
+  
+  .status-header {
+    padding: 24px !important;
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .status-header mat-card-title {
+    font-size: 24px;
+  }
+  
+  .status-header mat-icon[mat-card-avatar] {
+    width: 56px;
+    height: 56px;
+    font-size: 32px;
+  }
+  
+  .status-content {
+    padding: 24px !important;
+  }
+  
+  .error-message {
+    font-size: 15px;
+  }
+  
+  .status-actions {
+    padding: 0 24px 24px 24px !important;
+  }
+  
+  .status-actions button {
+    min-width: 140px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-header {
+    padding: 20px !important;
+  }
+  
+  .status-header mat-card-title {
+    font-size: 22px;
+  }
+  
+  .status-content {
+    padding: 20px !important;
+  }
+  
+  .error-message {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  .status-actions {
+    padding: 0 20px 20px 20px !important;
+    flex-direction: column;
+  }
+  
+  .status-actions button {
+    width: 100%;
+    min-width: unset;
+    height: 42px;
+  }
+}
+.status-actions {
+  padding: 24px 32px 32px 32px !important;
+  margin: 0;
+  justify-content: center;
+}
+
+.status-actions button {
+  padding: 12px 32px;
+  border-radius: 28px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Error State */
+.error-card {
+  border-left: 6px solid #f44336;
+}
+
+.error-card .status-header {
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.error-card mat-card-title {
+  color: #f44336;
+}
+
+.error-card mat-icon[mat-card-avatar] {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .state-container {
+    margin: 32px 16px;
+  }
+  
+  .status-card {
+    margin: 0;
+  }
+  
+  .status-header {
+    padding: 20px 24px !important;
+  }
+  
+  .status-content {
+    padding: 20px 24px !important;
+  }
+  
+  .status-actions {
+    padding: 20px 24px 24px 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .state-container {
+    margin: 24px 8px;
+  }
+  
+  .status-header {
+    padding: 16px 20px !important;
+  }
+  
+  .status-header mat-card-title {
+    font-size: 20px;
+  }
+  
+  .status-content {
+    padding: 16px 20px !important;
+  }
+  
+  .status-actions {
+    padding: 16px 20px 20px 20px !important;
+  }
+  
+  .status-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
