@@ -47,18 +47,17 @@ export class ShoppingCart implements OnInit {
 
   ngOnInit() {
     const userId = environment.devUser;
-    this.orderService.getOrders().subscribe({
-      next: orders => {
-        const userOrders = orders.filter((o: any) => o.user_id === userId);
+    this.orderService.getOrdersByUser(userId).subscribe({
+      next: (orders: any[]) => {
         this.discountPolicyService.getDiscountPolicies().subscribe({
           next: policies => {
             this.loadingProjects = true;
-            const allItems = userOrders.flatMap((order: any) => order.items);
+            const allItems = orders.flatMap((order: any) => order.items);
             const uniqueProjectIds = [...new Set(allItems.map((item: any) => item.project_id))];
             Promise.all(uniqueProjectIds.map(pid => this.projectService.getProjectById(pid).toPromise()))
               .then(projects => {
                 const projectMap = Object.fromEntries(projects.map((p: any) => [p.id, p]));
-                this.orders = userOrders.map((order: any) => {
+                this.orders = orders.map((order: any) => {
                   const items = order.items.map((item: any) => {
                     const project = projectMap[item.project_id];
                     return {
