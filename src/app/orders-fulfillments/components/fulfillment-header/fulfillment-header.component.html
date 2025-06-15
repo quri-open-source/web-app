@@ -1,0 +1,21 @@
+<div class="fulfillment-header">
+  <mat-card class="header-card" appearance="outlined">
+    <mat-card-content class="header-content-wrapper">
+      <div class="header-content">
+        <mat-icon class="header-icon">{{ icon }}</mat-icon>
+        <div class="header-text">
+          <h1>{{ title }}</h1>
+          <p class="subtitle">{{ subtitle }}</p>
+          <div *ngIf="totalCount > 0" class="count-info">
+            Total Orders: <strong>{{ totalCount }}</strong>
+          </div>
+        </div>
+        <div *ngIf="showRefreshButton" class="header-actions">
+          <button mat-icon-button class="refresh-button" (click)="onRefresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

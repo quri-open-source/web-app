@@ -59,5 +59,24 @@ export const routes: Routes = [
             import('./public/pages/choose-manufacturer/choose-manufacturer.component').then(
                 (m) => m.ChooseManufacturerComponent
             ),
-    }
+    },
+    {
+      path: 'my-fulfillments',
+      loadComponent: () =>
+        import('./public/pages/my-fulfillments/my-fulfillments.component').then(
+          (m) => m.FulfillmentsListComponent
+        ),
+    },
+  {
+    path: 'analytics',
+    loadComponent: () =>
+      import('./public/pages/dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
+  },
+  {
+    path: 'dashboard',
+    redirectTo: 'analytics',
+    pathMatch: 'full',
+  }
 ];
