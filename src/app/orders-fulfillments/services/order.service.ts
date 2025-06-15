@@ -5,15 +5,13 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apiUrl = environment.apiBaseUrl + '/orders';
+  private apiUrl = `${environment.apiBaseUrl}/orders`;
 
   constructor(private http: HttpClient) {}
 
-  getOrders(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
-
-  getOrderById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getOrdersByUser(userId: string): Observable<any[]> {
+    // Returns only the orders belonging to the given user
+    return this.http.get<any[]>(`${this.apiUrl}?user_id=${userId}`);
   }
 }
+
