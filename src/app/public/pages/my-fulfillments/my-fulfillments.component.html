@@ -1,0 +1,14 @@
+<div class="fulfillments-container">
+  <app-fulfillment-header 
+    (refresh)="onRefresh()"
+    class="header">
+  </app-fulfillment-header>
+  <div class="content">
+    <app-fulfillment-list
+      [fulfillments]="fulfillments"
+      [loading]="loading"
+      [error]="error"
+      (refresh)="onRefresh()">
+    </app-fulfillment-list>
+  </div>
+</div>
