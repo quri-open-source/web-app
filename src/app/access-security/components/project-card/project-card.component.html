@@ -1,0 +1,72 @@
+<mat-card
+  class="project-card"
+  [routerLink]="[ isDesignLab ? '/design-lab' : '/explore', project.id ]"
+  [ngClass]="context"
+>
+  <!-- COMMON PREVIEW -->
+  <div
+    class="project-preview"
+    [style.background-color]="project.garmentColor || '#fff'"
+  >
+    <ng-container *ngIf="project.previewImageUrl; else noPreview">
+      <img [src]="project.previewImageUrl" [alt]="project.name" />
+    </ng-container>
+    <ng-template #noPreview>
+      <div class="no-preview">
+        <mat-icon>image</mat-icon>
+        <span>No preview</span>
+      </div>
+    </ng-template>
+  </div>
+
+  <mat-card-content>
+    <h3>{{ project.name }}</h3>
+
+    <!-- BC: DESIGN-LAB -->
+    <div *ngIf="isDesignLab" class="project-details-list">
+      <div class="detail-row">{{ project.gender | titlecase }}</div>
+      <div class="detail-row">Size: {{ getSize(project) }}</div>
+      <div class="detail-row">
+        Last modified: {{ getLastModified(project) }}
+      </div>
+      <div class="detail-row">
+        <b>Privacy:</b> {{ project.privacy | titlecase }}
+      </div>
+    </div>
+
+    <!-- BC: EXPLORE -->
+    <div *ngIf="isExplore" class="project-details-list-explore">
+      <div class="detail-row-explore">
+        <span>{{ project.userId }}</span>
+        <span>
+          <mat-icon>favorite</mat-icon>
+          {{ project.likes }}
+        </span>
+      </div>
+      <div class="detail-row-price">
+        S/ {{ project.price | number:'1.2-2' }}
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <!-- ACTIONS DESIGN-LAB -->
+    <ng-container *ngIf="isDesignLab">
+      <button mat-button color="primary">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+      <button mat-button color="warn">
+        <mat-icon>delete</mat-icon> Delete
+      </button>
+    </ng-container>
+
+    <!-- ACTIONS EXPLORE -->
+    <ng-container *ngIf="isExplore">
+      <button mat-button color="accent">
+        <mat-icon>shopping_cart</mat-icon> Add to cart
+      </button>
+    </ng-container>
+
+
+  </mat-card-actions>
+</mat-card>
