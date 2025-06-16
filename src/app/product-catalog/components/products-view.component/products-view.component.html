@@ -1,0 +1,22 @@
+<ng-container *ngIf="projects$ | async as projects; else loading">
+  <div *ngIf="projects.length > 0; else empty" class="products-grid">
+    <app-project-card
+      *ngFor="let p of projects; trackBy: trackById"
+      [project]="p"
+      context="explore"
+    ></app-project-card>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="status loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>LOADING PUBLIC PROJECTS…</p>
+  </div>
+</ng-template>
+
+<ng-template #empty>
+  <div class="status empty-container">
+    <p>ITS EMPTY HERE.</p>
+  </div>
+</ng-template>
