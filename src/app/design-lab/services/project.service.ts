@@ -5,7 +5,7 @@ import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
 import { BaseService } from '../../shared/services/base.service';
 
-// this must be removed when the backend is ready
+// TODO: this must be removed when the backend is ready
 const GET_ALL_USER_BLUEPRINTS = (id: string) =>
     `http://localhost:3000/projects?status=blueprint&user_id=${id}`;
 
@@ -15,6 +15,8 @@ const GET_USER_BLUEPRINT_BY_ID = (id: string, userId: string) =>
 const GET_PROJECT_BY_ID = (id: string) =>
     `http://localhost:3000/projects?id=${id}`;
 
+const GET_ALL_PUBLIC_BLUEPRINTS = 'http://localhost:3000/projects?status=blueprint&public=true';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -23,6 +25,16 @@ export class ProjectService extends BaseService<ProjectResponse> {
 
     constructor() {
         super('projects');
+    }
+
+    getAllPublicProjects() {
+      return this.http
+        .get<ProjectResponse[]>(GET_ALL_PUBLIC_BLUEPRINTS)
+        .pipe(
+            map((projects) =>
+                ProjectAssembler.toEntitiesFromResponse(projects)
+            )
+        );
     }
 
     getUserBlueprints() {

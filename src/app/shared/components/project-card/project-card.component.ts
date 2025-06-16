@@ -1,5 +1,7 @@
+export type ProjectCardContext = 'design-lab' | 'explore' | 'dashboard';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Project } from '../../model/project.entity';
+import { Project } from '../../../design-lab/model/project.entity';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class ProjectCardComponent {
     @Input() project!: Project;
+    @Input() context: ProjectCardContext = 'explore';
     @Output() deleted = new EventEmitter<string>();
     constructor() {}
 
@@ -52,4 +55,8 @@ export class ProjectCardComponent {
         }
         return 'N/A';
     }
+
+    get isDesignLab()   { return this.context === 'design-lab'; }
+    get isExplore()     { return this.context === 'explore'; }
+    get isDashboard()   { return this.context === 'dashboard'; }
 }

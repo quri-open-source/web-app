@@ -33,7 +33,11 @@
           <!-- Projects Grid -->
           <div class="projects-grid">
             @for (project of projects; track project.id) {
-              <app-project-card [project]="project" (deleted)="onProjectDeleted(project.id)"></app-project-card>
+              <app-project-card
+                [project]="project"
+                context ="design-lab"
+                (deleted)="onProjectDeleted($event)">
+              </app-project-card>
             }
           </div>
         }

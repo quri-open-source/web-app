@@ -1,0 +1,9 @@
+<div class="explore-container">
+  <section class="search-bar-section">
+    <app-search-bar (filtersChanged)="applyFilters($event)"></app-search-bar>
+  </section>
+
+  <section class="explore-view">
+    <app-products-view [projects]="filteredProjects"></app-products-view>
+  </section>
+</div>

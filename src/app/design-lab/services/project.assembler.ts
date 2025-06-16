@@ -1,4 +1,4 @@
-import { GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER, PROJECT_STATUS } from "../../const";
+import { GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER, PROJECT_PRIVACY, PROJECT_STATUS } from "../../const";
 import { Project } from "../model/project.entity";
 import { LayerAssembler } from "./layer.assembler";
 import { ProjectResponse } from "./project.response";
@@ -14,6 +14,9 @@ export class ProjectAssembler {
             response.user_id,
             response.name,
             response.preview_image_url,
+            response.price,
+            response.likes,
+            response.privacy as PROJECT_PRIVACY,
             response.status as PROJECT_STATUS,
             response.gender as PROJECT_GENDER,
             response.garment_color as GARMENT_COLOR,

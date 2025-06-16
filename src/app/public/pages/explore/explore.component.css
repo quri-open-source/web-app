@@ -1,0 +1,15 @@
+.explore-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+}
+
+.search-bar-section {
+  margin-bottom: 2rem;
+}
+
+.explore-view {
+  display: flex;
+  justify-content: center;
+}

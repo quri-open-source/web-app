@@ -135,15 +135,15 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.error = null;    this.projectService.getProjectById(this.projectId).subscribe({
       next: (project) => {
         this.project = project;
-        
+
         // Extract text and image layers from the project
         if (this.project.layers) {
-          this.textLayers = this.project.layers.filter(layer => 
+          this.textLayers = this.project.layers.filter(layer =>
             layer.type === LayerType.TEXT) as TextLayer[];
-          this.imageLayers = this.project.layers.filter(layer => 
+          this.imageLayers = this.project.layers.filter(layer =>
             layer.type === LayerType.IMAGE) as ImageLayer[];
         }
-        
+
         this.loading = false;
       },
       error: (err) => {
@@ -193,7 +193,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     // Create a new TextLayer for backward compatibility
     const textLayer = new TextLayer(
       'text_' + Date.now(), // id
-      this.editorConfig.textEditor.centerTextCalculation 
+      this.editorConfig.textEditor.centerTextCalculation
         ? this.editorConfig.textEditor.defaultPosition.x - (textProps.text.length * textProps.fontSize) / 6
         : this.editorConfig.textEditor.defaultPosition.x, // x
       this.editorConfig.textEditor.defaultPosition.y, // y
@@ -263,6 +263,9 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       user_id: this.project.userId,
       name: this.project.name,
       preview_image_url: this.project.previewImageUrl || '',
+      privacy: this.project.privacy,
+      price: this.project.price,
+      likes: this.project.likes,
       status: this.project.status,
       gender: this.project.gender,
       garment_color: this.project.garmentColor,

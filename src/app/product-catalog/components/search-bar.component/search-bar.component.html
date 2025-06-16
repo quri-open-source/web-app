@@ -1,0 +1,45 @@
+<div class="search-bar-container">
+  <mat-form-field appearance="outline" class="search-field">
+    <input
+      matInput
+      placeholder="Buscar proyectos"
+      [(ngModel)]="searchText"
+      (input)="emitFilters()"
+    />
+    <button mat-icon-button matSuffix aria-label="Search">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <div class="price-filter">
+    <mat-form-field appearance="outline" class="price-input">
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="minPrice"
+        (input)="emitFilters()"
+        placeholder="Precio mínimo"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="price-input">
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="maxPrice"
+        (input)="emitFilters()"
+        placeholder="Precio máximo"
+      />
+    </mat-form-field>
+  </div>
+  <div class="tags-filter">
+    <mat-chip-listbox [(ngModel)]="selectedTags" multiple>
+      <mat-chip-option
+        *ngFor="let tag of availableTags"
+        [value]="tag"
+      >
+        {{ tag }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+</div>
