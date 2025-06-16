@@ -3,13 +3,33 @@
     {
       "id": "user-1",
       "email": "alice@example.com",
-      "password": "password",
+      "profile": {
+        "gender": "women",
+        "addresses": [
+          {
+            "id": "address-1",
+            "address": "123 Main St",
+            "city": "Anytown",
+            "country": "USA",
+            "state": "CA",
+            "zip": "12345",
+            "profile_id": "profile-1"
+          }
+        ],
+        "first_name": "Alice",
+        "last_name": "Smith"
+      },
       "rol": "customer"
     },
     {
       "id": "user-2",
       "email": "bob@example.com",
-      "password": "password",
+      "profile": {
+        "firstName": "Bobeeto",
+        "lastName": "Builder",
+        "gender": "men",
+        "addresses": []
+      },
       "rol": "manufacturer"
     },
     {
@@ -43,16 +63,16 @@
       "user_id": "user-1",
       "first_name": "Alice",
       "last_name": "Smith",
-      "gender": "men",
+      "gender": "women",
       "addresses": [
         {
           "id": "address-1",
-          "profile_id": "profile-1",
           "address": "123 Main St",
           "city": "Anytown",
           "country": "USA",
           "state": "CA",
-          "zip": "12345"
+          "zip": "12345",
+          "profile_id": "profile-1"
         }
       ]
     },
@@ -172,9 +192,9 @@
       "likes": 0,
       "status": "blueprint",
       "gender": "men",
-      "garment_color": "#403D3B",
+      "garment_color": "#161615",
       "garment_size": "L",
-      "last_modified": "2025-06-13T12:00:00.000Z",
+      "last_modified": "2025-06-16T17:23:46.012Z",
       "created_at": "2025-06-13T12:00:00.000Z",
       "layers": []
     },
@@ -200,7 +220,7 @@
       "name": "Misty Morning",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 22.50,
+      "price": 22.5,
       "likes": 45,
       "status": "blueprint",
       "gender": "women",
@@ -216,7 +236,7 @@
       "name": "Ocean Whisper",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 30.00,
+      "price": 30,
       "likes": 59,
       "status": "in-progress",
       "gender": "women",
@@ -248,7 +268,7 @@
       "name": "Hidden Garden",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 25.00,
+      "price": 25,
       "likes": 52,
       "status": "blueprint",
       "gender": "women",
@@ -280,7 +300,7 @@
       "name": "Urban Skyline",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 28.00,
+      "price": 28,
       "likes": 63,
       "status": "in-progress",
       "gender": "men",
@@ -296,7 +316,7 @@
       "name": "Midnight Muse",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 31.50,
+      "price": 31.5,
       "likes": 71,
       "status": "completed",
       "gender": "men",
@@ -312,7 +332,7 @@
       "name": "Citrus Burst",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 26.40,
+      "price": 26.4,
       "likes": 55,
       "status": "blueprint",
       "gender": "men",
@@ -376,7 +396,7 @@
       "name": "Aurora Lights",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 34.20,
+      "price": 34.2,
       "likes": 75,
       "status": "blueprint",
       "gender": "women",
@@ -392,7 +412,7 @@
       "name": "Midnight Garden",
       "preview_image_url": "https://picsum.photos/150/150",
       "privacy": "public",
-      "price": 27.60,
+      "price": 27.6,
       "likes": 61,
       "status": "in-progress",
       "gender": "women",
@@ -663,7 +683,7 @@
     {
       "id": "fulfillment-1",
       "order_id": "order-1",
-      "status": "in-progress",
+      "status": "delivered",
       "received_date": "2025-05-29T20:40:47.478Z",
       "shipped_date": null,
       "manufacturer_id": "manufacturer-1"
@@ -671,10 +691,18 @@
     {
       "id": "fulfillment-2",
       "order_id": "order-1",
-      "status": "shipped",
+      "status": "pending",
       "received_date": "2025-05-29T20:40:47.478Z",
       "shipped_date": "2025-05-30T20:40:47.478Z",
       "manufacturer_id": "manufacturer-1"
+    },
+    {
+      "id": "fulfillment-l47tixs17",
+      "order_id": "order-1",
+      "manufacturer_id": "manufacturer-1",
+      "status": "pending",
+      "received_date": "2025-06-16T15:41:38.244Z",
+      "shipped_date": null
     }
   ],
   "manufacturers": [
@@ -729,24 +757,23 @@
     {
       "id": "user-1",
       "email": "alice@example.com",
-      "password": "password",
-      "rol": "customer",
       "profile": {
         "first_name": "Alice",
         "last_name": "Smith",
-        "gender": "men",
+        "gender": "women",
         "addresses": [
           {
             "id": "address-1",
-            "profile_id": "profile-1",
             "address": "123 Main St",
             "city": "Anytown",
             "country": "USA",
             "state": "CA",
-            "zip": "12345"
+            "zip": "12345",
+            "profile_id": "profile-1"
           }
         ]
-      }
+      },
+      "rol": "customer"
     },
     {
       "id": "user-2",
@@ -779,21 +806,24 @@
       "total_projects": 2,
       "blueprints": 2,
       "designed_garments": 0,
-      "completed": 0
+      "completed": 0,
+      "id": "1ba3"
     },
     {
       "user_id": "user-2",
       "total_projects": 1,
       "blueprints": 1,
       "designed_garments": 0,
-      "completed": 0
+      "completed": 0,
+      "id": "ae68"
     },
     {
       "user_id": "user-3",
       "total_projects": 1,
       "blueprints": 0,
       "designed_garments": 1,
-      "completed": 0
+      "completed": 0,
+      "id": "174f"
     }
   ]
 }

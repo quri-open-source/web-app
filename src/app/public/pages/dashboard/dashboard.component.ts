@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment';
+import { UserService } from '../../../user-management/services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
   analytics: AnalyticsData | null = null;
   projects: Project[] = [];
   loading = true;
-  userId = environment.devUser;
+  userId!: string;
   displayedColumns: string[] = [
     'name', 'genre', 'garmentColor', 'garmentSize', 'status', 'createdAt', 'lastModified', 'actions'
   ];
@@ -43,10 +43,12 @@ export class DashboardComponent implements OnInit {
   constructor(
     private analyticsService: AnalyticsService,
     private projectService: ProjectService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    this.userId = this.userService.getSessionUserId();
     this.loadDashboard();
   }
 

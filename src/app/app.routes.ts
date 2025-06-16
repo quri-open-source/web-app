@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { roleGuard } from './shared/guards/role.guard';
+import { roleGuard } from './access-security/model/acces.entity';
 
 export const routes: Routes = [
     {

@@ -13,7 +13,8 @@ export abstract class BaseService<T> {
   }
 
   protected resourcePath(): string {
-    return `${this.apiUrl}${this.path}`;
+    // Ensure there is exactly one slash between apiUrl and path
+    return `${this.apiUrl.replace(/\/$/, '')}/${this.path.replace(/^\//, '')}`;
   }
 
   getURL(): string {
