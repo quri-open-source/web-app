@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Project } from '../../../design-lab/model/project.entity';
-import { ProjectCardComponent } from '../../../shared/components/project-card/project-card.component';
+import { ProjectCardComponent } from '../../../access-security/components/project-card/project-card.component';
 
 @Component({
   selector: 'app-products-view',

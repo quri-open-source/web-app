@@ -9,5 +9,5 @@ export const environment = {
   // Base URL for the projects API https://68230d7eb342dce800507517.mockapi.io
   devUser: 'user-1',
   devRole: 'customer', // Default role
-  currencyCode: 'PEN',
+  currencyCode: 'USD',
 };

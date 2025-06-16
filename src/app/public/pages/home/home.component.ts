@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RoleSwitcherComponent } from '../../../shared/components/role-switcher/role-switcher.component';
+import { RoleSwitcherComponent } from '../../../access-security/components/role-switcher/role-switcher.component';
 
 @Component({
   selector: 'app-home',

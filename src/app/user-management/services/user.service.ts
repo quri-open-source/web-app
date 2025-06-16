@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { BaseService } from '../../shared/services/base.service';
+import { BaseService } from '../../access-security/services/access.service';
 import { UserResponse } from './user.response';
 import { Observable, map, of, tap } from 'rxjs';
 import { UserAssembler } from './user.assembler';
@@ -16,44 +16,30 @@ const STORAGE_USER_ROLE = 'quri_user_role';
     providedIn: 'root',
 })
 export class UserService extends BaseService<UserResponse> {
-    // Get userId from localStorage or fall back to environment default
-    private userId: string = localStorage.getItem(STORAGE_USER_ID) || environment.devUser;
-    // Get userRole from localStorage or fall back to environment default
-    private userRole: string = localStorage.getItem(STORAGE_USER_ROLE) || environment.devRole;
-    
     constructor() {
         super('users');
-        console.log('UserService initialized with:', { userId: this.userId, role: this.userRole });
     }
 
     // Define user properties and methods here
     getSessionUserId(): string {
-        return this.userId;
+        return localStorage.getItem(STORAGE_USER_ID) || environment.devUser;
     }
 
     getUserRole(): string {
-        console.log('Getting user role:', this.userRole);
-        return this.userRole;
+        return localStorage.getItem(STORAGE_USER_ROLE) || environment.devRole;
     }
-    
+
     setUserRole(role: string): void {
-        console.log('Setting user role:', role);
-        this.userRole = role;
-        // Store in localStorage for persistence
         localStorage.setItem(STORAGE_USER_ROLE, role);
     }
-    
-    /**
-     * Force setting user role without API call - useful for testing
-     */
-    forceSetRole(role: string): void {
-        console.log('Force setting role to:', role);
-        this.setUserRole(role);
+
+    setSessionUserId(userId: string): void {
+        localStorage.setItem(STORAGE_USER_ID, userId);
     }
 
     getCurrentUser() {
         return this.http
-            .get<UserResponse[]>(USER_WITH_PROFILE(this.userId))
+            .get<UserResponse[]>(USER_WITH_PROFILE(this.getSessionUserId()))
             .pipe(map((response) => UserAssembler.toEntityFromResponse(response[0])));
     }
     
@@ -66,25 +52,16 @@ export class UserService extends BaseService<UserResponse> {
     // Method to simulate login as different user types (for testing)
     // Returns an Observable so we can wait for the role to be loaded
     loginAs(userId: string): Observable<string> {
-        console.log('Logging in as user:', userId);
-        this.userId = userId;
-        // Store in localStorage for persistence
-        localStorage.setItem(STORAGE_USER_ID, userId);
-        
-        // Get user data synchronously first
+        this.setSessionUserId(userId);
         return this.http
             .get<any[]>(USER_WITH_PROFILE(userId))
             .pipe(
                 map((response) => {
                     const user = response[0];
-                    console.log('User data fetched:', user);
                     if (user && user.rol) {
-                        console.log('Setting role from user data:', user.rol);
-                        this.setUserRole(user.rol); // Use the method that saves to localStorage
-                    } else {
-                        console.warn('No role found in user data');
+                        this.setUserRole(user.rol);
                     }
-                    return this.userRole; // Return the role
+                    return this.getUserRole();
                 }),
                 tap(role => console.log('Final role after login:', role))
             );
@@ -92,23 +69,33 @@ export class UserService extends BaseService<UserResponse> {
     
     // Hard-coded login for testing - skips API call
     loginAsDirect(userId: string, role: string): void {
-        console.log('Direct login as:', { userId, role });
-        this.userId = userId;
-        localStorage.setItem(STORAGE_USER_ID, userId);
+        this.setSessionUserId(userId);
         this.setUserRole(role);
     }
     
     // Check if the user is logged in
     isLoggedIn(): boolean {
-        return !!this.userId;
+        return !!this.getSessionUserId();
     }
     
     // Logout method to clear the session
     logout(): void {
-        console.log('Logging out');
-        this.userId = environment.devUser;
-        this.userRole = environment.devRole;
         localStorage.removeItem(STORAGE_USER_ID);
         localStorage.removeItem(STORAGE_USER_ROLE);
+    }
+
+    updateUser(user: any): Observable<any> {
+        // PUT to /users/:id (RESTful, fácil de migrar a Java)
+        return this.http.put<any>(`${this.resourcePath()}/${user.id}`, user);
+    }
+
+    updateProfile(profileId: string, profile: any): Observable<any> {
+        // PUT to /profiles/:id
+        return this.http.put<any>(`${environment.apiBaseUrl}/profiles/${profileId}`, profile);
+    }
+
+    updateUserWithProfile(userId: string, userWithProfile: any): Observable<any> {
+        // PUT to /userWithProfile/:id
+        return this.http.put<any>(`${environment.apiBaseUrl}/userWithProfile/${userId}`, userWithProfile);
     }
 }

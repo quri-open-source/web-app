@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BaseService } from '../../shared/services/base.service';
+import { BaseService } from '../../access-security/services/access.service';
 import { Fulfillment } from '../model/fulfillment.entity';
 import { FulfillmentAssembler } from './fulfillment.assembler';
 import { FulfillmentResponse } from './fulfillment.response';

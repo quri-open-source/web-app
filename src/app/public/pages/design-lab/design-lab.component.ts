@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
-import { ProjectCardComponent } from '../../../shared/components/project-card/project-card.component';
+import { ProjectCardComponent } from '../../../access-security/components/project-card/project-card.component';
 
 @Component({
     selector: 'app-design-lab',

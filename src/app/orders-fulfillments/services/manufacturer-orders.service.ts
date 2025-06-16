@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, forkJoin, of, from, switchMap, mergeMap, catchError, tap, filter } from 'rxjs';
-import { BaseService } from '../../shared/services/base.service';
+import { BaseService } from '../../access-security/services/access.service';
 import { UserService } from '../../user-management/services/user.service';
 import { FulfillmentService } from './fulfillment.service';
 import { OrderService } from './order.service';

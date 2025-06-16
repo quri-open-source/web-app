@@ -3,7 +3,7 @@ import { map } from 'rxjs';
 import { UserService } from '../../user-management/services/user.service';
 import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
-import { BaseService } from '../../shared/services/base.service';
+import { BaseService } from '../../access-security/services/access.service';
 
 // TODO: this must be removed when the backend is ready
 const GET_ALL_USER_BLUEPRINTS = (id: string) =>
