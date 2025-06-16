@@ -3,10 +3,12 @@ export const environment = {
   apiBaseUrl: 'http://localhost:3000',
   projectsApiBaseUrl: 'http://localhost:3000/projects',
   cloudinaryApiBaseUrl: 'https://api.cloudinary.com/v1_1/dkkfv72vo/image',
-  defaultUserId: 'user-001',
+  devUser: 'user-1', // Changed to match production environment
+  devRole: 'customer', // Default role
   defaultPreviewImageUrl: 'https://picsum.photos/150/150',
   defaultProjectStatus: 'blueprint',
   defaultGarmentSize: 'M',
   defaultGarmentColor: '#FFFFFF',
   garmentColorImagesUrl: 'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp',
+  currencyCode: 'PEN', // Added to match production environment
 };
