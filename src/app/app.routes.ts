@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from './shared/guards/role.guard';
 
 export const routes: Routes = [
     {
@@ -78,5 +79,29 @@ export const routes: Routes = [
     path: 'dashboard',
     redirectTo: 'analytics',
     pathMatch: 'full',
+  },
+  {
+    path: 'manufacturer-dashboard',
+    loadComponent: () =>
+      import('./public/pages/manufacturer-dashboard/manufacturer-dashboard.component').then(
+        (m) => m.ManufacturerDashboardComponent
+      ),
+    canActivate: [roleGuard(['manufacturer'])]
+  },
+  {
+    path: 'manufacturer-orders',
+    loadComponent: () =>
+      import('./public/pages/manufacturer-orders/manufacturer-orders-page.component').then(
+        (m) => m.ManufacturerOrdersPageComponent
+      ),
+    canActivate: [roleGuard(['manufacturer'])]
+  },
+  {
+    path: 'manufacturer-orders/:id',
+    loadComponent: () =>
+      import('./orders-fulfillments/components/manufacturer-orders/manufacturer-orders.component').then(
+        (m) => m.ManufacturerOrdersComponent
+      ),
+    canActivate: [roleGuard(['manufacturer'])]
   }
 ];
