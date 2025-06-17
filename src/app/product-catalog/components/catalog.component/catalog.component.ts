@@ -9,6 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { CartService } from '../../../orders-fulfillments/services/cart.service';
+import { UserService } from '../../../user-management/services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-catalog',
@@ -29,7 +32,10 @@ export class CatalogComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cartService: CartService,
+    private userService: UserService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -45,6 +51,23 @@ export class CatalogComponent implements OnInit {
       backdropClass: 'custom-dialog-backdrop',
       panelClass: 'custom-dialog-panel',
       hasBackdrop: true
+    });
+  }
+
+  addToCart(product: Product) {
+    this.cartService.addToCart(product).subscribe({
+      next: () => {
+        this.snackBar.open('Producto agregado al carrito', 'Cerrar', {
+          duration: 2000,
+          verticalPosition: 'top',
+        });
+      },
+      error: () => {
+        this.snackBar.open('Error al agregar al carrito', 'Cerrar', {
+          duration: 2000,
+          verticalPosition: 'top',
+        });
+      }
     });
   }
 }
