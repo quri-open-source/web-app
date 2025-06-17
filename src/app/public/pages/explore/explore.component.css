@@ -5,11 +5,12 @@
   padding: 1rem;
 }
 
-.search-bar-section {
-  margin-bottom: 2rem;
-}
-
-.explore-view {
+.search-bar-container {
   display: flex;
   justify-content: center;
 }
+
+.catalog-container {
+  width: 100%;
+}
+
