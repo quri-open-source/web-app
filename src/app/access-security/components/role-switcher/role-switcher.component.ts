@@ -18,49 +18,51 @@ export class RoleSwitcherComponent {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   
+  // Lista de usuarios de prueba para simular login
+  testUsers = [
+      { id: 'user-1', name: 'Alice', role: 'customer' },
+      { id: 'user-2', name: 'Bob', role: 'manufacturer' }
+  ];
+
+  switchUser(user: { id: string, name: string, role: string }) {
+      this.userService.loginAsDirect(user.id, user.role);
+      this.snackBar.open(`Switched to ${user.role} role (${user.name})`, 'OK', {
+          duration: 3000,
+      });
+      this.redirectBasedOnRole(user.role);
+  }
+
   getCurrentRoleName(): string {
     const role = this.userService.getUserRole();
-    return role === 'manufacturer' ? 'Manufacturer' : 'Customer';
+    if (!role) return 'No role';
+    return role.charAt(0).toUpperCase() + role.slice(1);
   }
   
   getCurrentUserId(): string {
     const userId = this.userService.getSessionUserId();
-    if (userId === 'user-1') {
-      return 'user-1 (Alice)';
-    } else if (userId === 'user-2') {
-      return 'user-2 (Bob)';
-    }
-    return userId;
+    const user = this.testUsers.find(u => u.id === userId);
+    return user ? `${user.id} (${user.name})` : userId;
   }
   
   switchToCustomer(): void {
     console.log('Switching to customer role...');
-    // Use direct login instead of API call for more reliable switching
     this.userService.loginAsDirect('user-1', 'customer');
-    
-    // Show a snackbar to indicate the role change
     this.snackBar.open('Switched to Customer role (Alice)', 'OK', {
       duration: 3000,
     });
-    
     this.redirectBasedOnRole('customer');
   }
   
   switchToManufacturer(): void {
     console.log('Switching to manufacturer role...');
-    // Use direct login instead of API call for more reliable switching
     this.userService.loginAsDirect('user-2', 'manufacturer');
-    
-    // Show a snackbar to indicate the role change
     this.snackBar.open('Switched to Manufacturer role (Bob)', 'OK', {
       duration: 3000,
     });
-    
     this.redirectBasedOnRole('manufacturer');
   }
   
   private redirectBasedOnRole(role: string): void {
-    // Use the role parameter instead of calling getUserRole() again
     if (role === 'manufacturer') {
       console.log('Redirecting to manufacturer dashboard');
       this.router.navigate(['/manufacturer-dashboard']);
