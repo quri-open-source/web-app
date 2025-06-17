@@ -6,40 +6,29 @@
       {{ error }}
     </div>
     <div *ngIf="!error">
-      <ng-container *ngIf="orders.length > 0; else emptyCart">
-        <div *ngFor="let order of orders" class="cart-order">
-          <h3>Order #{{ order.id }}</h3>
-          <div *ngFor="let item of order.items" class="cart-item">
-            <img [src]="item.projectImage || 'https://placehold.co/80x80'" alt="Product" class="cart-item-img" />
-            <div class="cart-item-info">
-              <div class="cart-item-title">{{ item.projectName || item.project_id }}</div>
-              <div class="cart-item-desc">{{ item.projectDescription || 'No description' }}</div>
-              <div class="cart-item-row">
-                <span class="cart-item-label">Unit price: </span>
-                <span class="cart-item-value">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
-              </div>
+      <ng-container *ngIf="cartWithDiscount && cartWithDiscount.items.length > 0; else emptyCart">
+        <div class="cart-item" *ngFor="let item of cartWithDiscount.items">
+          <img [src]="item.projectImage || 'https://placehold.co/80x80'" alt="Product" class="cart-item-img" />
+          <div class="cart-item-info">
+            <div class="cart-item-title">{{ item.projectName || item.project_id }}</div>
+            
+            <div class="cart-item-row">
+              <span class="cart-item-label">Unit price: </span>
+              <span class="cart-item-value">{{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
             </div>
-            <div class="cart-item-qty">
-              <button mat-icon-button><mat-icon>remove</mat-icon></button>
-              <span>{{ item.quantity }}</span>
-              <button mat-icon-button><mat-icon>add</mat-icon></button>
+          </div>
+          <div class="cart-item-qty">
+            <button mat-icon-button (click)="decreaseQuantity(item)"><mat-icon>remove</mat-icon></button>
+            <span>{{ item.quantity }}</span>
+            <button mat-icon-button (click)="increaseQuantity(item)"><mat-icon>add</mat-icon></button>
+            <button mat-icon-button color="warn" (click)="removeItem(item)"><mat-icon>delete</mat-icon></button>
+          </div>
+          <div class="cart-order-summary">
+            <div class="cart-summary-row">
+              <span class="cart-summary-label"><b>Item subtotal:</b></span>
+              <span class="cart-summary-value">{{ item.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
             </div>
-            <div class="cart-order-summary">
-              <div class="cart-summary-row">
-                <span class="cart-summary-label"><b>Order subtotal:</b></span>
-                <span class="cart-summary-value">{{ order.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
-              </div>
-              <div class="cart-summary-row" *ngIf="order.discountPolicy">
-                <span class="cart-summary-label">- Discount:</span>
-                <span class="cart-summary-value">{{ order.discount | currency:environment.currencyCode:'symbol':'1.2-2' }} ({{ order.discountPolicy.discount_percentage }}%)</span>
-              </div>
-              <div class="cart-summary-row">
-                <span class="cart-summary-label"><b>Order total:</b></span>
-                <span class="cart-summary-value">{{ order.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
-              </div>
-            </div>
-          </div>        
-          <hr />
+          </div>
         </div>
       </ng-container>
       <ng-template #emptyCart>
@@ -50,43 +39,22 @@
       </ng-template>
     </div>
   </div>
-  <div class="cart-summary-container" *ngIf="orders.length && !error">
-    <div class="cart-summary-shipping-section">
-      <mat-card class="cart-shipping-card">
-        <mat-card-title>Shipping Address</mat-card-title>
-        <mat-card-content>
-          <div class="shipping-row"><span class="shipping-label">Address:</span> <span class="shipping-value">{{ orders[0].shipping_address.address }}</span></div>
-          <div class="shipping-row"><span class="shipping-label">City:</span> <span class="shipping-value">{{ orders[0].shipping_address.city }}</span></div>
-          <div class="shipping-row"><span class="shipping-label">Country:</span> <span class="shipping-value">{{ orders[0].shipping_address.country }}</span></div>
-          <div class="shipping-row"><span class="shipping-label">State:</span> <span class="shipping-value">{{ orders[0].shipping_address.state }}</span></div>
-          <div class="shipping-row"><span class="shipping-label">ZIP:</span> <span class="shipping-value">{{ orders[0].shipping_address.zip }}</span></div>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-icon-button color="primary" aria-label="Edit shipping address">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
+  <div class="cart-summary-container" *ngIf="cartWithDiscount && !error">
     <div class="cart-summary-section">
       <mat-card class="cart-summary-card">
         <mat-card-title>Summary</mat-card-title>
         <mat-card-content>
           <div class="cart-summary-row">
             <span class="cart-summary-label">Subtotal:</span>
-            <span class="cart-summary-value">{{ summarySubtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+            <span class="cart-summary-value">{{ cartWithDiscount.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
-          <div class="cart-summary-row">
-            <span class="cart-summary-label">Shipping:</span>
-            <span class="cart-summary-value">{{ 15 | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
-          </div>
-          <div class="cart-summary-row">
+          <div class="cart-summary-row" *ngIf="cartWithDiscount.discountPolicy">
             <span class="cart-summary-label">Discount:</span>
-            <span class="cart-summary-value">- {{ summaryDiscount | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+            <span class="cart-summary-value">- {{ cartWithDiscount.discount | currency:environment.currencyCode:'symbol':'1.2-2' }} ({{ cartWithDiscount.discountPolicy.discount_percentage }}%)</span>
           </div>
           <div class="cart-summary-row total">
             <span class="cart-summary-label">Total:</span>
-            <span class="cart-summary-value">{{ summaryTotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+            <span class="cart-summary-value">{{ (cartWithDiscount.total) | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
           </div>
         </mat-card-content>
         <mat-card-actions>
@@ -95,8 +63,7 @@
             color="primary"
             class="checkout-btn"
             [routerLink]="['/choose-manufacturer']"
-            [queryParams]="{ orderId: orders[0]?.id }"
-            [disabled]="!orders.length"
+            [disabled]="!cartWithDiscount.items.length"
           >
             Make order
           </button>
