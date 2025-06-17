@@ -1,7 +1,7 @@
 export type ProjectCardContext = 'design-lab' | 'explore' | 'dashboard';
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Project } from '../../../design-lab/model/project.entity';
+import { Project } from '../../model/project.entity';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
