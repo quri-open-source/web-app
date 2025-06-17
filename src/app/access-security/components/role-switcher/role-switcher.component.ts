@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserService } from '../../../user-management/services/user.service';
+import { RoleDomainService } from '../../services/role-domain.service';
+import { UserDomainService } from '../../services/user-domain.service';
 
 @Component({
   selector: 'app-role-switcher',
@@ -17,8 +19,10 @@ export class RoleSwitcherComponent {
   public userService = inject(UserService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private roleDomainService = inject(RoleDomainService);
+  private userDomainService = inject(UserDomainService);
   
-  // Lista de usuarios de prueba para simular login
+  
   testUsers = [
       { id: 'user-1', name: 'Alice', role: 'customer' },
       { id: 'user-2', name: 'Bob', role: 'manufacturer' }
@@ -26,6 +30,8 @@ export class RoleSwitcherComponent {
 
   switchUser(user: { id: string, name: string, role: string }) {
       this.userService.loginAsDirect(user.id, user.role);
+      this.roleDomainService.setRole(user.role);
+      this.userDomainService.setUser(user); 
       this.snackBar.open(`Switched to ${user.role} role (${user.name})`, 'OK', {
           duration: 3000,
       });
@@ -47,6 +53,8 @@ export class RoleSwitcherComponent {
   switchToCustomer(): void {
     console.log('Switching to customer role...');
     this.userService.loginAsDirect('user-1', 'customer');
+    this.roleDomainService.setRole('customer');
+    this.userDomainService.setUser({ id: 'user-1', name: 'Alice', role: 'customer' });
     this.snackBar.open('Switched to Customer role (Alice)', 'OK', {
       duration: 3000,
     });
@@ -56,6 +64,8 @@ export class RoleSwitcherComponent {
   switchToManufacturer(): void {
     console.log('Switching to manufacturer role...');
     this.userService.loginAsDirect('user-2', 'manufacturer');
+    this.roleDomainService.setRole('manufacturer');
+    this.userDomainService.setUser({ id: 'user-2', name: 'Bob', role: 'manufacturer' });
     this.snackBar.open('Switched to Manufacturer role (Bob)', 'OK', {
       duration: 3000,
     });
@@ -65,7 +75,7 @@ export class RoleSwitcherComponent {
   private redirectBasedOnRole(role: string): void {
     if (role === 'manufacturer') {
       console.log('Redirecting to manufacturer dashboard');
-      this.router.navigate(['/manufacturer-dashboard']);
+      this.router.navigate(['/home']);
     } else {
       console.log('Redirecting to home');
       this.router.navigate(['/home']);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CartService } from '../../../../app/orders-fulfillments/services/cart.service';
 import { DiscountPolicyService } from '../../../../app/orders-fulfillments/services/discount-policy.service';
 import { environment } from '../../../../environments/environment';
@@ -14,6 +14,8 @@ import { ProjectService } from '../../../../app/design-lab/services/project.serv
 import { RouterModule } from '@angular/router';
 import { CartDiscountAssembler, CartWithDiscount } from '../../../../app/orders-fulfillments/services/cart-discount.assembler';
 import { Cart, CartItem } from '../../../../app/orders-fulfillments/model/cart.entity';
+import { UserDomainService, User } from '../../../access-security/services/user-domain.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -32,22 +34,48 @@ import { Cart, CartItem } from '../../../../app/orders-fulfillments/model/cart.e
   templateUrl: './shopping-cart.html',
   styleUrl: './shopping-cart.css'
 })
-export class ShoppingCart implements OnInit {
+export class ShoppingCart implements OnInit, OnDestroy {
   environment = environment;
   cart: Cart | null = null;
   cartWithDiscount: CartWithDiscount | null = null;
   loadingProjects = false;
   error: string | null = null;
   private projects: any[] = [];
+  private userDomainService: UserDomainService;
+  private userSubscription: Subscription | null = null;
+  currentUser: User | null = null;
 
   constructor(
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
-    private projectService: ProjectService 
-  ) {}
+    private projectService: ProjectService,
+    userDomainService: UserDomainService
+  ) {
+    this.userDomainService = userDomainService;
+  }
 
   ngOnInit() {
-    const userId = environment.devUser;
+    this.userSubscription = this.userDomainService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (user) {
+        this.loadCartForUser(user.id);
+      } else {
+        this.cart = null;
+        this.cartWithDiscount = null;
+      }
+    });
+    this.cartService.getCartUpdates().subscribe((updatedCart) => {
+      if (updatedCart && updatedCart.items.length > 0) {
+        this.cart = this.restoreCartItemPrototypes(updatedCart);
+        this.loadDiscountsAndAssemble();
+      } else {
+        this.cart = null;
+        this.cartWithDiscount = null;
+      }
+    });
+  }
+
+  loadCartForUser(userId: string) {
     this.cartService.getCartByUser(userId).subscribe((carts: Cart[]) => {
       this.cart = carts && carts.length > 0 ? this.restoreCartItemPrototypes(carts[0]) : null;
       if (this.cart && this.cart.items.length > 0) {
@@ -71,6 +99,10 @@ export class ShoppingCart implements OnInit {
         this.loadDiscountsAndAssemble();
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.userSubscription?.unsubscribe();
   }
 
   loadDiscountsAndAssemble() {
@@ -106,6 +138,10 @@ export class ShoppingCart implements OnInit {
     if (!this.cart) return;
     this.cart.items = this.cart.items.filter(i => i !== item);
     this.updateCartOnServer();
+    if (this.cart.items.length === 0) {
+      this.cart = null;
+      this.cartWithDiscount = null;
+    }
   }
 
   private restoreCartItemPrototypes(cart: Cart) {
@@ -115,7 +151,7 @@ export class ShoppingCart implements OnInit {
   }
 
   updateCartOnServer() {
-    if (!this.cart) return;
+    if (!this.cart || !this.currentUser) return;
     this.cartService.updateCart(this.cart).subscribe((updatedCart: Cart) => {
       this.cart = this.restoreCartItemPrototypes(updatedCart);
       if (this.cart && this.cart.items.length > 0) {

@@ -10,6 +10,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { ShoppingCartPopoverComponent } from '../app/orders-fulfillments/components/shopping-cart-popover/shopping-cart-popover.component';
 import { UserService } from './user-management/services/user.service';
+import { RoleDomainService } from './access-security/services/role-domain.service';
 
 export interface AppRoute {
     path: string;
@@ -39,6 +40,7 @@ export class App implements OnDestroy, OnInit {
     private readonly _mobileQuery: MediaQueryList;
     private readonly _mobileQueryListener: () => void;
     private routerSubscription: Subscription;
+    private roleDomainSubscription: Subscription;
 
     currentPage = '';
     currentPath = '';
@@ -51,9 +53,9 @@ export class App implements OnDestroy, OnInit {
             icon: 'home',
         },
         {
-            path: 'dashboard',
-            label: 'Dashboard',
-            icon: 'dashboard',
+            path: 'analytics',
+            label: 'Analytics',
+            icon: 'bar_chart',
         },
         {
             path: 'explore',
@@ -109,7 +111,7 @@ export class App implements OnDestroy, OnInit {
             icon: 'settings',
         },
     ];
-    constructor(private router: Router, public userService: UserService) {
+    constructor(private router: Router, public userService: UserService, private roleDomainService: RoleDomainService) {
         console.log('App Component - Constructor initialized');
         
         // Get user role and set initial routes
@@ -138,6 +140,13 @@ export class App implements OnDestroy, OnInit {
             this.updateLayout();
         };
         this._mobileQuery.addEventListener('change', this._mobileQueryListener);
+
+        // Suscribirse a los cambios de rol
+        this.roleDomainSubscription = this.roleDomainService.currentRole$.subscribe(role => {
+            if (role) {
+                this.updateRoutesBasedOnRole();
+            }
+        });
     }
     
     private updateRoutesBasedOnRole(): void {
@@ -172,6 +181,9 @@ export class App implements OnDestroy, OnInit {
         
         if (this.routerSubscription) {
             this.routerSubscription.unsubscribe();
+        }
+        if (this.roleDomainSubscription) {
+            this.roleDomainSubscription.unsubscribe();
         }
     }
     

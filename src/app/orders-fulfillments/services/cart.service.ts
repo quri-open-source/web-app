@@ -4,13 +4,12 @@ import { Observable, map, switchMap, BehaviorSubject } from 'rxjs';
 import { Cart, CartItem } from '../model/cart.entity';
 import { environment } from '../../../environments/environment';
 import { Product } from '../../product-catalog/model/product.entity';
-import { UserService } from '../../user-management/services/user.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private cartChanged$ = new BehaviorSubject<Cart | null>(null);
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(private http: HttpClient) {}
 
   getCartByUser(userId: string): Observable<Cart[]> {
     return this.http.get<Cart[]>(`${environment.apiBaseUrl}/carts?user_id=${userId}`);
@@ -39,8 +38,7 @@ export class CartService {
     );
   }
 
-  addToCart(product: Product): Observable<Cart> {
-    const userId = this.userService.getSessionUserId();
+  addToCart(product: Product, userId: string): Observable<Cart> {
     return this.getCartByUser(userId).pipe(
       map((carts) => carts[0]),
       switchMap((cart) => {
