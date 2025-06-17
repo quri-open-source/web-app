@@ -10,6 +10,7 @@ import { Project } from '../../design-lab/model/project.entity';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../model/product.entity';
+import { ProjectAssembler } from '../../design-lab/services/project.assembler';
 
 const GET_ALL_PRODUCTS = 'http://localhost:3000/catalog';
 
@@ -75,9 +76,10 @@ export class ProductService extends BaseService<ProductResponse> {
       getAllProductsWithProjects(): Observable<Product[]> {
         return forkJoin({
             products: this.http.get<ProductResponse[]>(this.productsUrl),
-            projects: this.http.get<Project[]>(this.projectsUrl),
+            projectResponses: this.http.get<ProjectResponse[]>(this.projectsUrl),
         }).pipe(
-            map(({ products, projects }) => {
+            map(({ products, projectResponses }) => {
+                const projects = ProjectAssembler.toEntitiesFromResponse(projectResponses);
                 return products.map((product) => {
                     const project = projects.find((p) => p.id === product.project_id);
                     return {
@@ -98,9 +100,14 @@ export class ProductService extends BaseService<ProductResponse> {
                             createdAt: new Date(comment.created_at),
                         })),
                         projectDetails: project ? {
+                            userId: project.userId,
+                            gender: project.gender,
+                            garmentSize: project.garmentSize,
                             garmentColor: project.garmentColor,
                             previewImageUrl: project.previewImageUrl,
                             name: project.name,
+                            lastModified: project.lastModified,
+                            createdAt: project.createdAt
                         } : undefined,
                     };
                 });
@@ -108,4 +115,3 @@ export class ProductService extends BaseService<ProductResponse> {
         );
     }
 }
-
