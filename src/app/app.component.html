@@ -37,13 +37,8 @@
                         <mat-icon>menu</mat-icon>
                     </button>
                     } @if (currentPage) {
-                    <h2>{{ currentPage }}</h2>
+                    <h2>{{currentPage}}</h2>
                     }
-                    <div class="role-indicator" 
-                         [class.manufacturer]="userService.getUserRole() === 'manufacturer'"
-                         [class.customer]="userService.getUserRole() === 'customer'">
-                        {{ userService.getUserRole() === 'manufacturer' ? 'MANUFACTURER' : 'CUSTOMER' }}
-                    </div>
                 </div>
                 <div class="toolbar-right">
                     <button
