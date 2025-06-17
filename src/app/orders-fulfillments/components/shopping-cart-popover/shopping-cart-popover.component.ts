@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { Cart, CartItem } from '../../model/cart.entity';
 import { DiscountPolicyService } from '../../services/discount-policy.service';
 import { CartDiscountAssembler, CartWithDiscount } from '../../services/cart-discount.assembler';
+import { UserDomainService, User } from '../../../access-security/services/user-domain.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-cart-popover',
@@ -16,21 +18,47 @@ import { CartDiscountAssembler, CartWithDiscount } from '../../services/cart-dis
   templateUrl: './shopping-cart-popover.component.html',
   styleUrls: ['./shopping-cart-popover.component.css']
 })
-export class ShoppingCartPopoverComponent implements OnInit {
+export class ShoppingCartPopoverComponent implements OnInit, OnDestroy {
   cart: Cart | null = null;
   cartWithDiscount: CartWithDiscount | null = null;
   environment = environment;
   projects: any[] = [];
   discountPolicies: any[] = [];
+  private userDomainService: UserDomainService;
+  private userSubscription: Subscription | null = null;
+  currentUser: User | null = null;
 
   constructor(
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
-    private router: Router
-  ) {}
+    private router: Router,
+    userDomainService: UserDomainService
+  ) {
+    this.userDomainService = userDomainService;
+  }
 
   ngOnInit() {
-    const userId = environment.devUser;
+    this.userSubscription = this.userDomainService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (user) {
+        this.loadCartForUser(user.id);
+      } else {
+        this.cart = null;
+        this.cartWithDiscount = null;
+      }
+    });
+    this.cartService.getCartUpdates().subscribe((updatedCart) => {
+      if (updatedCart && updatedCart.items.length > 0) {
+        this.cart = this.restoreCartItemPrototypes(updatedCart);
+        this.loadDiscountsAndAssemble();
+      } else {
+        this.cart = null;
+        this.cartWithDiscount = null;
+      }
+    });
+  }
+
+  loadCartForUser(userId: string) {
     this.cartService.getCartByUser(userId).subscribe((carts: Cart[]) => {
       this.cart = carts && carts.length > 0 ? this.restoreCartItemPrototypes(carts[0]) : null;
       if (this.cart && this.cart.items.length > 0) {
@@ -52,13 +80,10 @@ export class ShoppingCartPopoverComponent implements OnInit {
         this.loadDiscountsAndAssemble();
       }
     });
+  }
 
-    this.cartService.getCartUpdates().subscribe((updatedCart) => {
-      if (updatedCart) {
-        this.cart = this.restoreCartItemPrototypes(updatedCart);
-        this.loadDiscountsAndAssemble();
-      }
-    });
+  ngOnDestroy() {
+    this.userSubscription?.unsubscribe();
   }
 
   loadDiscountsAndAssemble() {
@@ -126,5 +151,9 @@ export class ShoppingCartPopoverComponent implements OnInit {
     if (!this.cart) return;
     this.cart.items = this.cart.items.filter(i => i !== item);
     this.updateCartOnServer();
+    if (this.cart.items.length === 0) {
+      this.cart = null;
+      this.cartWithDiscount = null;
+    }
   }
 }

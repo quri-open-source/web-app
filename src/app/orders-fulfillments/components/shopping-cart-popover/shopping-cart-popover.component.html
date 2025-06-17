@@ -10,7 +10,7 @@
             <button mat-icon-button (click)="decreaseQuantity(item)">−</button>
             <span>{{ item.quantity }}</span>
             <button mat-icon-button (click)="increaseQuantity(item)">+</button>
-            <a href="#" (click)="removeItem(item)" style="color:#1976d2;text-decoration:underline;margin-left:12px;">Remove</a>
+            <a href="#" (click)="removeItem(item); $event.preventDefault()" style="color:#1976d2;text-decoration:underline;margin-left:12px;">Remove</a>
           </div>
           <div class="cart-item-price">
             {{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}
