@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AnalyticsService } from '../../../analytics/services/analytics.service';
-import { AnalyticsData } from '../../../analytics/model/analytics-data.model';
+import { AnalyticsData } from '../../../analytics/model/analytics.entity';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { CommonModule } from '@angular/common';
@@ -41,7 +40,6 @@ export class DashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private analyticsService: AnalyticsService,
     private projectService: ProjectService,
     private router: Router,
     private userService: UserService
@@ -58,11 +56,6 @@ export class DashboardComponent implements OnInit {
 
   loadDashboard() {
     this.loading = true;
-    this.analyticsService.getUserAnalytics(this.userId).subscribe({
-      next: (data) => this.analytics = data,
-      error: () => this.analytics = null,
-      complete: () => this.loading = false
-    });
     this.projectService.getUserBlueprints().subscribe({
       next: (projectsData: Project[]) => {
         this.projects = projectsData;

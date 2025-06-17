@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AnalyticsService } from '../services/analytics.service';
-import { AnalyticsData } from '../model/analytics-data.model';
+import { AnalyticsData } from '../model/analytics.entity';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -23,7 +23,7 @@ export class AnalyticsDashboardComponent implements OnInit {
       return;
     }
     this.analyticsService.getUserAnalytics(this.userId).subscribe({
-      next: data => this.analytics = data,
+      next: (data: AnalyticsData) => this.analytics = data,
       error: () => this.error = 'Failed to load analytics data.'
     });
   }

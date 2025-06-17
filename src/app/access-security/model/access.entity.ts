@@ -34,3 +34,12 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     return false;
   };
 };
+
+export class Access {
+  constructor(
+    public id: string,
+    public userId: string,
+    public role: string,
+    public permissions: string[]
+  ) {}
+}
