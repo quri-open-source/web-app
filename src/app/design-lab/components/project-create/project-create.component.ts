@@ -14,7 +14,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {ProjectService} from '../../services/project.service';
 import {UserService} from '../../../user-management/services/user.service';
 import {Project} from '../../model/project.entity';
-import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER, PROJECT_PRIVACY, PROJECT_STATUS} from '../../../const';
+import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER, PROJECT_STATUS} from '../../../const';
 import {ProjectResponse} from '../../services/project.response';
 
 interface GarmentColorOption {
@@ -133,9 +133,6 @@ export class ProjectCreateComponent {
       userId,
       formValue.name,
       '', // previewImageUrl will be empty initially//
-      0,
-      0,
-      PROJECT_PRIVACY.PRIVATE,
       PROJECT_STATUS.BLUEPRINT,
       formValue.gender,
       formValue.garmentColor,
@@ -151,9 +148,6 @@ export class ProjectCreateComponent {
       user_id: userId,
       name: formValue.name,
       preview_image_url: '',
-      privacy: PROJECT_PRIVACY.PRIVATE,
-      price: 0,
-      likes: 0,
       status: PROJECT_STATUS.BLUEPRINT,
       gender: formValue.gender,
       garment_color: formValue.garmentColor,

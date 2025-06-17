@@ -1,12 +1,8 @@
-
 export interface ProjectResponse {
     id: string;
     user_id: string;
     name: string;
     preview_image_url: string;
-    price: number;
-    likes: number;
-    privacy: string;
     status: string;
     gender: string;
     garment_color: string;

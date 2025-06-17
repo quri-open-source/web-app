@@ -68,3 +68,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-dark);
 }
+
+.custom-dialog-backdrop {
+  background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 40%, transparent 60%);
+}
+
+.custom-dialog-panel {
+  padding: 0;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 80%;
+}

@@ -13,11 +13,6 @@ export const DEFAULT_LAYER_STYLES = {
 export const TEXT_LAYER_BOLD_VALUE = '700';
 export const TEXT_LAYER_REGULAR_VALUE = '400';
 
-export enum PROJECT_PRIVACY {
-    PRIVATE = 'private',
-    PUBLIC = 'public',
-}
-
 export enum PROJECT_STATUS {
     IN_PROGRESS = 'in progress',
     BLUEPRINT = 'blueprint',

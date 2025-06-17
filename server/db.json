@@ -155,9 +155,6 @@
       "user_id": "user-1",
       "name": "Project One",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "private",
-      "price": 0,
-      "likes": 0,
       "status": "blueprint",
       "gender": "men",
       "garment_color": "#1B8937",
@@ -171,9 +168,6 @@
       "user_id": "user-3",
       "name": "Summer Collection Design",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "private",
-      "price": 0,
-      "likes": 0,
       "status": "in-progress",
       "gender": "women",
       "garment_color": "#F459B0",
@@ -187,9 +181,6 @@
       "user_id": "user-2",
       "name": "Bob's First Project",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 0,
-      "likes": 0,
       "status": "blueprint",
       "gender": "men",
       "garment_color": "#161615",
@@ -203,9 +194,6 @@
       "user_id": "user-1",
       "name": "BlackJacket",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 0,
-      "likes": 0,
       "status": "blueprint",
       "gender": "men",
       "garment_color": "#403D3B",
@@ -219,9 +207,6 @@
       "user_id": "user-14",
       "name": "Misty Morning",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 22.5,
-      "likes": 45,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#FFC0CB",
@@ -235,9 +220,6 @@
       "user_id": "user-14",
       "name": "Ocean Whisper",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 30,
-      "likes": 59,
       "status": "in-progress",
       "gender": "women",
       "garment_color": "#87CEFA",
@@ -251,9 +233,6 @@
       "user_id": "user-14",
       "name": "Autumn Leaves",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 27.75,
-      "likes": 38,
       "status": "completed",
       "gender": "women",
       "garment_color": "#FFA07A",
@@ -267,9 +246,6 @@
       "user_id": "user-14",
       "name": "Hidden Garden",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 25,
-      "likes": 52,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#32CD32",
@@ -283,9 +259,6 @@
       "user_id": "user-14",
       "name": "Private Memoir",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "private",
-      "price": 0,
-      "likes": 10,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#D3D3D3",
@@ -299,9 +272,6 @@
       "user_id": "user-15",
       "name": "Urban Skyline",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 28,
-      "likes": 63,
       "status": "in-progress",
       "gender": "men",
       "garment_color": "#708090",
@@ -315,9 +285,6 @@
       "user_id": "user-15",
       "name": "Midnight Muse",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 31.5,
-      "likes": 71,
       "status": "completed",
       "gender": "men",
       "garment_color": "#191970",
@@ -331,9 +298,6 @@
       "user_id": "user-15",
       "name": "Citrus Burst",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 26.4,
-      "likes": 55,
       "status": "blueprint",
       "gender": "men",
       "garment_color": "#FFD700",
@@ -347,9 +311,6 @@
       "user_id": "user-15",
       "name": "Frosted Peaks",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 24.85,
-      "likes": 48,
       "status": "in-progress",
       "gender": "men",
       "garment_color": "#B0E0E6",
@@ -363,9 +324,6 @@
       "user_id": "user-15",
       "name": "Private Blueprint",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "private",
-      "price": 0,
-      "likes": 8,
       "status": "blueprint",
       "gender": "men",
       "garment_color": "#DCDCDC",
@@ -379,9 +337,6 @@
       "user_id": "user-16",
       "name": "Zen Garden",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 29.95,
-      "likes": 68,
       "status": "completed",
       "gender": "women",
       "garment_color": "#98FB98",
@@ -395,9 +350,6 @@
       "user_id": "user-16",
       "name": "Aurora Lights",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 34.2,
-      "likes": 75,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#7FFFD4",
@@ -411,9 +363,6 @@
       "user_id": "user-16",
       "name": "Midnight Garden",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 27.6,
-      "likes": 61,
       "status": "in-progress",
       "gender": "women",
       "garment_color": "#4B0082",
@@ -427,9 +376,6 @@
       "user_id": "user-16",
       "name": "Serene Sunset",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "public",
-      "price": 23.45,
-      "likes": 54,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#FF7F50",
@@ -443,9 +389,6 @@
       "user_id": "user-16",
       "name": "Private Reflection",
       "preview_image_url": "https://picsum.photos/150/150",
-      "privacy": "private",
-      "price": 0,
-      "likes": 9,
       "status": "blueprint",
       "gender": "women",
       "garment_color": "#FFE4E1",
@@ -723,6 +666,7 @@
       "project_id": "project-1",
       "manufacturer_id": "manufacturer-1",
       "price": 50,
+      "likes": 25,
       "tags": [
         "t-shirt",
         "cotton"
@@ -738,10 +682,190 @@
         {
           "id": "comment-1",
           "user_id": "user-1",
-          "text": "This is a comment",
-          "created_at": "2025-05-29T20:40:47.478Z"
+          "text": "Great design!",
+          "created_at": "2025-06-01T10:00:00.000Z"
         }
       ]
+    },
+    {
+      "id": "product-2",
+      "project_id": "project-3",
+      "manufacturer_id": "manufacturer-1",
+      "price": 60,
+      "likes": 30,
+      "tags": [
+        "modern",
+        "men"
+      ],
+      "created_at": "2025-06-13T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.7,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-3",
+      "project_id": "61430d53-94d5-4e7a-aa39-47614c438969",
+      "manufacturer_id": "manufacturer-1",
+      "price": 55,
+      "likes": 15,
+      "tags": [
+        "jacket",
+        "men"
+      ],
+      "created_at": "2025-06-13T17:29:42.729Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.2,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-4",
+      "project_id": "project-14-1",
+      "manufacturer_id": "manufacturer-1",
+      "price": 70,
+      "likes": 40,
+      "tags": [
+        "elegant",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.8,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-5",
+      "project_id": "project-14-4",
+      "manufacturer_id": "manufacturer-1",
+      "price": 65,
+      "likes": 35,
+      "tags": [
+        "garden",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.6,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-6",
+      "project_id": "project-14-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 80,
+      "likes": 50,
+      "tags": [
+        "memoir",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.9,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-7",
+      "project_id": "project-15-3",
+      "manufacturer_id": "manufacturer-1",
+      "price": 45,
+      "likes": 20,
+      "tags": [
+        "burst",
+        "men"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.3,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-8",
+      "project_id": "project-15-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 50,
+      "likes": 25,
+      "tags": [
+        "blueprint",
+        "men"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.4,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-9",
+      "project_id": "project-16-2",
+      "manufacturer_id": "manufacturer-1",
+      "price": 75,
+      "likes": 45,
+      "tags": [
+        "aurora",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.7,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-10",
+      "project_id": "project-16-4",
+      "manufacturer_id": "manufacturer-1",
+      "price": 85,
+      "likes": 55,
+      "tags": [
+        "sunset",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.9,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-11",
+      "project_id": "project-16-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 90,
+      "likes": 60,
+      "tags": [
+        "reflection",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 5.0,
+      "status": "available",
+      "comments": []
     }
   ],
   "transactions": [
@@ -827,3 +951,4 @@
     }
   ]
 }
+
