@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../../../../app/orders-fulfillments/services/order.service';
+import { CartService } from '../../../../app/orders-fulfillments/services/cart.service';
 import { DiscountPolicyService } from '../../../../app/orders-fulfillments/services/discount-policy.service';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { ProjectService } from '../../../../app/design-lab/services/project.service';
-import { RouterModule } from '@angular/router'; // <-- add this import
+import { RouterModule } from '@angular/router';
+import { CartDiscountAssembler, CartWithDiscount } from '../../../../app/orders-fulfillments/services/cart-discount.assembler';
+import { Cart, CartItem } from '../../../../app/orders-fulfillments/model/cart.entity';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -25,83 +27,116 @@ import { RouterModule } from '@angular/router'; // <-- add this import
     MatFormFieldModule,
     MatInputModule,
     MatChipsModule,
-    RouterModule // <-- add this line
+    RouterModule 
   ],
   templateUrl: './shopping-cart.html',
   styleUrl: './shopping-cart.css'
 })
 export class ShoppingCart implements OnInit {
   environment = environment;
-  orders: any[] = [];
+  cart: Cart | null = null;
+  cartWithDiscount: CartWithDiscount | null = null;
   loadingProjects = false;
-  summarySubtotal = 0;
-  summaryDiscount = 0;
-  summaryTotal = 0;
   error: string | null = null;
+  private projects: any[] = [];
 
   constructor(
-    private orderService: OrderService,
+    private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
-    private projectService: ProjectService // <-- inject ProjectService
+    private projectService: ProjectService 
   ) {}
 
   ngOnInit() {
     const userId = environment.devUser;
-    this.orderService.getOrdersByUser(userId).subscribe({
-      next: (orders: any[]) => {
-        this.discountPolicyService.getDiscountPolicies().subscribe({
-          next: policies => {
-            this.loadingProjects = true;
-            const allItems = orders.flatMap((order: any) => order.items);
-            const uniqueProjectIds = [...new Set(allItems.map((item: any) => item.project_id))];
-            Promise.all(uniqueProjectIds.map(pid => this.projectService.getProjectById(pid).toPromise()))
-              .then(projects => {
-                const projectMap = Object.fromEntries(projects.map((p: any) => [p.id, p]));
-                this.orders = orders.map((order: any) => {
-                  const items = order.items.map((item: any) => {
-                    const project = projectMap[item.project_id];
-                    return {
-                      ...item,
-                      projectName: project?.name,
-                      projectImage: project?.previewImageUrl,
-                      projectDescription: project?.description || order.description || '',
-                      unit_price: item.unit_price
-                    };
-                  });
-                  const subtotal = items.reduce((sum: number, item: any) => sum + item.unit_price * item.quantity, 0);
-                  let discount = 0;
-                  let discountPolicy = null;
-                  if (order.applied_discounts && order.applied_discounts.length > 0) {
-                    const discountId = order.applied_discounts[0].id;
-                    discountPolicy = policies.find((p: any) => p.id === discountId);
-                    if (discountPolicy) {
-                      discount = subtotal * (discountPolicy.discount_percentage / 100);
-                    }
-                  }
-                  const total = subtotal - discount;
-                  return { ...order, items, subtotal, discount, discountPolicy, total };
-                });
-                // Calcular resumen global
-                this.summarySubtotal = this.orders.reduce((sum, o) => sum + o.subtotal, 0);
-                this.summaryDiscount = this.orders.reduce((sum, o) => sum + o.discount, 0);
-                this.summaryTotal = this.orders.reduce((sum, o) => sum + o.total, 0) + 15;
-                this.loadingProjects = false;
-                this.error = null;
-              })
-              .catch(() => {
-                this.error = 'Failed to load';
-                this.loadingProjects = false;
-              });
-          },
-          error: () => {
-            this.error = 'Failed to load';
-            this.loadingProjects = false;
-          }
-        });
-      },
-      error: () => {
-        this.error = 'Failed to load';
+    this.cartService.getCartByUser(userId).subscribe((carts: Cart[]) => {
+      this.cart = carts && carts.length > 0 ? this.restoreCartItemPrototypes(carts[0]) : null;
+      if (this.cart && this.cart.items.length > 0) {
+        fetch(`${environment.apiBaseUrl}/projects`)
+          .then(res => res.json())
+          .then((projects: any[]) => {
+            this.projects = projects;
+            this.cart!.items = this.cart!.items.map((item: CartItem) => {
+              const project = projects.find((p: any) => p.id === item.project_id);
+              const cartItem = Object.setPrototypeOf({
+                ...item,
+                projectName: project ? project.name : '',
+                projectImage: project ? project.preview_image_url : '',
+                projectDescription: project ? project.description || '' : '',
+              }, CartItem.prototype);
+              return cartItem;
+            });
+            this.loadDiscountsAndAssemble();
+          });
+      } else {
+        this.loadDiscountsAndAssemble();
+      }
+    });
+  }
+
+  loadDiscountsAndAssemble() {
+    if (!this.cart) return;
+    this.discountPolicyService.getDiscountPolicies().subscribe(
+      (policies) => {
+        this.cartWithDiscount = CartDiscountAssembler.assemble(this.cart!, policies);
         this.loadingProjects = false;
+        this.error = null;
+      },
+      () => {
+        this.error = 'Failed to load discounts';
+        this.loadingProjects = false;
+      }
+    );
+  }
+
+  increaseQuantity(item: CartItem) {
+    if (!this.cart) return;
+    item.quantity++;
+    this.updateCartOnServer();
+  }
+
+  decreaseQuantity(item: CartItem) {
+    if (!this.cart) return;
+    if (item.quantity > 1) {
+      item.quantity--;
+      this.updateCartOnServer();
+    }
+  }
+
+  removeItem(item: CartItem) {
+    if (!this.cart) return;
+    this.cart.items = this.cart.items.filter(i => i !== item);
+    this.updateCartOnServer();
+  }
+
+  private restoreCartItemPrototypes(cart: Cart) {
+    if (!cart || !cart.items) return cart;
+    cart.items = cart.items.map(item => Object.setPrototypeOf(item, CartItem.prototype));
+    return cart;
+  }
+
+  updateCartOnServer() {
+    if (!this.cart) return;
+    this.cartService.updateCart(this.cart).subscribe((updatedCart: Cart) => {
+      this.cart = this.restoreCartItemPrototypes(updatedCart);
+      if (this.cart && this.cart.items.length > 0) {
+        fetch(`${environment.apiBaseUrl}/projects`)
+          .then(res => res.json())
+          .then((projects: any[]) => {
+            this.projects = projects;
+            this.cart!.items = this.cart!.items.map((item: CartItem) => {
+              const project = projects.find((p: any) => p.id === item.project_id);
+              const cartItem = Object.setPrototypeOf({
+                ...item,
+                projectName: project ? project.name : '',
+                projectImage: project ? project.preview_image_url : '',
+                projectDescription: project ? project.description || '' : '',
+              }, CartItem.prototype);
+              return cartItem;
+            });
+            this.loadDiscountsAndAssemble();
+          });
+      } else {
+        this.loadDiscountsAndAssemble();
       }
     });
   }

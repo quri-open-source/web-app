@@ -27,7 +27,7 @@ export interface AppRoute {
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
-        ShoppingCartPopoverComponent,
+        ShoppingCartPopoverComponent
     ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
