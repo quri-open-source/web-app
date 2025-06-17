@@ -863,7 +863,7 @@
       "gallery": [
         "https://picsum.photos/200/200"
       ],
-      "rating": 5.0,
+      "rating": 5,
       "status": "available",
       "comments": []
     }
@@ -949,6 +949,73 @@
       "completed": 0,
       "id": "174f"
     }
+  ],
+  "carts": [
+    {
+      "id": "cart-1",
+      "user_id": "user-1",
+      "items": [
+        {
+          "project_id": "project-1",
+          "quantity": 2,
+          "unit_price": 50,
+          "projectName": "Project One",
+          "projectImage": "https://picsum.photos/150/150",
+          "projectDescription": ""
+        },
+        {
+          "project_id": "project-14-1",
+          "quantity": 3,
+          "unit_price": 50,
+          "projectName": "Misty Morning",
+          "projectImage": "https://picsum.photos/150/150",
+          "projectDescription": ""
+        },
+        {
+          "project_id": "project-3",
+          "quantity": 1,
+          "unit_price": 60,
+          "projectImage": "https://picsum.photos/150/150",
+          "projectName": "Bob's First Project"
+        }
+      ],
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ]
+    },
+    {
+      "id": "cart-2",
+      "user_id": "user-3",
+      "items": [
+        {
+          "project_id": "project-2",
+          "quantity": 2,
+          "unit_price": 50,
+          "projectName": "Project One",
+          "projectImage": "https://picsum.photos/150/150"
+        }
+      ],
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ]
+    },
+    {
+      "id": "",
+      "user_id": "user-2",
+      "items": [
+        {
+          "project_id": "project-1",
+          "quantity": 1,
+          "unit_price": 50,
+          "projectImage": "https://picsum.photos/150/150",
+          "projectName": "Project One"
+        }
+      ],
+      "applied_discounts": []
+    }
   ]
 }
-
