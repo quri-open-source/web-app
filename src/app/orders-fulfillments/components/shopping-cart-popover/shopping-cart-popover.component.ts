@@ -52,6 +52,13 @@ export class ShoppingCartPopoverComponent implements OnInit {
         this.loadDiscountsAndAssemble();
       }
     });
+
+    this.cartService.getCartUpdates().subscribe((updatedCart) => {
+      if (updatedCart) {
+        this.cart = this.restoreCartItemPrototypes(updatedCart);
+        this.loadDiscountsAndAssemble();
+      }
+    });
   }
 
   loadDiscountsAndAssemble() {
