@@ -957,7 +957,7 @@
       "items": [
         {
           "project_id": "project-1",
-          "quantity": 2,
+          "quantity": 3,
           "unit_price": 50,
           "projectName": "Project One",
           "projectImage": "https://picsum.photos/150/150",
@@ -970,13 +970,6 @@
           "projectName": "Misty Morning",
           "projectImage": "https://picsum.photos/150/150",
           "projectDescription": ""
-        },
-        {
-          "project_id": "project-3",
-          "quantity": 1,
-          "unit_price": 60,
-          "projectImage": "https://picsum.photos/150/150",
-          "projectName": "Bob's First Project"
         }
       ],
       "applied_discounts": [
