@@ -3,3 +3,12 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 2fr));
   gap: 1rem;
 }
+
+.detail-row-secondary {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon-container {
+  width: 4rem;
+}
