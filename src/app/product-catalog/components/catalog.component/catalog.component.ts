@@ -13,6 +13,7 @@ import { CartService } from '../../../orders-fulfillments/services/cart.service'
 import { UserService } from '../../../user-management/services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserDomainService } from '../../../access-security/services/user-domain.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-catalog',
@@ -29,7 +30,7 @@ import { UserDomainService } from '../../../access-security/services/user-domain
 })
 export class CatalogComponent implements OnInit {
   products: Product[] = [];
-
+  currencyCode = environment.currencyCode;
   constructor(
     private productService: ProductService,
     private cdr: ChangeDetectorRef,

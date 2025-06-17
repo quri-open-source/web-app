@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./product-detail-dialog.component.css'],
 })
 export class ProductDetailDialogComponent {
+  currencyCode = environment.currencyCode;
   constructor(
     @Inject(MAT_DIALOG_DATA) public product: Product,
     private dialogRef: MatDialogRef<ProductDetailDialogComponent>

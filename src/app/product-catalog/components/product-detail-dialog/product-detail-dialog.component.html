@@ -8,7 +8,7 @@
     </div>
     <div class="detail-info" *ngIf="product.projectDetails">
       <p><strong>User:</strong> {{ product.projectDetails.userId }}</p>
-      <p><strong>Price:</strong> S/. {{ product.price | number:'1.2-2' }}</p>
+      <p><strong>Price:</strong> {{ currencyCode }} {{ product.price | number:'1.2-2' }}</p>
       <p><strong>Color:</strong> <span [style.background-color]="product.projectDetails.garmentColor" class="color-box"></span> {{ product.projectDetails.garmentColor }}</p>
       <p><strong>Size:</strong> {{ product.projectDetails.garmentSize }}</p>
       <p><strong>Gender:</strong> {{ product.projectDetails.gender | titlecase }}</p>

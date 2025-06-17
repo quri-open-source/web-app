@@ -20,7 +20,7 @@
       <h3>{{ product.projectDetails?.name }}</h3>
 
       <div class="product-details-list">
-        <div class="detail-row" style="font-weight: 500">S/. {{ product.price | number:'1.2-2' }}</div>
+        <div class="detail-row" style="font-weight: 500">{{ currencyCode }} {{ product.price | number:'1.2-2' }}</div>
         <div class="detail-row"> {{ product.projectDetails?.gender | titlecase }}</div>
 
         <div class="detail-row-secondary" style="margin-top: 0.5rem;">
