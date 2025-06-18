@@ -8,7 +8,8 @@
 </head>
 <body>
 <section class="dashboard-page">
-  <app-analytics-dashboard [userId]="userId" *ngIf="!loading" />
+  <app-analytics-dashboard [userId]="userId" *ngIf="!loading && userRole === 'customer'" />
+  <app-manufacturer-analytics-dashboard [userId]="userId" *ngIf="!loading && userRole === 'manufacturer'" />
   <div class="projects-section">
     <div class="table-header">
       <h2>Your Projects</h2>

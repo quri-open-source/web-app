@@ -25,10 +25,10 @@
       "id": "user-2",
       "email": "bob@example.com",
       "profile": {
-        "firstName": "Bobeeto",
-        "lastName": "Builder",
         "gender": "men",
-        "addresses": []
+        "addresses": [],
+        "first_name": "Bobe",
+        "last_name": "Builder"
       },
       "rol": "manufacturer"
     },
@@ -653,11 +653,11 @@
       "id": "manufacturer-1",
       "user_id": "user-2",
       "name": "Manufacturer One",
-      "address": "123 Main St",
-      "city": "Anytown",
+      "address": "456 Factory Ave",
+      "city": "Industriaville",
       "country": "USA",
-      "state": "CA",
-      "zip": "12345"
+      "state": "TX",
+      "zip": "75002"
     }
   ],
   "catalog": [
@@ -908,7 +908,17 @@
         "first_name": "Bob",
         "last_name": "Builder",
         "gender": "men",
-        "addresses": []
+        "addresses": [
+          {
+            "id": "address-2",
+            "address": "456 Factory Ave",
+            "city": "Industriaville",
+            "country": "USA",
+            "state": "TX",
+            "zip": "75002",
+            "profile_id": "profile-bob"
+          }
+        ]
       }
     },
     {
@@ -924,7 +934,7 @@
       }
     }
   ],
-  "analytics": [
+  "customer_analytics": [
     {
       "user_id": "user-1",
       "total_projects": 2,
@@ -934,20 +944,45 @@
       "id": "1ba3"
     },
     {
-      "user_id": "user-2",
-      "total_projects": 1,
-      "blueprints": 1,
-      "designed_garments": 0,
-      "completed": 0,
-      "id": "ae68"
-    },
-    {
       "user_id": "user-3",
       "total_projects": 1,
       "blueprints": 0,
       "designed_garments": 1,
       "completed": 0,
       "id": "174f"
+    },
+    {
+      "user_id": "user-14",
+      "total_projects": 5,
+      "blueprints": 3,
+      "designed_garments": 1,
+      "completed": 1,
+      "id": "user-14-analytics"
+    },
+    {
+      "user_id": "user-15",
+      "total_projects": 5,
+      "blueprints": 2,
+      "designed_garments": 2,
+      "completed": 1,
+      "id": "user-15-analytics"
+    },
+    {
+      "user_id": "user-16",
+      "total_projects": 5,
+      "blueprints": 3,
+      "designed_garments": 1,
+      "completed": 1,
+      "id": "user-16-analytics"
+    }
+  ],
+  "manufacturer_analytics": [
+    {
+      "user_id": "user-2",
+      "total_orders_received": 0,
+      "pending_fulfillments": 0,
+      "produced_projects": 1,
+      "avg_fulfillment_time_days": 0
     }
   ],
   "carts": [
