@@ -9,7 +9,8 @@ import { AnalyticsAssembler } from './analytics.assembler';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
-  private apiUrl = environment.apiBaseUrl + '/analytics';
+  // Cambia la URL para que apunte a la colección correcta en el backend json-server
+  private apiUrl = environment.apiBaseUrl + '/customer_analytics';
 
   constructor(private http: HttpClient) {}
 
