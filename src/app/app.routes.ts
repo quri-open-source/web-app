@@ -80,8 +80,8 @@ export const routes: Routes = [
   {
     path: 'analytics',
     loadComponent: () =>
-      import('./public/pages/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent
+      import('./public/pages/analytics/analytics.component').then(
+        (m) => m.AnalyticsComponent
       ),
   },
   {

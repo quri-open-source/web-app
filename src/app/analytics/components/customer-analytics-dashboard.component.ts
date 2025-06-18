@@ -7,8 +7,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-analytics-dashboard',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './analytics-dashboard.component.html',
-  styleUrls: ['./analytics-dashboard.component.css'],
+  templateUrl: './customer-analytics-dashboard.component.html',
+  styleUrls: ['./customer-analytics-dashboard.component.css'],
 })
 export class AnalyticsDashboardComponent implements OnInit {
   @Input() userId!: string;

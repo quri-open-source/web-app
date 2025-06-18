@@ -3,7 +3,8 @@ import { AnalyticsData } from '../../../analytics/model/analytics.entity';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { CommonModule } from '@angular/common';
-import { AnalyticsDashboardComponent } from '../../../analytics/components/analytics-dashboard.component';
+import { AnalyticsDashboardComponent as CustomerAnalyticsDashboardComponent } from '../../../analytics/components/customer-analytics-dashboard.component';
+import { ManufacturerAnalyticsDashboardComponent } from '../../../analytics/components/manufacturer-analytics-dashboard.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -14,25 +15,27 @@ import { Router } from '@angular/router';
 import { UserService } from '../../../user-management/services/user.service';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-analytics',
   standalone: true,
   imports: [
     CommonModule,
-    AnalyticsDashboardComponent,
+    CustomerAnalyticsDashboardComponent,
+    ManufacturerAnalyticsDashboardComponent,
     MatButtonModule,
     MatTableModule,
     MatProgressSpinnerModule,
     MatIconModule,
     MatPaginatorModule
   ],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  templateUrl: './analytics.component.html',
+  styleUrls: ['./analytics.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class AnalyticsComponent implements OnInit {
   analytics: AnalyticsData | null = null;
   projects: Project[] = [];
   loading = true;
   userId!: string;
+  userRole!: string;
   displayedColumns: string[] = [
     'name', 'genre', 'garmentColor', 'garmentSize', 'status', 'createdAt', 'lastModified', 'actions'
   ];
@@ -45,8 +48,10 @@ export class DashboardComponent implements OnInit {
     private userService: UserService
   ) {}
 
+
   ngOnInit(): void {
     this.userId = this.userService.getSessionUserId();
+    this.userRole = this.userService.getUserRole();
     this.loadDashboard();
   }
 
