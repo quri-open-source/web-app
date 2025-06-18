@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
 import { UserService } from '../../services/user.service';
+import { ManufacturerService, ManufacturerProfile } from '../../services/manufacturer.service';
 import { User } from '../../model/user.entity';
 import { of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -42,6 +43,10 @@ import { UserAssembler } from '../../services/user.assembler';
 export class UserInfoComponent implements OnInit {
     @Input() user!: User;
     editUser: any = {};
+    manufacturerProfile: ManufacturerProfile | null = null;
+    manufacturerUser: any = null;
+    isManufacturer = false;
+    private manufacturerService = inject(ManufacturerService);
     private userService = inject(UserService);
     private snackBar = inject(MatSnackBar);
 
@@ -50,13 +55,27 @@ export class UserInfoComponent implements OnInit {
     errorLoadingAddresses = false;
 
     ngOnInit() {
-        console.log('UserInfoComponent initialized with user:', this.user);
-        console.log("addresses", this.user?.profile?.addresses || []);
-        this.editUser = { ...this.user };
-        if (this.user?.profile) {
-            this.editUser.profile = { ...this.user.profile };
+        this.isManufacturer = this.user.rol === 'manufacturer';
+        if (this.isManufacturer) {
+            // Cargar manufacturer profile y user
+            this.manufacturerService.getManufacturerByUserId(this.user.id).subscribe({
+                next: (profiles) => {
+                    this.manufacturerProfile = profiles[0];
+                }
+            });
+            // Cargar userWithProfile para manufacturer
+            this.userService.getUserWithProfile(this.user.id).subscribe({
+                next: (user) => {
+                    this.manufacturerUser = { ...user };
+                }
+            });
+        } else {
+            this.editUser = { ...this.user };
+            if (this.user?.profile) {
+                this.editUser.profile = { ...this.user.profile };
+            }
+            this.loadAddresses();
         }
-        this.loadAddresses();
     }
 
     loadAddresses() {
@@ -86,7 +105,38 @@ export class UserInfoComponent implements OnInit {
     }
 
     onUpdate() {
-        // Convert camelCase to snake_case for profile and addresses before PUT
+        if (this.isManufacturer && this.manufacturerProfile && this.manufacturerUser) {
+            // Actualiza manufacturer
+            this.manufacturerService.updateManufacturer(this.manufacturerProfile.id, this.manufacturerProfile).subscribe({
+                next: (updated) => {
+                    this.manufacturerProfile = updated;
+                    // Actualiza userWithProfile (nombre, email, género)
+                    const userUpdate = {
+                        ...this.manufacturerUser,
+                        email: this.manufacturerUser.email,
+                        profile: {
+                            ...this.manufacturerUser.profile,
+                            first_name: this.manufacturerUser.profile.first_name,
+                            last_name: this.manufacturerUser.profile.last_name,
+                            gender: this.manufacturerUser.profile.gender
+                        }
+                    };
+                    this.userService.updateUserWithProfile(this.user.id, userUpdate).subscribe({
+                        next: () => {
+                            this.snackBar.open('Manufacturer profile updated!', 'Close', { duration: 3000 });
+                        },
+                        error: () => {
+                            this.snackBar.open('Error updating manufacturer user. Please try again.', 'Close', { duration: 4000 });
+                        }
+                    });
+                },
+                error: () => {
+                    this.snackBar.open('Error updating manufacturer. Please try again.', 'Close', { duration: 4000 });
+                }
+            });
+            return;
+        }
+        // Customer flow (igual que antes)
         const userToUpdate = {
             ...this.editUser,
             profile: {
@@ -108,8 +158,6 @@ export class UserInfoComponent implements OnInit {
         delete userToUpdate.profile.firstName;
         delete userToUpdate.profile.lastName;
         userToUpdate.profile.addresses.forEach((a: any) => delete a.profileId);
-
-        // Actualiza el perfil en la colección 'profiles' usando el id correcto
         const profileId = userToUpdate.profile.addresses[0]?.profile_id || null;
         if (profileId) {
             this.userService.updateProfile(profileId, {
@@ -121,7 +169,6 @@ export class UserInfoComponent implements OnInit {
                 addresses: userToUpdate.profile.addresses
             }).subscribe({
                 next: () => {
-                    // Después de actualizar el perfil, actualiza userWithProfile si existe
                     this.userService.updateUserWithProfile(userToUpdate.id, {
                         ...userToUpdate,
                         profile: {
@@ -134,20 +181,13 @@ export class UserInfoComponent implements OnInit {
                 }
             });
         }
-
         this.userService.updateUser(userToUpdate).subscribe({
             next: (updated) => {
                 this.user = UserAssembler.toEntityFromResponse(updated);
-                this.snackBar.open('Update successful!', 'Close', {
-                    duration: 3000,
-                });
+                this.snackBar.open('Update successful!', 'Close', { duration: 3000 });
             },
             error: () => {
-                this.snackBar.open(
-                    'Error updating user. Please try again.',
-                    'Close',
-                    { duration: 4000 }
-                );
+                this.snackBar.open('Error updating user. Please try again.', 'Close', { duration: 4000 });
             },
         });
     }
