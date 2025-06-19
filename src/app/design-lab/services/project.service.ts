@@ -58,8 +58,9 @@ export class ProjectService extends BaseService<ProjectResponse> {
   getProjectById(id: string) {
     return this.http.get<ProjectResponse[]>(GET_PROJECT_BY_ID(id)).pipe(
       map((projects) => {
+        console.log('Projects response:', projects);
         if (projects && projects.length > 0) {
-          return ProjectAssembler.toEntityFromResponse(projects[0]);
+          return ProjectAssembler.toEntitiesFromResponse(projects);
         }
         throw new Error('Project not found');
       })
@@ -76,5 +77,11 @@ export class ProjectService extends BaseService<ProjectResponse> {
 
         return ProjectAssembler.toEntityFromResponse(response)
       }));
+  }
+
+  getAllPublicProjectsForDevUser() {
+    return this.http
+      .get<ProjectResponse[]>(`${environment.apiBaseUrl}/projects/users/${environment.devUser}`)
+      .pipe(map((projects) => ProjectAssembler.toEntitiesFromResponse(projects)));
   }
 }

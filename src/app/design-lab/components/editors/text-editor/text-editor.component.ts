@@ -11,7 +11,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { TextLayer } from '../../../model/layer.entity';
-import { LayerType } from '../../../../const';
 
 export interface TextProperties {
   text: string;
@@ -142,7 +141,7 @@ export class TextEditorComponent {
     if (this.textProps.text.trim()) {
       // Emit the text properties for backward compatibility
       this.textAdded.emit({ ...this.textProps });
-      
+
       // Create and emit a proper TextLayer entity
       const textLayer = this.createTextLayer(this.textProps);
       this.textLayerCreated.emit(textLayer);
@@ -154,11 +153,11 @@ export class TextEditorComponent {
 
   private createTextLayer(textProps: TextProperties): TextLayer {
     const id = 'text_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
+
     // Calculate position
     let x = this.config.defaultPosition.x;
     let y = this.config.defaultPosition.y;
-    
+
     if (this.config.centerTextCalculation) {
       // Center text horizontally based on text length and font size
       x = x - (textProps.text.length * textProps.fontSize) / 6;
@@ -173,14 +172,18 @@ export class TextEditorComponent {
       y,
       zIndex,
       1, // opacity
-      true, // visible
-      textProps.text,
-      textProps.fontSize,
-      textProps.color,
-      textProps.fontFamily,
-      textProps.fontWeight >= 700, // bold
-      textProps.italic || false,
-      textProps.underline || false
+      true, // isVisible
+      new Date(), // createdAt
+      new Date(), // updatedAt
+      {
+        isItalic: textProps.italic || false,
+        fontFamily: textProps.fontFamily,
+        isUnderlined: textProps.underline || false,
+        fontSize: textProps.fontSize,
+        text: textProps.text,
+        fontColor: textProps.color,
+        isBold: textProps.fontWeight >= 700,
+      }
     );
   }
 

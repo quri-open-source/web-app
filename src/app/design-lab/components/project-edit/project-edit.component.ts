@@ -15,7 +15,7 @@ import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
 import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
-import { GARMENT_COLOR, GARMENT_SIZE, LayerType } from '../../../const';
+import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
 
 interface GarmentColorOption {
   label: string;
@@ -128,26 +128,26 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       this.loading = false;
       return;
     }
-
     this.loading = true;
-    this.error = null;    this.projectService.getProjectById(this.projectId).subscribe({
-      next: (project) => {
-        this.project = project;
-
-        // Extract text and image layers from the project
-        if (this.project.layers) {
-          this.textLayers = this.project.layers.filter(layer =>
-            layer.type === LayerType.TEXT) as TextLayer[];
-          this.imageLayers = this.project.layers.filter(layer =>
-            layer.type === LayerType.IMAGE) as ImageLayer[];
+    this.error = null;
+    // Fetch all projects for the dev user and filter by id
+    this.projectService.getAllPublicProjectsForDevUser().subscribe({
+      next: (projects: Project[]) => {
+        const found = projects.find((p: Project) => p.id === this.projectId);
+        if (!found) {
+          this.error = 'Project not found';
+          this.loading = false;
+          return;
         }
-
+        this.project = found;
+        if (this.project && this.project.layers) {
+          this.textLayers = this.project.layers.filter((layer: Layer) => layer.type === 'TEXT') as TextLayer[];
+          this.imageLayers = this.project.layers.filter((layer: Layer) => layer.type === 'IMAGE') as ImageLayer[];
+        }
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error fetching project:', err);
-        this.error =
-          'Failed to load project. Please check if the project ID is valid.';
+      error: (_err: any) => {
+        this.error = 'Failed to load projects. Please try again.';
         this.loading = false;
       },
     });

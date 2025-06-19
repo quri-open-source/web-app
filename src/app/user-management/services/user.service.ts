@@ -30,11 +30,11 @@ export class UserService extends BaseService<UserResponse> {
     }
 
     setUserRole(role: string): void {
-        localStorage.setItem(STORAGE_USER_ROLE, role);
+        localStorage.setItem(STORAGE_USER_ROLE, environment.devUser);
     }
 
     setSessionUserId(userId: string): void {
-        localStorage.setItem(STORAGE_USER_ID, userId);
+        localStorage.setItem(STORAGE_USER_ID, environment.devUser);
     }
 
     getCurrentUser() {

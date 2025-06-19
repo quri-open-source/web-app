@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-project-preview',
@@ -47,9 +48,17 @@ export class ProjectPreviewComponent implements OnInit {
 
     private loadProject(projectId: string): void {
       console.log('Loading project with ID:', projectId);
-        this.projectService.getProjectById(projectId).subscribe({
-            next: (project) => {
-                console.log('Project loaded:', project);
+        this.projectService.getProjectById(environment.devUser).subscribe({
+            next: (projects ) => {
+                console.log('Project loaded:', projects);
+
+                const project = projects.find(p => p.id === projectId);
+                if (!project) {
+                    this.error = 'Project not found';
+                    this.loading = false;
+                    return;
+                }
+
                 this.project = project;
                 this.loading = false;
             },

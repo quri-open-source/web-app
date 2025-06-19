@@ -5,7 +5,7 @@ import { LayerResponse } from "./project.response";
 export class LayerAssembler {
 
     static toEntityFromResponse(response: LayerResponse) : Layer {
-        if (response.type === 'image') {
+        if (response.type === 'IMAGE') {
             return new ImageLayer(
                 response.id,
                 response.x,
@@ -15,7 +15,7 @@ export class LayerAssembler {
                 response.visible,
                 response.image_url || ''
             );
-        } else if (response.type === 'text') {
+        } else if (response.type === 'TEXT') {
             return new TextLayer(
                 response.id,
                 response.x,
@@ -23,13 +23,17 @@ export class LayerAssembler {
                 response.z_index,
                 response.opacity,
                 response.visible,
-                response.text_content || '',
-                response.font_size || DEFAULT_LAYER_STYLES.FONT_SIZE,
-                response.font_color || DEFAULT_LAYER_STYLES.FONT_COLOR,
-                response.font_family || DEFAULT_LAYER_STYLES.FONT_FAMILY,
-                response.bold || DEFAULT_LAYER_STYLES.BOLD,
-                response.italic || DEFAULT_LAYER_STYLES.ITALIC,
-                response.underline || DEFAULT_LAYER_STYLES.UNDERLINE
+                new Date(), // createdAt (no existe en response, usar fecha actual)
+                new Date(), // updatedAt (no existe en response, usar fecha actual)
+                {
+                    isItalic: response.italic || false,
+                    fontFamily: response.font_family || '',
+                    isUnderlined: response.underline || false,
+                    fontSize: response.font_size || 16,
+                    text: response.text_content || '',
+                    fontColor: response.font_color || '#000000',
+                    isBold: response.bold || false
+                }
             );
         } else {
             throw new Error(`Unknown layer type: ${response.type}`);

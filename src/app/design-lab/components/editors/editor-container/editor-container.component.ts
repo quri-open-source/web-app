@@ -82,9 +82,27 @@ export class EditorContainerComponent implements OnInit {
     textAlign: 'center',
   };
 
+  textEditorRef: any;
+  imageEditorRef: any;
+
   ngOnInit() {
     // Set the initial tab
     switch (this.initialTab) {
+      case 'color':
+        this.selectedTabIndex = 0;
+        break;
+      case 'text':
+        this.selectedTabIndex = 1;
+        break;
+      case 'image':
+        this.selectedTabIndex = 2;
+        break;
+    }
+  }
+
+  // Cambia el tab seleccionado
+  selectTab(tab: EditorTab) {
+    switch (tab) {
       case 'color':
         this.selectedTabIndex = 0;
         break;
@@ -113,26 +131,30 @@ export class EditorContainerComponent implements OnInit {
 
   // Enhanced text addition with entity creation
   onTextAdded(textProps: TextProperties): void {
-    // Emit legacy event for backward compatibility
     this.textAdded.emit(textProps);
+    // Limpiar formulario y volver al tab principal
+    this.selectTab('color');
   }
 
   onTextLayerCreated(textLayer: TextLayer): void {
-    // Emit new entity-aware events
     this.textLayerCreated.emit(textLayer);
     this.layerAdded.emit(textLayer);
+    // Limpiar formulario y volver al tab principal
+    this.selectTab('color');
   }
 
   // Enhanced image addition with entity creation
   onImageAdded(imageProps: ImageProperties): void {
-    // Emit legacy event for backward compatibility
     this.imageAdded.emit(imageProps);
+    // Limpiar formulario y volver al tab principal
+    this.selectTab('color');
   }
 
   onImageLayerCreated(imageLayer: ImageLayer): void {
-    // Emit new entity-aware events
     this.imageLayerCreated.emit(imageLayer);
     this.layerAdded.emit(imageLayer);
+    // Limpiar formulario y volver al tab principal
+    this.selectTab('color');
   }
 
   // Utility methods for layer management
@@ -155,7 +177,16 @@ export class EditorContainerComponent implements OnInit {
   }
 
   // Get the current project's garment color for the color editor
-  getCurrentColor(): string | null {
-    return this.project?.garmentColor || this.currentColor;
+  getCurrentColor(): GARMENT_COLOR | null {
+    // Si el color es string, lo convertimos a enum si es posible
+    const color = this.project?.garmentColor || this.currentColor;
+    if (!color) return null;
+    // Si ya es del tipo enum, lo devolvemos
+    if (Object.values(GARMENT_COLOR).includes(color as GARMENT_COLOR)) {
+      return color as GARMENT_COLOR;
+    }
+    // Si es string, intentamos mapearlo a enum (por si viene en mayúsculas)
+    const found = Object.values(GARMENT_COLOR).find(e => e === color.toUpperCase());
+    return found ? (found as GARMENT_COLOR) : null;
   }
 }

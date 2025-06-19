@@ -59,8 +59,8 @@ export class CartService {
           newItem.project_id = product.projectId;
           newItem.quantity = 1;
           newItem.unit_price = product.price;
-          newItem.projectName = product.projectDetails?.name || '';
-          newItem.projectImage = product.projectDetails?.previewImageUrl || environment.defaultPreviewImageUrl;
+          newItem.projectName = product.projectDetails?.title || '';
+          newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
           cart.items.push(newItem);
         }
         return this.updateCart(cart);
@@ -73,8 +73,8 @@ export class CartService {
     newItem.project_id = product.projectId;
     newItem.quantity = 1;
     newItem.unit_price = product.price;
-    newItem.projectName = product.projectDetails?.name || '';
-    newItem.projectImage = product.projectDetails?.previewImageUrl || environment.defaultPreviewImageUrl;
+    newItem.projectName = product.projectDetails?.title || '';
+    newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
     cart.items = [newItem];
     return this.http.post<Cart>(`${environment.apiBaseUrl}/carts`, cart).pipe(
       map((createdCart) => {
