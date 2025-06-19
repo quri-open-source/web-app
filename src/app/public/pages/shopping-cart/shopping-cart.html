@@ -62,7 +62,7 @@
             mat-raised-button
             color="primary"
             class="checkout-btn"
-            [routerLink]="['/choose-manufacturer']"
+            (click)="makeOrder()"
             [disabled]="!cartWithDiscount.items.length"
           >
             Make order
