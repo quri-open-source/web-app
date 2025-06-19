@@ -15,9 +15,7 @@ import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
 import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
-import { GARMENT_COLOR, GARMENT_SIZE, LayerType } from '../../../const';
-import { ProjectResponse, LayerResponse } from '../../services/project.response';
-import { ProjectAssembler } from '../../services/project.assembler';
+import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
 
 interface GarmentColorOption {
   label: string;
@@ -130,31 +128,31 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       this.loading = false;
       return;
     }
-
     this.loading = true;
-    this.error = null;    this.projectService.getProjectById(this.projectId).subscribe({
-      next: (project) => {
-        this.project = project;
-
-        // Extract text and image layers from the project
-        if (this.project.layers) {
-          this.textLayers = this.project.layers.filter(layer =>
-            layer.type === LayerType.TEXT) as TextLayer[];
-          this.imageLayers = this.project.layers.filter(layer =>
-            layer.type === LayerType.IMAGE) as ImageLayer[];
+    this.error = null;
+    // Fetch all projects for the dev user and filter by id
+    this.projectService.getAllPublicProjectsForDevUser().subscribe({
+      next: (projects: Project[]) => {
+        const found = projects.find((p: Project) => p.id === this.projectId);
+        if (!found) {
+          this.error = 'Project not found';
+          this.loading = false;
+          return;
         }
-
+        this.project = found;
+        if (this.project && this.project.layers) {
+          this.textLayers = this.project.layers.filter((layer: Layer) => layer.type === 'TEXT') as TextLayer[];
+          this.imageLayers = this.project.layers.filter((layer: Layer) => layer.type === 'IMAGE') as ImageLayer[];
+        }
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Error fetching project:', err);
-        this.error =
-          'Failed to load project. Please check if the project ID is valid.';
+      error: (_err: any) => {
+        this.error = 'Failed to load projects. Please try again.';
         this.loading = false;
       },
     });
   }
-  selectColor(colorValue: GARMENT_COLOR): void {
+  selectColor(colorValue: string): void {
     if (this.project) {
       this.project.garmentColor = colorValue;
     }
@@ -167,7 +165,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   }
 
   // Enhanced event handlers using the new entity-aware approach
-  handleGarmentColorChanged(color: GARMENT_COLOR): void {
+  handleGarmentColorChanged(color: string): void {
     this.selectColor(color);
   }
 
@@ -189,26 +187,27 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   // Legacy handlers for backward compatibility
   handleTextAdded(textProps: TextProperties): void {
     console.log('Text added (legacy):', textProps);
-
-    // Create a new TextLayer for backward compatibility
     const textLayer = new TextLayer(
-      'text_' + Date.now(), // id
+      'text_' + Date.now(),
       this.editorConfig.textEditor.centerTextCalculation
         ? this.editorConfig.textEditor.defaultPosition.x - (textProps.text.length * textProps.fontSize) / 6
         : this.editorConfig.textEditor.defaultPosition.x, // x
       this.editorConfig.textEditor.defaultPosition.y, // y
-      this.textLayers.length + this.editorConfig.textEditor.defaultZIndex, // zIndex
+      this.textLayers.length + this.editorConfig.textEditor.defaultZIndex, // z
       1, // opacity
-      true, // visible
-      textProps.text, // textContent
-      textProps.fontSize, // fontSize
-      textProps.color, // fontColor
-      textProps.fontFamily, // fontFamily
-      textProps.fontWeight >= 700, // bold
-      textProps.italic || false, // italic
-      textProps.underline || false // underline
+      true, // isVisible
+      new Date(), // createdAt
+      new Date(), // updatedAt
+      {
+        isItalic: textProps.italic || false,
+        fontFamily: textProps.fontFamily,
+        isUnderlined: textProps.underline || false,
+        fontSize: textProps.fontSize,
+        text: textProps.text,
+        fontColor: textProps.color,
+        isBold: textProps.fontWeight >= 700,
+      }
     );
-
     this.textLayers.push(textLayer);
   }  handleImageAdded(imageProps: ImageProperties): void {
     console.log('Image added (legacy):', imageProps);
@@ -226,12 +225,18 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
     this.imageLayers.push(imageLayer);
   }
+  getColorLabel(value: GARMENT_COLOR): string {
+    const foundColor = this.garmentColors.find(
+      (color) => color.value === value
+    );
+    return foundColor ? foundColor.label : 'Custom';
+  }
+
   getBackgroundPosition(colorValue: string): string {
-    // Find the index of the color in the garmentColors array
     const colorIndex = this.garmentColors.findIndex(
       (color) => color.value === colorValue
     );
-    if (colorIndex === -1) return '0% 0%'; // Default to first position if not found
+    if (colorIndex === -1) return '0% 0%';
     const row = Math.floor(colorIndex / 4);
     const col = colorIndex % 4;
     const xPos = col * (100 / 3);
@@ -258,18 +263,18 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.project.layers = [...this.textLayers, ...this.imageLayers];
 
     // Convert the Project entity to a ProjectResponse using the ProjectAssembler
-    const projectResponse: ProjectResponse = {
+    const projectResponse: any = {
       id: this.project.id,
-      user_id: this.project.userId,
-      name: this.project.name,
-      preview_image_url: this.project.previewImageUrl || '',
+      userId: this.project.userId,
+      title: this.project.title,
+      previewUrl: this.project.previewUrl || '',
       status: this.project.status,
-      gender: this.project.gender,
-      garment_color: this.project.garmentColor,
-      garment_size: this.project.garmentSize,
-      last_modified: new Date().toISOString(),
-      created_at: this.project.createdAt.toISOString(),
+      garmentColor: this.project.garmentColor,
+      garmentSize: this.project.garmentSize,
+      garmentGender: this.project.garmentGender,
       layers: this.convertLayersToResponse(),
+      createdAt: this.project.createdAt.toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     this.projectService.update(this.project.id, projectResponse).subscribe({
@@ -285,37 +290,21 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     });
   }
 
-  private convertLayersToResponse(): LayerResponse[] {
+  private convertLayersToResponse(): any[] {
     const allLayers = [...this.textLayers, ...this.imageLayers];
     return allLayers.map((layer) => {
-      const baseLayerResponse: LayerResponse = {
+      const baseLayerResponse = {
         id: layer.id,
         x: layer.x,
         y: layer.y,
-        z_index: layer.zIndex,
+        z: layer.z,
         opacity: layer.opacity,
-        visible: layer.visible,
+        isVisible: layer.isVisible,
         type: layer.type,
+        createdAt: layer.createdAt.toISOString(),
+        updatedAt: layer.updatedAt.toISOString(),
+        details: layer.details || {},
       };
-
-      if (layer instanceof TextLayer) {
-        return {
-          ...baseLayerResponse,
-          text_content: layer.textContent,
-          font_size: layer.fontSize,
-          font_color: layer.fontColor,
-          font_family: layer.fontFamily,
-          bold: layer.bold,
-          italic: layer.italic,
-          underline: layer.underline,
-        };
-      } else if (layer instanceof ImageLayer) {
-        return {
-          ...baseLayerResponse,
-          image_url: layer.imageUrl,
-        };
-      }
-
       return baseLayerResponse;
     });
   }

@@ -5,7 +5,7 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span class="toolbar-spacer"></span>
-    <span *ngIf="project">Editing: {{ project.name }}</span>
+    <span *ngIf="project">Editing: {{ project.title }}</span>
     <span class="toolbar-spacer"></span>
     <button mat-raised-button color="accent" (click)="saveProject()">
       <mat-icon>save</mat-icon>
@@ -44,27 +44,15 @@
                 <div
                   *ngFor="let layer of textLayers"
                   class="text-layer"
-                  [style.color]="layer.fontColor"
-                  [style.font-family]="layer.fontFamily"
-                  [style.font-size.px]="layer.fontSize"
-                  [style.font-weight]="layer.bold ? 700 : 400"
-                  [style.font-style]="layer.italic ? 'italic' : 'normal'"
-                  [style.text-decoration]="layer.underline ? 'underline' : 'none'"
                   [style.left.px]="layer.x"
                   [style.top.px]="layer.y"
                   [style.opacity]="layer.opacity"
-                  [style.visibility]="layer.visible ? 'visible' : 'hidden'"
-                  [style.z-index]="layer.zIndex"
+                  [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
+                  [style.z-index]="layer.z"
                   (mousedown)="startDrag($event, layer)"
                 >
-                  <div
-                    class="delete-button"
-                    (mousedown)="$event.stopPropagation()"
-                    (click)="deleteLayer($event, layer, 'text')"
-                  >
-                    ×
-                  </div>
-                  {{ layer.textContent }}
+                  <div class="delete-button" (mousedown)="$event.stopPropagation()" (click)="deleteLayer($event, layer, 'text')">×</div>
+                  {{ layer.details?.text }}
                 </div>
                 <!-- Image Layers -->
                 <div
@@ -73,17 +61,11 @@
                   [style.left.px]="layer.x"
                   [style.top.px]="layer.y"
                   [style.opacity]="layer.opacity"
-                  [style.visibility]="layer.visible ? 'visible' : 'hidden'"
-                  [style.z-index]="layer.zIndex"
+                  [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
+                  [style.z-index]="layer.z"
                   (mousedown)="startDrag($event, layer)"
                 >
-                  <div
-                    class="delete-button"
-                    (mousedown)="$event.stopPropagation()"
-                    (click)="deleteLayer($event, layer, 'image')"
-                  >
-                    ×
-                  </div>
+                  <div class="delete-button" (mousedown)="$event.stopPropagation()" (click)="deleteLayer($event, layer, 'image')">×</div>
                   <img [src]="layer.imageUrl" />
                 </div>
               </div>

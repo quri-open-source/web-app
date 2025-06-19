@@ -67,8 +67,11 @@ export class ProductService extends BaseService<ProductResponse> {
         return this.http.get<ProductResponse[]>(GET_PRODUCT_BY_ID(productId)).pipe(
           map((products) => products[0]),
           switchMap((product) =>
-            this.projectService.getProjectById(product.project_id).pipe(
-              map((project: Project) => project.name)
+            this.projectService.getAllPublicProjectsForDevUser().pipe(
+              map((projects: Project[]) => {
+                const found = projects.find((p: Project) => p.id === product.project_id);
+                return found ? found.title : '';
+              })
             )
           )
         );
@@ -101,14 +104,17 @@ export class ProductService extends BaseService<ProductResponse> {
                             createdAt: new Date(comment.created_at),
                         })),
                         projectDetails: project ? {
+                            id: project.id,
+                            title: project.title,
                             userId: project.userId,
-                            gender: project.gender,
-                            garmentSize: project.garmentSize,
+                            previewUrl: project.previewUrl,
+                            status: project.status,
                             garmentColor: project.garmentColor,
-                            previewImageUrl: project.previewImageUrl,
-                            name: project.name,
-                            lastModified: project.lastModified,
-                            createdAt: project.createdAt
+                            garmentSize: project.garmentSize,
+                            garmentGender: project.garmentGender,
+                            layers: project.layers,
+                            createdAt: project.createdAt,
+                            updatedAt: project.updatedAt
                         } : undefined,
                     };
                 });

@@ -15,19 +15,19 @@
     </div>
   } @else if (project) {
     <div class="project-header">
-      <h1>{{ project.name }}</h1>
+      <h1>{{ project.title }}</h1>
       <div class="project-meta">
         <mat-chip-listbox>
           <mat-chip>{{ project.status | titlecase }}</mat-chip>
-          <mat-chip>{{ project.gender | titlecase }}</mat-chip>
+          <mat-chip>{{ project.garmentGender | titlecase }}</mat-chip>
           <mat-chip>Size: {{ project.garmentSize }}</mat-chip>
         </mat-chip-listbox>
       </div>
     </div>    <div class="project-content">
       <div class="project-preview-area">
         <div class="canvas-container">
-          @if (project.previewImageUrl) {
-            <img [src]="project.previewImageUrl" [alt]="project.name" class="preview-image" />
+          @if (project.previewUrl) {
+            <img [src]="project.previewUrl" [alt]="project.title" class="preview-image" />
           } @else {
             <div class="canvas-placeholder">
               <div class="tshirt-preview">
@@ -45,7 +45,7 @@
                               class="text-layer-preview"
                               [style.left.px]="layer.x"
                               [style.top.px]="layer.y"
-                              [style.z-index]="layer.zIndex"
+                              [style.z-index]="layer.z"
                               [innerHTML]="layer.getContent()"
                             ></div>
                           } @else if (layer.type === 'image') {
@@ -54,7 +54,7 @@
                               [src]="layer.getContent()"
                               [style.left.px]="layer.x"
                               [style.top.px]="layer.y"
-                              [style.z-index]="layer.zIndex"
+                              [style.z-index]="layer.z"
                             />
                           }
                         }
@@ -83,7 +83,7 @@
               <strong>Status:</strong> {{ project.status | titlecase }}
             </div>
             <div class="detail-row">
-              <strong>Gender:</strong> {{ project.gender | titlecase }}
+              <strong>Gender:</strong> {{ project.garmentGender| titlecase }}
             </div>
             <div class="detail-row">
               <strong>Garment Color:</strong>
@@ -97,7 +97,7 @@
               <strong>Created:</strong> {{ project.createdAt | date:'medium' }}
             </div>
             <div class="detail-row">
-              <strong>Last Modified:</strong> {{ project.lastModified | date:'medium' }}
+              <strong>Last Modified:</strong> {{ project.updatedAt | date:'medium' }}
             </div>
           </mat-card-content>
         </mat-card>

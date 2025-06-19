@@ -5,27 +5,36 @@ export abstract class Layer {
     id: string;
     x: number;
     y: number;
-    zIndex: number;
+    z: number;
     opacity: number;
-    visible: boolean;
-    type: LayerType;
+    isVisible: boolean;
+    type: string;
+    createdAt: Date;
+    updatedAt: Date;
+    details?: any;
 
     constructor(
         id: string,
         x: number,
         y: number,
-        zIndex: number,
+        z: number,
         opacity: number,
-        visible: boolean,
-        type: LayerType
+        isVisible: boolean,
+        type: string,
+        createdAt: Date,
+        updatedAt: Date,
+        details?: any
     ) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.zIndex = zIndex;
+        this.z = z;
         this.opacity = opacity;
-        this.visible = visible;
+        this.isVisible = isVisible;
         this.type = type;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.details = details;
     }
 
     abstract getCssStyles(): string;
@@ -39,20 +48,20 @@ export class ImageLayer extends Layer {
         id: string,
         x: number,
         y: number,
-        zIndex: number,
+        z: number,
         opacity: number,
-        visible: boolean,
+        isVisible: boolean,
         imageUrl: string
     ) {
-        super(id, x, y, zIndex, opacity, visible, LayerType.IMAGE);
+        super(id, x, y, z, opacity, isVisible, LayerType.IMAGE, new Date(), new Date());
         this.imageUrl = imageUrl;
     }
 
     getCssStyles(): string {
         return `position: absolute; left: ${this.x}px; top: ${
             this.y
-        }px; z-index: ${this.zIndex}; opacity: ${this.opacity}; visibility: ${
-            this.visible ? 'visible' : 'hidden'
+        }px; z-index: ${this.z}; opacity: ${this.opacity}; visibility: ${
+            this.isVisible ? 'visible' : 'hidden'
         };`;
     }
 
@@ -62,55 +71,44 @@ export class ImageLayer extends Layer {
 }
 
 export class TextLayer extends Layer {
-    textContent: string;
-    fontSize: number;
-    fontColor: string;
-    fontFamily: string;
-    bold: boolean;
-    italic: boolean;
-    underline: boolean;
-
     constructor(
         id: string,
         x: number,
         y: number,
-        zIndex: number,
+        z: number,
         opacity: number,
-        visible: boolean,
-        textContent: string,
-        fontSize: number,
-        fontColor: string,
-        fontFamily: string,
-        bold: boolean,
-        italic: boolean,
-        underline: boolean
+        isVisible: boolean,
+        createdAt: Date,
+        updatedAt: Date,
+        details: {
+            isItalic: boolean,
+            fontFamily: string,
+            isUnderlined: boolean,
+            fontSize: number,
+            text: string,
+            fontColor: string,
+            isBold: boolean
+        }
     ) {
-        super(id, x, y, zIndex, opacity, visible, LayerType.TEXT);
-        this.textContent = textContent;
-        this.fontSize = fontSize;
-        this.fontColor = fontColor;
-        this.fontFamily = fontFamily;
-        this.bold = bold;
-        this.italic = italic;
-        this.underline = underline;
+        super(id, x, y, z, opacity, isVisible, 'TEXT', createdAt, updatedAt, details);
     }
 
     getCssStyles(): string {
-        let fontWeight = this.bold ? TEXT_LAYER_BOLD_VALUE : TEXT_LAYER_REGULAR_VALUE;
-        let fontStyle = this.italic ? 'italic' : 'normal'; // As the values wont change over time, we can hardcode them
-        let textDecoration = this.underline ? 'underline' : 'none';
+        let fontWeight = this.details?.isBold ? TEXT_LAYER_BOLD_VALUE : TEXT_LAYER_REGULAR_VALUE;
+        let fontStyle = this.details?.isItalic ? 'italic' : 'normal'; // As the values wont change over time, we can hardcode them
+        let textDecoration = this.details?.isUnderlined ? 'underline' : 'none';
         return `position: absolute; left: ${this.x}px; top: ${
             this.y
-        }px; z-index: ${this.zIndex}; opacity: ${this.opacity}; visibility: ${
-            this.visible ? 'visible' : 'hidden'
-        }; font-size: ${this.fontSize}px; color: ${
-            this.fontColor
+        }px; z-index: ${this.z}; opacity: ${this.opacity}; visibility: ${
+            this.isVisible ? 'visible' : 'hidden'
+        }; font-size: ${this.details?.fontSize}px; color: ${
+            this.details?.fontColor
         }; font-family: ${
-            this.fontFamily
+            this.details?.fontFamily
         }; font-weight: ${fontWeight}; font-style: ${fontStyle}; text-decoration: ${textDecoration};`;
     }
 
     getContent(): string {
-        return this.textContent;
+        return this.details?.text || '';
     }
 }

@@ -396,6 +396,19 @@
       "last_modified": "2025-06-16T12:00:00.000Z",
       "created_at": "2025-06-16T12:00:00.000Z",
       "layers": []
+    },
+    {
+      "id": "",
+      "user_id": "user-1",
+      "name": "Demo",
+      "preview_image_url": "",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#B3B1AF",
+      "garment_size": "M",
+      "last_modified": "2025-06-19T01:01:25.436Z",
+      "created_at": "2025-06-19T01:01:25.436Z",
+      "layers": []
     }
   ],
   "garment-colors": [
@@ -982,7 +995,8 @@
       "total_orders_received": 0,
       "pending_fulfillments": 0,
       "produced_projects": 1,
-      "avg_fulfillment_time_days": 0
+      "avg_fulfillment_time_days": 0,
+      "id": "9123"
     }
   ],
   "carts": [

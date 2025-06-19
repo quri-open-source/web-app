@@ -30,11 +30,11 @@ export class UserService extends BaseService<UserResponse> {
     }
 
     setUserRole(role: string): void {
-        localStorage.setItem(STORAGE_USER_ROLE, role);
+        localStorage.setItem(STORAGE_USER_ROLE, environment.devUser);
     }
 
     setSessionUserId(userId: string): void {
-        localStorage.setItem(STORAGE_USER_ID, userId);
+        localStorage.setItem(STORAGE_USER_ID, environment.devUser);
     }
 
     getCurrentUser() {
@@ -42,13 +42,13 @@ export class UserService extends BaseService<UserResponse> {
             .get<UserResponse[]>(USER_WITH_PROFILE(this.getSessionUserId()))
             .pipe(map((response) => UserAssembler.toEntityFromResponse(response[0])));
     }
-    
+
     getUserWithProfile(userId: string): Observable<any> {
         return this.http
             .get<any[]>(USER_WITH_PROFILE(userId))
             .pipe(map((response) => response[0]));
     }
-    
+
     // Method to simulate login as different user types (for testing)
     // Returns an Observable so we can wait for the role to be loaded
     loginAs(userId: string): Observable<string> {
@@ -66,18 +66,18 @@ export class UserService extends BaseService<UserResponse> {
                 tap(role => console.log('Final role after login:', role))
             );
     }
-    
+
     // Hard-coded login for testing - skips API call
     loginAsDirect(userId: string, role: string): void {
         this.setSessionUserId(userId);
         this.setUserRole(role);
     }
-    
+
     // Check if the user is logged in
     isLoggedIn(): boolean {
         return !!this.getSessionUserId();
     }
-    
+
     // Logout method to clear the session
     logout(): void {
         localStorage.removeItem(STORAGE_USER_ID);
