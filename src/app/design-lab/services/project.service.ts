@@ -4,18 +4,19 @@ import { UserService } from '../../user-management/services/user.service';
 import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
 import { BaseService } from '../../access-security/services/access.service';
+import { environment } from '../../../environments/environment';
 
 // TODO: this must be removed when the backend is ready
 const GET_ALL_USER_BLUEPRINTS = (id: string) =>
-    `http://localhost:3000/projects?status=blueprint&user_id=${id}`;
+    `${environment.apiBaseUrl}/projects?status=blueprint&user_id=${id}`;
 
 const GET_USER_BLUEPRINT_BY_ID = (id: string, userId: string) =>
-    `http://localhost:3000/projects?id=${id}&status=blueprint&user_id=${userId}`;
+    `${environment.apiBaseUrl}/projects?id=${id}&status=blueprint&user_id=${userId}`;
 
 const GET_PROJECT_BY_ID = (id: string) =>
-    `http://localhost:3000/projects?id=${id}`;
+    `${environment.apiBaseUrl}/projects?id=${id}`;
 
-const GET_ALL_BLUEPRINTS = 'http://localhost:3000/projects?status=blueprint&public=true';
+const GET_ALL_BLUEPRINTS = `${environment.apiBaseUrl}/projects?status=blueprint&public=true`;
 
 @Injectable({
     providedIn: 'root',

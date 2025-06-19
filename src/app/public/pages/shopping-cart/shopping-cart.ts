@@ -11,11 +11,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { ProjectService } from '../../../../app/design-lab/services/project.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CartDiscountAssembler, CartWithDiscount } from '../../../../app/orders-fulfillments/services/cart-discount.assembler';
 import { Cart, CartItem } from '../../../../app/orders-fulfillments/model/cart.entity';
 import { UserDomainService, User } from '../../../access-security/services/user-domain.service';
 import { Subscription } from 'rxjs';
+import { OrderService, OrderResponse } from '../../../orders-fulfillments/services/order.service';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -29,7 +31,8 @@ import { Subscription } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     MatChipsModule,
-    RouterModule 
+    RouterModule,
+    MatSnackBarModule
   ],
   templateUrl: './shopping-cart.html',
   styleUrl: './shopping-cart.css'
@@ -49,7 +52,10 @@ export class ShoppingCart implements OnInit, OnDestroy {
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
     private projectService: ProjectService,
-    userDomainService: UserDomainService
+    userDomainService: UserDomainService,
+    private router: Router,
+    private orderService: OrderService,
+    private snackBar: MatSnackBar
   ) {
     this.userDomainService = userDomainService;
   }
@@ -173,6 +179,68 @@ export class ShoppingCart implements OnInit, OnDestroy {
           });
       } else {
         this.loadDiscountsAndAssemble();
+      }
+    });
+  }
+
+  makeOrder() {
+    if (!this.cartWithDiscount || !this.currentUser) {
+      this.snackBar.open('Cannot create order. Please check cart or login.', 'Close', { duration: 3000 });
+      return;
+    }
+
+    // Create new order from cart
+    const newOrder: Partial<OrderResponse> = {
+      user_id: this.currentUser.id,
+      total_amount: this.cartWithDiscount.total,
+      description: `Order ${new Date().toISOString()}`,
+      status: 'pending',
+      shipping_address: {
+        address: '123 Main St',
+        city: 'New York',
+        country: 'USA',
+        state: 'NY',
+        zip: '10001'
+      },
+      items: this.cartWithDiscount.items.map(item => ({
+        id: '',
+        project_id: item.project_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price
+      })),
+      applied_discounts: this.cartWithDiscount.discountPolicy 
+        ? [{ id: this.cartWithDiscount.discountPolicy.id }] 
+        : []
+    };
+
+    this.snackBar.open('Creating order...', '', { duration: 2000 });
+
+    // Create order and navigate
+    this.orderService.placeOrder(newOrder).subscribe({
+      next: (response: OrderResponse) => {
+        this.snackBar.open('Order created successfully!', 'Close', { duration: 2000 });
+        
+        // Clear the cart after successful order creation
+        if (this.cart) {
+          this.cartService.clearCart(this.cart).subscribe({
+            next: () => {
+              console.log('Cart cleared successfully');
+              // Navigate to choose-manufacturer with orderId
+              this.router.navigate(['/choose-manufacturer'], { queryParams: { orderId: response.id } });
+            },
+            error: (err) => {
+              console.error('Error clearing cart:', err);
+              // Still navigate even if cart clearing fails
+              this.router.navigate(['/choose-manufacturer'], { queryParams: { orderId: response.id } });
+            }
+          });
+        } else {
+          this.router.navigate(['/choose-manufacturer'], { queryParams: { orderId: response.id } });
+        }
+      },
+      error: (error) => {
+        console.error('Error creating order:', error);
+        this.snackBar.open('Error creating order. Please try again.', 'Close', { duration: 3000 });
       }
     });
   }

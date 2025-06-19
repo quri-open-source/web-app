@@ -11,17 +11,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../model/product.entity';
 import { ProjectAssembler } from '../../design-lab/services/project.assembler';
+import { environment } from '../../../environments/environment';
 
-const GET_ALL_PRODUCTS = 'http://localhost:3000/catalog';
+const GET_ALL_PRODUCTS = `${environment.apiBaseUrl}/catalog`;
 
 const GET_PRODUCT_BY_PROJECT_ID = (id: string) =>
-    `http://localhost:3000/products?project_id=${id}`;
+    `${environment.apiBaseUrl}/products?project_id=${id}`;
 
 const GET_PRODUCT_BY_ID = (id: string) =>
-    `http://localhost:3000/products?id=${id}`;
+    `${environment.apiBaseUrl}/products?id=${id}`;
 
 const GET_PROJECT_BY_ID = (id: string) =>
-    `http://localhost:3000/projects?id=${id}`;
+    `${environment.apiBaseUrl}/projects?id=${id}`;
 
 @Injectable({
   providedIn: 'root',

@@ -5,6 +5,8 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { ManufacturerService } from '../../../orders-fulfillments/services/manufacturer.service';
 import { Manufacturer } from '../../../orders-fulfillments/model/manufacturer.entity';
 import { Fulfillment } from '../../../orders-fulfillments/model/fulfillment.entity';
+import { environment } from '../../../../environments/environment';
+import { UserService } from '../../../user-management/services/user.service';
 import {
   ChooseManufacturerFormComponent
 } from '../../../orders-fulfillments/components/choose-manufacturer-form/choose-manufacturer-form.component';
@@ -51,9 +53,20 @@ export class ChooseManufacturerComponent implements OnInit {
     private manufacturerService: ManufacturerService,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private userService: UserService
   ) {}
   ngOnInit(): void {
+    // Check if user is logged in
+    const userId = this.userService.getSessionUserId();
+    if (!userId) {
+      this.error = 'No active user. Please log in to continue.';
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 3000);
+      return;
+    }
+
     // Get orderId from route parameters
     this.route.queryParams.subscribe(params => {
       this.orderId = params['orderId'] || '';
@@ -89,7 +102,7 @@ export class ChooseManufacturerComponent implements OnInit {
         let errorMessage = 'Error loading manufacturers. ';
 
         if (error.status === 0) {
-          errorMessage += 'Cannot connect to server. Please verify the server is running on http://localhost:3000';
+          errorMessage += `Cannot connect to server. Please verify the server is running on ${environment.apiBaseUrl}`;
         } else if (error.status === 404) {
           errorMessage += 'The /manufacturers endpoint was not found.';
         } else if (error.status >= 500) {
@@ -113,6 +126,28 @@ export class ChooseManufacturerComponent implements OnInit {
       verticalPosition: 'bottom'
     });
   }  onOrderSubmitted(data: { orderId: string; manufacturerId: string }): void {
+    // Check if user is logged in and has customer role
+    const userId = this.userService.getSessionUserId();
+    const userRole = this.userService.getUserRole();
+    
+    if (!userId) {
+      this.error = 'No active user. Please log in to continue.';
+      this.snackBar.open('Please log in to submit orders', 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+    
+    if (userRole !== 'customer') {
+      this.error = 'Only customers can submit orders. Please switch to customer role.';
+      this.snackBar.open('Please switch to customer role to place orders', 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+    
     if (!data.orderId || !data.manufacturerId) {
       this.error = 'Please complete all required fields.';
       this.snackBar.open('Please complete all required fields.', 'Close', {
@@ -138,7 +173,7 @@ export class ChooseManufacturerComponent implements OnInit {
         this.isLoading = false;
 
         // Show success notification
-        this.snackBar.open('Order assigned successfully!', 'View Orders', {
+        this.snackBar.open('Order assigned successfully! Cart has been cleared.', 'View Orders', {
           duration: 8000,
           panelClass: ['success-snackbar']
         }).onAction().subscribe(() => {
