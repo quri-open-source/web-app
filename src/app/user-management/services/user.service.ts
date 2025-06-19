@@ -6,7 +6,7 @@ import { Observable, map, of, tap } from 'rxjs';
 import { UserAssembler } from './user.assembler';
 
 const USER_WITH_PROFILE = (id: string) =>
-    `http://localhost:3000/userWithProfile?id=${id}`;
+    `${environment.apiBaseUrl}/userWithProfile?id=${id}`;
 
 // Local storage keys
 const STORAGE_USER_ID = 'quri_user_id';
