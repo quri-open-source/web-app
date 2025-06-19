@@ -1,0 +1,49 @@
+<div class="product-list">
+  <mat-card *ngFor="let product of products" class="product-card">
+
+    <!-- Product Preview -->
+
+    <div class="product-preview" [style.background-color]="product.projectDetails?.garmentColor">
+      <ng-container *ngIf="(product.gallery ?? []).length > 0; else noPreview">
+        <img [src]="product.gallery[0]" [alt]="product.projectDetails?.name" />
+      </ng-container>
+      <ng-template #noPreview>
+        <div class="no-preview">
+          <mat-icon>image</mat-icon>
+          <span>No preview</span>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Product Details -->
+    <mat-card-content>
+      <h3>{{ product.projectDetails?.name }}</h3>
+
+      <div class="product-details-list">
+        <div class="detail-row" style="font-weight: 500">S/. {{ product.price | number:'1.2-2' }}</div>
+        <div class="detail-row"> {{ product.projectDetails?.gender | titlecase }}</div>
+
+        <div class="detail-row-secondary" style="margin-top: 0.5rem;">
+          <div class="icon-container">
+          <mat-icon style="font-size:21px;vertical-align: middle;">stars</mat-icon> {{ product.rating }}
+          </div>
+          <div class="icon-container">
+          <mat-icon style="font-size:21px;vertical-align: middle;">favorite</mat-icon> {{ product.likes }}
+          </div>
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+    <!-- Product Actions -->
+    <mat-card-actions>
+      <button mat-button color="primary" (click)="openDetail(product)">
+        <mat-icon>visibility</mat-icon> View
+      </button>
+      <button mat-button color="accent" (click)="addToCart(product)">
+        <mat-icon>shopping_cart</mat-icon>Add to Cart
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

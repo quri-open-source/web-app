@@ -1,0 +1,17 @@
+.explore-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+}
+
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+}
+
+.catalog-container {
+  margin: 0 auto;
+  width: 90%;
+}
+

@@ -1,0 +1,44 @@
+<mat-card
+  class="project-card"
+  [routerLink]="['/design-lab', project.id]"
+  [ngClass]="context"
+>
+  <!-- COMMON PREVIEW -->
+  <div
+    class="project-preview"
+    [style.background-color]="project.garmentColor || '#fff'"
+  >
+    <ng-container *ngIf="project.previewImageUrl; else noPreview">
+      <img [src]="project.previewImageUrl" [alt]="project.name" />
+    </ng-container>
+    <ng-template #noPreview>
+      <div class="no-preview">
+        <mat-icon>image</mat-icon>
+        <span>No preview</span>
+      </div>
+    </ng-template>
+  </div>
+
+  <mat-card-content>
+    <h3>{{ project.name }}</h3>
+
+    <!-- DESIGN-LAB DETAILS -->
+    <div class="project-details-list">
+      <div class="detail-row">{{ project.gender | titlecase }}</div>
+      <div class="detail-row">Size: {{ getSize(project) }}</div>
+      <div class="detail-row">
+        Last modified: {{ getLastModified(project) }}
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <!-- ACTIONS DESIGN-LAB -->
+    <button mat-button color="primary">
+      <mat-icon>edit</mat-icon> Edit
+    </button>
+    <button mat-button color="warn">
+      <mat-icon>delete</mat-icon> Delete
+    </button>
+  </mat-card-actions>
+</mat-card>

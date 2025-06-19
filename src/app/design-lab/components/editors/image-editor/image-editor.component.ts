@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ImageLayer } from '../../../model/layer.entity';
+import { LayerType } from '../../../../const';
 
 export interface ImageProperties {
   imageUrl: string;
@@ -16,10 +19,18 @@ export interface ImageProperties {
   maintainAspectRatio: boolean;
 }
 
+// Configuration interface for image editor
+export interface ImageEditorConfig {
+  defaultPosition: { x: number; y: number };
+  maxImageSize: { width: number; height: number };
+  defaultZIndex: number;
+  allowedFileTypes: string[];
+  maxFileSize: number; // in bytes
+}
+
 @Component({
   selector: 'app-image-editor',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule,
     FormsModule,
     MatCardModule,
@@ -28,204 +39,24 @@ export interface ImageProperties {
     MatProgressBarModule,
     MatSliderModule,
     MatTooltipModule,
+    MatSnackBarModule,
   ],
-  template: `
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Add Image</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="image-editor-container">
-          <h4 class="section-title">Upload Image</h4>
-          <div class="upload-section" *ngIf="!previewImageUrl">
-            <div class="upload-placeholder" (click)="fileInput.click()">
-              <mat-icon>cloud_upload</mat-icon>
-              <p>Click to upload an image</p>
-              <input
-                type="file"
-                hidden
-                #fileInput
-                (change)="onFileSelected($event)"
-                accept="image/*"
-              />
-            </div>
-            <p class="file-hint">Supported formats: JPG, PNG, GIF</p>
-          </div>
-          <div *ngIf="previewImageUrl" class="preview-section">
-            <h4 class="section-title">Preview &amp; Settings</h4>
-            <div class="image-preview">
-              <img [src]="previewImageUrl" alt="Preview" />
-            </div>
-
-            <div class="image-controls">
-              <h5>Scale</h5>
-              <mat-slider
-                min="0.5"
-                max="2"
-                step="0.1"
-                discrete
-                [displayWith]="formatLabel"
-                class="scale-slider"
-              >
-                <input matSliderThumb [(ngModel)]="imageScale" />
-              </mat-slider>
-              <span class="scale-value">{{ imageScale }}x</span>
-            </div>
-
-            <div class="image-options">
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="removeImage()"
-                matTooltip="Remove Image"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="uploading" class="upload-progress">
-            <p>Uploading...</p>
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-          </div>
-
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!previewImageUrl || uploading"
-            (click)="addImage()"
-          >
-            Add to Design
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  `,  styles: [
-    `
-      .image-editor-container {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
-      .upload-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-
-      .upload-placeholder {
-        width: 100%;
-        height: 160px;
-        border: 2px dashed #ccc;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: border-color 0.3s, background-color 0.3s;
-        margin-bottom: 12px;
-      }
-
-      .upload-placeholder:hover {
-        border-color: #3f51b5;
-        background-color: rgba(63, 81, 181, 0.05);
-      }
-
-      .upload-placeholder mat-icon {
-        font-size: 48px;
-        height: 48px;
-        width: 48px;
-        color: #757575;
-      }
-
-      .upload-placeholder p {
-        margin-top: 8px;
-        color: #757575;
-      }
-
-      .file-hint {
-        margin-top: 8px;
-        color: #757575;
-        font-size: 0.85rem;
-      }
-      .preview-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 16px;
-      }
-
-      .image-preview {
-        max-width: 100%;
-        max-height: 200px;
-        overflow: hidden;
-        border-radius: 4px;
-        border: 1px solid #eee;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        background-color: #f9f9f9;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 8px;
-      }
-
-      .image-preview img {
-        max-width: 100%;
-        max-height: 180px;
-        object-fit: contain;
-      }
-
-      .image-controls {
-        width: 100%;
-        padding: 8px 0;
-      }
-
-      .image-controls h5 {
-        margin: 8px 0;
-        font-size: 0.9rem;
-        color: #555;
-      }
-
-      .scale-slider {
-        width: 100%;
-        margin-bottom: 8px;
-      }
-
-      .scale-value {
-        display: inline-block;
-        margin-left: 8px;
-        font-size: 0.9rem;
-        color: #555;
-      }
-
-      .image-options {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .upload-progress {
-        margin: 8px 0;
-      }
-
-      .section-title {
-        margin-top: 12px;
-        margin-bottom: 16px;
-        color: #333;
-        font-weight: 500;
-        font-size: 1rem;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 4px;
-      }
-    `,
-  ],
+  templateUrl: './image-editor.component.html',
+  styleUrls: ['./image-editor.component.css'],
 })
 export class ImageEditorComponent {
+  @Input() config: ImageEditorConfig = {
+    defaultPosition: { x: 100, y: 100 },
+    maxImageSize: { width: 300, height: 300 },
+    defaultZIndex: 1,
+    allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    maxFileSize: 5 * 1024 * 1024 // 5MB
+  };
+
+  @Input() existingImageLayers: ImageLayer[] = [];
+
   @Output() imageAdded = new EventEmitter<ImageProperties>();
+  @Output() imageLayerCreated = new EventEmitter<ImageLayer>();
 
   previewImageUrl: string = '';
   uploading: boolean = false;
@@ -234,61 +65,110 @@ export class ImageEditorComponent {
   imageHeight: number = 200;
   actualWidth: number = 0;
   actualHeight: number = 0;
+  uploadError: string | null = null;
+
+  constructor(private snackBar: MatSnackBar) {}
 
   formatLabel(value: number): string {
     return `${value}x`;
   }
-
-  // In a real app, you would handle file uploads to a server (like Cloudinary)
+  // Enhanced file selection with validation
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.uploading = true;
       const file = input.files[0];
+      
+      // Validate file type
+      if (!this.config.allowedFileTypes.includes(file.type)) {
+        this.showError('Invalid file type. Please select a valid image file.');
+        this.resetFileInput(input);
+        return;
+      }
+
+      // Validate file size
+      if (file.size > this.config.maxFileSize) {
+        const maxSizeMB = this.config.maxFileSize / (1024 * 1024);
+        this.showError(`File size too large. Maximum allowed size is ${maxSizeMB}MB.`);
+        this.resetFileInput(input);
+        return;
+      }
+
+      this.uploading = true;
+      this.uploadError = null;
 
       // Create a local preview
       const reader = new FileReader();
       reader.onload = () => {
         this.previewImageUrl = reader.result as string;
-
-        // Get actual image dimensions
-        const img = new Image();
-        img.onload = () => {
-          this.actualWidth = img.width;
-          this.actualHeight = img.height;
-
-          // Calculate appropriate dimensions while maintaining aspect ratio
-          if (img.width > img.height) {
-            // Landscape image
-            this.imageWidth = Math.min(200, img.width);
-            this.imageHeight = Math.floor((img.height / img.width) * this.imageWidth);
-          } else {
-            // Portrait or square image
-            this.imageHeight = Math.min(200, img.height);
-            this.imageWidth = Math.floor((img.width / img.height) * this.imageHeight);
-          }
-        };
-        img.src = this.previewImageUrl;
-
-        // Reset scale when new image is loaded
-        this.imageScale = 1;
-
-        // Simulate upload delay
-        setTimeout(() => {
-          this.uploading = false;
-        }, 1500);
+        this.processImage();
       };
+      
+      reader.onerror = () => {
+        this.showError('Failed to read the selected file.');
+        this.uploading = false;
+      };
+      
       reader.readAsDataURL(file);
     }
   }
-  removeImage(): void {
+
+  private processImage(): void {
+    // Get actual image dimensions
+    const img = new Image();
+    img.onload = () => {
+      this.actualWidth = img.width;
+      this.actualHeight = img.height;
+
+      // Calculate appropriate dimensions while maintaining aspect ratio
+      const maxWidth = this.config.maxImageSize.width;
+      const maxHeight = this.config.maxImageSize.height;
+
+      if (img.width > img.height) {
+        // Landscape image
+        this.imageWidth = Math.min(maxWidth, img.width);
+        this.imageHeight = Math.floor((img.height / img.width) * this.imageWidth);
+      } else {
+        // Portrait or square image
+        this.imageHeight = Math.min(maxHeight, img.height);
+        this.imageWidth = Math.floor((img.width / img.height) * this.imageHeight);
+      }
+
+      // Reset scale when new image is loaded
+      this.imageScale = 1;
+
+      // Simulate upload delay (in real app, this would be actual upload to server)
+      setTimeout(() => {
+        this.uploading = false;
+      }, 1500);
+    };
+    
+    img.onerror = () => {
+      this.showError('Failed to process the selected image.');
+      this.uploading = false;
+    };
+    
+    img.src = this.previewImageUrl;
+  }
+
+  private resetFileInput(input: HTMLInputElement): void {
+    input.value = '';
+  }
+
+  private showError(message: string): void {
+    this.uploadError = message;
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      panelClass: ['error-snackbar']
+    });
+  }  removeImage(): void {
     this.previewImageUrl = '';
     this.imageScale = 1;
+    this.uploadError = null;
   }
 
   addImage(): void {
     if (this.previewImageUrl) {
-      // In a real app, you would use the uploaded image URL from your server
+      // Emit image properties for backward compatibility
       const imageProps: ImageProperties = {
         imageUrl: this.previewImageUrl,
         width: this.imageWidth,
@@ -298,9 +178,56 @@ export class ImageEditorComponent {
       };
       this.imageAdded.emit(imageProps);
 
+      // Create and emit a proper ImageLayer entity
+      const imageLayer = this.createImageLayer(imageProps);
+      this.imageLayerCreated.emit(imageLayer);
+
       // Clear the preview after adding to design
-      this.previewImageUrl = '';
-      this.imageScale = 1;
+      this.resetForm();
     }
+  }
+
+  private createImageLayer(imageProps: ImageProperties): ImageLayer {
+    const id = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    // Calculate z-index based on existing layers
+    const zIndex = this.existingImageLayers.length + this.config.defaultZIndex;
+
+    return new ImageLayer(
+      id,
+      this.config.defaultPosition.x,
+      this.config.defaultPosition.y,
+      zIndex,
+      1, // opacity
+      true, // visible
+      imageProps.imageUrl
+    );
+  }
+
+  private resetForm(): void {
+    this.previewImageUrl = '';
+    this.imageScale = 1;
+    this.uploadError = null;
+    this.actualWidth = 0;
+    this.actualHeight = 0;
+    this.imageWidth = 200;
+    this.imageHeight = 200;
+  }
+
+  // Validation methods
+  isImageValid(): boolean {
+    return this.previewImageUrl.length > 0 && !this.uploading;
+  }
+
+  getScaledDimensions(): { width: number; height: number } {
+    return {
+      width: Math.floor(this.imageWidth * this.imageScale),
+      height: Math.floor(this.imageHeight * this.imageScale)
+    };
+  }
+
+  getFileInfo(): string {
+    if (!this.actualWidth || !this.actualHeight) return '';
+    return `Original: ${this.actualWidth}x${this.actualHeight}px`;
   }
 }

@@ -1,0 +1,23 @@
+<h2>Analytics Dashboard</h2>
+<div *ngIf="error" class="error-message">{{ error }}</div>
+<div *ngIf="!error && analytics as a" class="dashboard-stats">
+  <div class="stat-card">
+    <div class="stat-title">Total Projects</div>
+    <div class="stat-value">{{ a.totalProjects }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-title">Blueprints</div>
+    <div class="stat-value">{{ a.blueprints }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-title">Designed Garments</div>
+    <div class="stat-value">{{ a.designedGarments }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-title">Completed</div>
+    <div class="stat-value">{{ a.completed }}</div>
+  </div>
+</div>
+<ng-template #loading>
+  <div class="dashboard-stats">Loading...</div>
+</ng-template>

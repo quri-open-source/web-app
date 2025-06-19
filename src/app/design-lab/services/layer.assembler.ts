@@ -1,57 +1,46 @@
-import { ImageContent, Layer, TextContent } from '../model/layer.entity';
-import { LayerResponse } from './project.response';
+import { DEFAULT_LAYER_STYLES } from "../../const";
+import { ImageLayer, Layer, TextLayer } from "../model/layer.entity";
+import { LayerResponse } from "./project.response";
 
 export class LayerAssembler {
-    static toEntityFromResponse(response: LayerResponse): Layer {
-        const content = response.content;
-        const layer = {
-            id: response.id,
-            canvasId: response.canvas_id,
-            type: response.type,
-            zIndex: response.z_index,
-            isVisible: response.is_visible,
-            createdAt: new Date(response.created_at),
-            lastModified: new Date(response.last_modified),
-        };
 
-        const layerContent: any = {
-            x: content.x || 0,
-            y: content.y || 0,
-            rotation: content.rotation || 0,
-            opacity: content.opacity || 1,
-        };
-
-        if (response.type === 'image') {
-            layerContent.imageUrl = content.image_url || '';
-            layerContent.width = content.width || 0;
-            layerContent.height = content.height || 0;
-            layerContent.scale = content.scale || 1;
-            layerContent.maintainAspectRatio =
-                content.maintain_aspect_ratio || false;
-
-            return {
-                ...layer,
-                content: layerContent as ImageContent,
-            };
-        } else if (response.type === 'text') {
-            layerContent.text = content.text || '';
-            layerContent.fontFamily = content.font_family || '';
-            layerContent.fontSize = content.font_size || 0;
-            layerContent.fontWeight = content.font_weight || 0;
-            layerContent.color = content.color || '';
-            layerContent.textAlign = content.text_align || 'left';
-            return {
-                ...layer,
-                content: layerContent as TextContent,
-            };
+    static toEntityFromResponse(response: LayerResponse) : Layer {
+        if (response.type === 'IMAGE') {
+            return new ImageLayer(
+                response.id,
+                response.x,
+                response.y,
+                response.z_index,
+                response.opacity,
+                response.visible,
+                response.image_url || ''
+            );
+        } else if (response.type === 'TEXT') {
+            return new TextLayer(
+                response.id,
+                response.x,
+                response.y,
+                response.z_index,
+                response.opacity,
+                response.visible,
+                new Date(), // createdAt (no existe en response, usar fecha actual)
+                new Date(), // updatedAt (no existe en response, usar fecha actual)
+                {
+                    isItalic: response.italic || false,
+                    fontFamily: response.font_family || '',
+                    isUnderlined: response.underline || false,
+                    fontSize: response.font_size || 16,
+                    text: response.text_content || '',
+                    fontColor: response.font_color || '#000000',
+                    isBold: response.bold || false
+                }
+            );
+        } else {
+            throw new Error(`Unknown layer type: ${response.type}`);
         }
-
-        throw new Error(`Unknown layer type: ${response.type}`);
     }
 
-    static toEntitiesFromResponse(response: LayerResponse[]): Layer[] {
-        return response.map((layerResponse) => {
-            return LayerAssembler.toEntityFromResponse(layerResponse);
-        });
+    static toEntitiesFromResponse(responses: LayerResponse[]) : Layer[] {
+        return responses.map(response => LayerAssembler.toEntityFromResponse(response));
     }
 }

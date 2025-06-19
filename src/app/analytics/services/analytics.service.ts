@@ -1,59 +1,23 @@
 import { Injectable } from '@angular/core';
-import { BaseService } from '../../shared/services/base.service';
-import { Analytics } from '../model/analytics.entity';
-import { map, Observable } from 'rxjs';
-import { AnalyticsAssembler } from './analytics.assembler';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { AnalyticsResponse } from './analytics.response';
+import { AnalyticsData } from '../model/analytics.entity';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { AnalyticsAssembler } from './analytics.assembler';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AnalyticsService extends BaseService<Analytics> {
-  constructor() {
-    super('/analytics');
-  }
+@Injectable({ providedIn: 'root' })
+export class AnalyticsService {
+  // Cambia la URL para que apunte a la colección correcta en el backend json-server
+  private apiUrl = environment.apiBaseUrl + '/customer_analytics';
 
-  public getAnalyticsByUserId(userId: string): Observable<Analytics[]> {
-    return this.http
-      .get<AnalyticsResponse[]>(`${this.resourcePath()}`, {
-        params: {
-          user_id: userId,
-        },
-      })
+  constructor(private http: HttpClient) {}
+
+  getUserAnalytics(userId: string): Observable<AnalyticsData> {
+    return this.http.get<AnalyticsResponse[]>(`${this.apiUrl}?user_id=${userId}`)
       .pipe(
-        map((response) => {
-          return AnalyticsAssembler.ToEntitiesFromResponse(response);
-        })
+        map(responses => AnalyticsAssembler.toEntity(responses[0]))
       );
-  }
-
-  public getAnalyticsByProjectId(projectId: string): Observable<Analytics[]> {
-    return this.http
-      .get<AnalyticsResponse[]>(`${this.resourcePath()}`, {
-        params: {
-          project_id: projectId,
-        },
-      })
-      .pipe(
-        map((response) => {
-          return AnalyticsAssembler.ToEntitiesFromResponse(response);
-        })
-      );
-  }
-
-  public createAnalytics(analytics: Analytics): Observable<Analytics> {
-    return this.create(analytics).pipe(
-      map((response: any) => {
-        return AnalyticsAssembler.ToEntityFromResponse(response);
-      })
-    );
-  }
-
-  public updateAnalytics(id: string, analytics: Analytics): Observable<Analytics> {
-    return this.update(id, analytics).pipe(
-      map((response: any) => {
-        return AnalyticsAssembler.ToEntityFromResponse(response);
-      })
-    );
   }
 }

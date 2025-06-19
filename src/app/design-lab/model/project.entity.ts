@@ -1,32 +1,44 @@
-import { ProjectStatus, GarmentSize } from "../services/project.response";
-import { Canvas } from "./canvas.entity";
+import {
+    PROJECT_STATUS,
+} from '../../const';
+import { Layer } from './layer.entity';
 
 export class Project {
     id: string;
+    title: string;
     userId: string;
-    createdAt: Date;
-    status: ProjectStatus;
-
-    genre: string;
-    previewImageUrl: string;
-    name: string;
+    previewUrl: string | null;
+    status: PROJECT_STATUS;
     garmentColor: string;
-    garmentSize: GarmentSize;
-    lastModified: Date;
-    canvas: Canvas;
+    garmentSize: string;
+    garmentGender: string;
+    layers: Layer[];
+    createdAt: Date;
+    updatedAt: Date;
 
-
-    constructor(userId: string, name: string, genre: string, garmentSize: GarmentSize, color: string) {
-        this.id = crypto.randomUUID();
+    constructor(
+        id: string,
+        title: string,
+        userId: string,
+        previewUrl: string | null,
+        status: PROJECT_STATUS,
+        garmentColor: string,
+        garmentSize: string,
+        garmentGender: string,
+        layers: Layer[],
+        createdAt: Date,
+        updatedAt: Date
+    ) {
+        this.id = id;
+        this.title = title;
         this.userId = userId;
-        this.createdAt = new Date();
-        this.status = 'blueprint';
-        this.previewImageUrl = '';
-        this.name = name;
-        this.garmentColor = color;
+        this.previewUrl = previewUrl;
+        this.status = status;
+        this.garmentColor = garmentColor;
         this.garmentSize = garmentSize;
-        this.genre = genre;
-        this.lastModified = new Date();
-        this.canvas = new Canvas();
+        this.garmentGender = garmentGender;
+        this.layers = layers;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

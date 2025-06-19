@@ -2,3 +2,80 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Angular Material Custom Styles */
+
+/* Custom Snackbar Styles */
+.success-snackbar {
+  --mdc-snackbar-container-color: #4caf50 !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #f44336 !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+}
+
+/* Custom Material Theme Colors */
+:root {
+  --primary-color: #667eea;
+  --primary-dark: #764ba2;
+  --accent-color: #667eea;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --info-color: #2196f3;
+}
+
+/* Material Card Customization */
+.mat-mdc-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Material Button Customization */
+.mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: var(--primary-color);
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  --mdc-filled-button-container-color: var(--primary-dark);
+}
+
+/* Material Form Field Customization */
+.mat-mdc-form-field.mat-form-field-appearance-outline .mat-mdc-form-field-outline-thick {
+  color: var(--primary-color);
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+  color: var(--primary-color) !important;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+.custom-dialog-backdrop {
+  background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 40%, transparent 60%);
+}
+
+.custom-dialog-panel {
+  padding: 0;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 80%;
+}

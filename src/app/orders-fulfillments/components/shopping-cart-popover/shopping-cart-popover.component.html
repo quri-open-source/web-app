@@ -1,0 +1,38 @@
+<div class="cart-popover">
+  <h3>Shopping Cart</h3>
+  <ng-container *ngIf="cartWithDiscount && cartWithDiscount.items.length > 0; else noCart">
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of cartWithDiscount.items">
+        <img [src]="item.projectImage" alt="T-shirt" class="cart-item-img" />
+        <div class="cart-item-info">
+          <div class="cart-item-title">{{ item.projectName }}</div>
+          <div class="cart-item-qty">
+            <button mat-icon-button (click)="decreaseQuantity(item)">−</button>
+            <span>{{ item.quantity }}</span>
+            <button mat-icon-button (click)="increaseQuantity(item)">+</button>
+            <a href="#" (click)="removeItem(item); $event.preventDefault()" style="color:#1976d2;text-decoration:underline;margin-left:12px;">Remove</a>
+          </div>
+          <div class="cart-item-price">
+            {{ item.unit_price | currency:environment.currencyCode:'symbol':'1.2-2' }}
+            <span style="margin-left:8px; color: #888;">
+              Subtotal: {{ item.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cart-summary">
+      <div>Subtotal: <span>{{ cartWithDiscount.subtotal | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+      <div *ngIf="cartWithDiscount.discount > 0">
+        Discount: <span>-{{ cartWithDiscount.discount | currency:environment.currencyCode:'symbol':'1.2-2' }}</span>
+      </div>
+      <div style="font-weight:bold;">Total: <span>{{ cartWithDiscount.total | currency:environment.currencyCode:'symbol':'1.2-2' }}</span></div>
+    </div>
+    <div class="cart-actions">
+      <button mat-stroked-button (click)="goToCart()">View Details</button>
+    </div>
+  </ng-container>
+  <ng-template #noCart>
+    <div class="no-orders">You have no items in your cart.</div>
+  </ng-template>
+</div>

@@ -1,344 +1,1063 @@
 {
-  "settings": {
-    "theme": "light",
-    "language": "en",
-    "notifications": true
-  },
-  "projects": [
-    {
-      "id": "proj-001",
-      "user_id": "user-001",
-      "created_at": "2025-05-08T10:00:00Z",
-      "status": "blueprint",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Summer Collection T-Shirt",
-      "tshirt_color": "#FFFFFF",
-      "tshirt_size": "M",
-      "last_modified": "2025-05-08T15:30:00Z",
-      "genre": "women",
-      "canvas": {
-        "id": "canvas-001",
-        "project_id": "proj-001",
-        "background_color": "#FFFFFF",
-        "created_at": "2025-05-08T10:00:00Z",
-        "last_modified": "2025-05-08T15:30:00Z",
-        "layers": [
-          {
-            "id": "layer-001",
-            "canvas_id": "canvas-001",
-            "type": "text",
-            "z_index": 1,
-            "content": {
-              "text": "Summer Vibes",
-              "x": 100,
-              "y": 150,
-              "font_family": "Arial",
-              "font_size": 24,
-              "font_weight": 700,
-              "color": "#000000",
-              "rotation": 0,
-              "text_align": "center",
-              "opacity": 1
-            },
-            "is_visible": true,
-            "created_at": "2025-05-08T10:05:00Z",
-            "last_modified": "2025-05-08T15:30:00Z"
-          },
-          {
-            "id": "layer-002",
-            "canvas_id": "canvas-001",
-            "type": "image",
-            "z_index": 2,
-            "content": {
-              "image_url": "https://example.com/images/summer-icon.png",
-              "width": 200,
-              "height": 200,
-              "x": 150,
-              "y": 200,
-              "rotation": 0,
-              "opacity": 1,
-              "scale": 1,
-              "maintain_aspect_ratio": true
-            },
-            "is_visible": true,
-            "created_at": "2025-05-08T10:10:00Z",
-            "last_modified": "2025-05-08T15:30:00Z"
-          }
-        ]
-      }
-    },
-    {
-      "id": "proj-002",
-      "user_id": "user-001",
-      "created_at": "2025-05-07T14:20:00Z",
-      "status": "designed-garment",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Urban Style Design",
-      "tshirt_color": "#000000",
-      "tshirt_size": "L",
-      "last_modified": "2025-05-08T09:15:00Z",
-      "genre": "women",
-      "canvas": {
-        "id": "canvas-002",
-        "project_id": "proj-002",
-        "background_color": "#000000",
-        "created_at": "2025-05-07T14:20:00Z",
-        "last_modified": "2025-05-08T09:15:00Z",
-        "layers": [
-          {
-            "id": "layer-003",
-            "canvas_id": "canvas-002",
-            "type": "text",
-            "z_index": 1,
-            "content": {
-              "text": "Urban Style",
-              "x": 100,
-              "y": 150,
-              "font_family": "Helvetica",
-              "font_size": 32,
-              "font_weight": 800,
-              "color": "#FFFFFF",
-              "rotation": 0,
-              "text_align": "center",
-              "opacity": 1
-            },
-            "is_visible": true,
-            "created_at": "2025-05-07T14:25:00Z",
-            "last_modified": "2025-05-08T09:15:00Z"
-          }
-        ]
-      }
-    },
-    {
-      "id": "proj-003",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T08:00:00Z",
-      "status": "blueprint",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Beach Party Design",
-      "tshirt_color": "#FFD700",
-      "tshirt_size": "S",
-      "last_modified": "2025-05-09T08:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-003",
-        "project_id": "proj-003",
-        "background_color": "#FFD700",
-        "created_at": "2025-05-09T08:00:00Z",
-        "last_modified": "2025-05-09T08:30:00Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "proj-004",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T09:00:00Z",
-      "status": "designed-garment",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Winter Wonderland",
-      "tshirt_color": "#FFFFFF",
-      "tshirt_size": "L",
-      "last_modified": "2025-05-09T09:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-004",
-        "project_id": "proj-004",
-        "background_color": "#FFFFFF",
-        "created_at": "2025-05-09T09:00:00Z",
-        "last_modified": "2025-05-09T09:30:00Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "proj-005",
-      "user_id": "user-002",
-      "created_at": "2025-05-09T10:00:00Z",
-      "status": "blueprint",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Spring Blossom",
-      "tshirt_color": "#FF69B4",
-      "tshirt_size": "M",
-      "last_modified": "2025-05-09T10:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-005",
-        "project_id": "proj-005",
-        "background_color": "#FF69B4",
-        "created_at": "2025-05-09T10:00:00Z",
-        "last_modified": "2025-05-09T10:30:00Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "proj-006",
-      "user_id": "user-001",
-      "created_at": "2025-05-09T11:00:00Z",
-      "status": "designed-garment",
-      "preview_image_url": "https://picsum.photos/150/150",
-      "name": "Autumn Leaves",
-      "tshirt_color": "#FFA500",
-      "tshirt_size": "XL",
-      "last_modified": "2025-05-09T11:30:00Z",
-      "genre": "men",
-      "canvas": {
-        "id": "canvas-006",
-        "project_id": "proj-006",
-        "background_color": "#FFA500",
-        "created_at": "2025-05-09T11:00:00Z",
-        "last_modified": "2025-05-09T11:30:00Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "9a5cb46d-8aa3-4851-9289-45ec8fa4dcf5",
-      "userId": "user-001",
-      "createdAt": "2025-05-12T05:41:06.956Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "",
-      "name": "Mateo",
-      "garmentColor": "black",
-      "garmentSize": "M",
-      "lastModified": "2025-05-12T05:41:06.956Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-12T05:41:06.956Z",
-        "lastModified": "2025-05-12T05:41:06.956Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "3f281b94-8d87-493f-8490-d663a3a4d9ee",
-      "userId": "user-001",
-      "createdAt": "2025-05-13T03:07:44.139Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "",
-      "name": "Fabri",
-      "garmentColor": "#1B3D92",
-      "garmentSize": "M",
-      "lastModified": "2025-05-13T03:07:44.139Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-13T03:07:44.139Z",
-        "lastModified": "2025-05-13T03:07:44.139Z",
-        "layers": []
-      }
-    },
-    {
-      "id": "0c521a95-cfad-46c2-9328-adb01bae6bcc",
-      "userId": "user-001",
-      "createdAt": "2025-05-13T03:37:40.347Z",
-      "status": "blueprint",
-      "genre": "men",
-      "previewImageUrl": "",
-      "name": "sdfsdf",
-      "garmentColor": "#693FA0",
-      "garmentSize": "M",
-      "lastModified": "2025-05-13T03:37:40.347Z",
-      "canvas": {
-        "id": "",
-        "projectId": "",
-        "backgroundColor": "",
-        "createdAt": "2025-05-13T03:37:40.347Z",
-        "lastModified": "2025-05-13T03:37:40.347Z",
-        "layers": []
-      }
-    }
-  ],
-  "templates": [],
-  "favorites": [],
-  "designs": [],
   "users": [
     {
-      "id": "user-001",
-      "email": "user@example.com",
-      "name": "Test User",
-      "created_at": "2024-03-19T00:00:00Z"
+      "id": "user-1",
+      "email": "alice@example.com",
+      "profile": {
+        "gender": "women",
+        "addresses": [
+          {
+            "id": "address-1",
+            "address": "123 Main St",
+            "city": "Anytown",
+            "country": "USA",
+            "state": "CA",
+            "zip": "12345",
+            "profile_id": "profile-1"
+          }
+        ],
+        "first_name": "Alice",
+        "last_name": "Smith"
+      },
+      "rol": "customer"
+    },
+    {
+      "id": "user-2",
+      "email": "bob@example.com",
+      "profile": {
+        "gender": "men",
+        "addresses": [],
+        "first_name": "Bobe",
+        "last_name": "Builder"
+      },
+      "rol": "manufacturer"
+    },
+    {
+      "id": "user-3",
+      "email": "charlie@example.com",
+      "password": "password",
+      "rol": "customer"
+    },
+    {
+      "id": "user-14",
+      "email": "olivia.green@example.com",
+      "password": "password",
+      "rol": "customer"
+    },
+    {
+      "id": "user-15",
+      "email": "luke.hernandez@example.com",
+      "password": "password",
+      "rol": "customer"
+    },
+    {
+      "id": "user-16",
+      "email": "sophia.khan@example.com",
+      "password": "password",
+      "rol": "customer"
     }
   ],
-  "analytics": [
+  "profiles": [
     {
-      "id": "analytics-001",
-      "user_id": "user-001",
-      "project_id": "proj-001",
+      "id": "profile-1",
+      "user_id": "user-1",
+      "first_name": "Alice",
+      "last_name": "Smith",
+      "gender": "women",
+      "addresses": [
+        {
+          "id": "address-1",
+          "address": "123 Main St",
+          "city": "Anytown",
+          "country": "USA",
+          "state": "CA",
+          "zip": "12345",
+          "profile_id": "profile-1"
+        }
+      ]
+    },
+    {
+      "id": "profile-2",
+      "user_id": "user-3",
+      "first_name": "Charlie",
+      "last_name": "Johnson",
+      "gender": "women",
+      "addresses": [
+        {
+          "id": "address-2",
+          "profile_id": "profile-2",
+          "address": "789 Pine St",
+          "city": "Springfield",
+          "country": "USA",
+          "state": "TX",
+          "zip": "75001"
+        }
+      ]
+    },
+    {
+      "id": "profile-3",
+      "user_id": "user-14",
+      "first_name": "Olivia",
+      "last_name": "Green",
+      "gender": "women",
+      "addresses": [
+        {
+          "id": "address-3",
+          "profile_id": "profile-3",
+          "address": "34 Elm Street",
+          "city": "Riverside",
+          "country": "USA",
+          "state": "CA",
+          "zip": "92501"
+        }
+      ]
+    },
+    {
+      "id": "profile-4",
+      "user_id": "user-15",
+      "first_name": "Luke",
+      "last_name": "Hernandez",
+      "gender": "men",
+      "addresses": [
+        {
+          "id": "address-4",
+          "profile_id": "profile-4",
+          "address": "210 Oak Avenue",
+          "city": "Greenville",
+          "country": "USA",
+          "state": "SC",
+          "zip": "29601"
+        }
+      ]
+    },
+    {
+      "id": "profile-5",
+      "user_id": "user-16",
+      "first_name": "Sophia",
+      "last_name": "Khan",
+      "gender": "women",
+      "addresses": [
+        {
+          "id": "address-5",
+          "profile_id": "profile-5",
+          "address": "56 Maple Road",
+          "city": "Lincoln",
+          "country": "USA",
+          "state": "NE",
+          "zip": "68508"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "user_id": "user-1",
+      "name": "Project One",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#1B8937",
       "garment_size": "M",
-      "garment_color": "#FFFFFF",
-      "created_at": "2025-05-08T15:30:00Z",
-      "last_modified": "2025-05-12T11:00:00Z",
-      "page_views": 245,
-      "total_likes": 78,
-      "click_count": 120,
-      "conversion_rate": 0.32
+      "last_modified": "2025-05-29T20:40:47.478Z",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "layers": []
     },
     {
-      "id": "analytics-002",
-      "user_id": "user-001",
-      "project_id": "proj-002",
+      "id": "project-2",
+      "user_id": "user-3",
+      "name": "Summer Collection Design",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "women",
+      "garment_color": "#F459B0",
       "garment_size": "L",
-      "garment_color": "#000000",
-      "created_at": "2025-05-08T09:15:00Z",
-      "last_modified": "2025-05-12T11:15:00Z",
-      "page_views": 189,
-      "total_likes": 42,
-      "click_count": 95,
-      "conversion_rate": 0.25
+      "last_modified": "2025-06-03T10:15:30.000Z",
+      "created_at": "2025-06-02T14:22:15.000Z",
+      "layers": []
     },
     {
-      "id": "analytics-003",
-      "user_id": "user-001",
-      "project_id": "proj-003",
+      "id": "project-3",
+      "user_id": "user-2",
+      "name": "Bob's First Project",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#161615",
+      "garment_size": "L",
+      "last_modified": "2025-06-16T17:23:46.012Z",
+      "created_at": "2025-06-13T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "61430d53-94d5-4e7a-aa39-47614c438969",
+      "user_id": "user-1",
+      "name": "BlackJacket",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#403D3B",
       "garment_size": "S",
-      "garment_color": "#FFD700",
-      "created_at": "2025-05-09T08:30:00Z",
-      "last_modified": "2025-05-12T11:30:00Z",
-      "page_views": 312,
-      "total_likes": 105,
-      "click_count": 167,
-      "conversion_rate": 0.38
+      "last_modified": "2025-06-13T21:18:17.425Z",
+      "created_at": "2025-06-13T17:29:42.729Z",
+      "layers": []
     },
     {
-      "id": "analytics-004",
-      "user_id": "user-001",
-      "project_id": "proj-004",
-      "garment_size": "L",
-      "garment_color": "#FFFFFF",
-      "created_at": "2025-05-09T09:30:00Z",
-      "last_modified": "2025-05-12T11:45:00Z",
-      "page_views": 176,
-      "total_likes": 53,
-      "click_count": 89,
-      "conversion_rate": 0.29
-    },
-    {
-      "id": "analytics-005",
-      "user_id": "user-002",
-      "project_id": "proj-005",
+      "id": "project-14-1",
+      "user_id": "user-14",
+      "name": "Misty Morning",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#FFC0CB",
       "garment_size": "M",
-      "garment_color": "#FF69B4",
-      "created_at": "2025-05-09T10:30:00Z",
-      "last_modified": "2025-05-12T12:00:00Z",
-      "page_views": 205,
-      "total_likes": 67,
-      "click_count": 115,
-      "conversion_rate": 0.31
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
     },
     {
-      "id": "analytics-006",
-      "user_id": "user-001",
-      "project_id": "proj-006",
-      "garment_size": "XL",
-      "garment_color": "#FFA500",
-      "created_at": "2025-05-09T11:30:00Z",
-      "last_modified": "2025-05-12T12:15:00Z",
-      "page_views": 283,
-      "total_likes": 91,
-      "click_count": 142,
-      "conversion_rate": 0.35
+      "id": "project-14-2",
+      "user_id": "user-14",
+      "name": "Ocean Whisper",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "women",
+      "garment_color": "#87CEFA",
+      "garment_size": "L",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-14-3",
+      "user_id": "user-14",
+      "name": "Autumn Leaves",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "completed",
+      "gender": "women",
+      "garment_color": "#FFA07A",
+      "garment_size": "S",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-14-4",
+      "user_id": "user-14",
+      "name": "Hidden Garden",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#32CD32",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-14-5",
+      "user_id": "user-14",
+      "name": "Private Memoir",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#D3D3D3",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-15-1",
+      "user_id": "user-15",
+      "name": "Urban Skyline",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "men",
+      "garment_color": "#708090",
+      "garment_size": "L",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-15-2",
+      "user_id": "user-15",
+      "name": "Midnight Muse",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "completed",
+      "gender": "men",
+      "garment_color": "#191970",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-15-3",
+      "user_id": "user-15",
+      "name": "Citrus Burst",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#FFD700",
+      "garment_size": "S",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-15-4",
+      "user_id": "user-15",
+      "name": "Frosted Peaks",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "men",
+      "garment_color": "#B0E0E6",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-15-5",
+      "user_id": "user-15",
+      "name": "Private Blueprint",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#DCDCDC",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-16-1",
+      "user_id": "user-16",
+      "name": "Zen Garden",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "completed",
+      "gender": "women",
+      "garment_color": "#98FB98",
+      "garment_size": "L",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-16-2",
+      "user_id": "user-16",
+      "name": "Aurora Lights",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#7FFFD4",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-16-3",
+      "user_id": "user-16",
+      "name": "Midnight Garden",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "in-progress",
+      "gender": "women",
+      "garment_color": "#4B0082",
+      "garment_size": "S",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-16-4",
+      "user_id": "user-16",
+      "name": "Serene Sunset",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#FF7F50",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "project-16-5",
+      "user_id": "user-16",
+      "name": "Private Reflection",
+      "preview_image_url": "https://picsum.photos/150/150",
+      "status": "blueprint",
+      "gender": "women",
+      "garment_color": "#FFE4E1",
+      "garment_size": "M",
+      "last_modified": "2025-06-16T12:00:00.000Z",
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "layers": []
+    },
+    {
+      "id": "",
+      "user_id": "user-1",
+      "name": "Demo",
+      "preview_image_url": "",
+      "status": "blueprint",
+      "gender": "men",
+      "garment_color": "#B3B1AF",
+      "garment_size": "M",
+      "last_modified": "2025-06-19T01:01:25.436Z",
+      "created_at": "2025-06-19T01:01:25.436Z",
+      "layers": []
+    }
+  ],
+  "garment-colors": [
+    {
+      "label": "black",
+      "value": "#161615",
+      "id": "baa8"
+    },
+    {
+      "label": "gray",
+      "value": "#403D3B",
+      "id": "c635"
+    },
+    {
+      "label": "light-gray",
+      "value": "#B3B1AF",
+      "id": "e0aa"
+    },
+    {
+      "label": "white",
+      "value": "#EDEDED",
+      "id": "368d"
+    },
+    {
+      "label": "red",
+      "value": "#B51B14",
+      "id": "3941"
+    },
+    {
+      "label": "pink",
+      "value": "#F459B0",
+      "id": "7a76"
+    },
+    {
+      "label": "light-purple",
+      "value": "#D890E4",
+      "id": "418f"
+    },
+    {
+      "label": "purple",
+      "value": "#693FA0",
+      "id": "aafd"
+    },
+    {
+      "label": "light-blue",
+      "value": "#00A5BC",
+      "id": "5b17"
+    },
+    {
+      "label": "cyan",
+      "value": "#31B7C9",
+      "id": "a85a"
+    },
+    {
+      "label": "sky-blue",
+      "value": "#3F9BDC",
+      "id": "86fb"
+    },
+    {
+      "label": "blue",
+      "value": "#1B3D92",
+      "id": "d448"
+    },
+    {
+      "label": "green",
+      "value": "#1B8937",
+      "id": "2b4c"
+    },
+    {
+      "label": "light-green",
+      "value": "#5BBE65",
+      "id": "f0a6"
+    },
+    {
+      "label": "yellow",
+      "value": "#FECD08",
+      "id": "da82"
+    },
+    {
+      "label": "dark-yellow",
+      "value": "#F2AB00",
+      "id": "b24b"
+    }
+  ],
+  "garment-sizes": [
+    {
+      "label": "XS",
+      "value": "XS",
+      "id": "size-xs"
+    },
+    {
+      "label": "S",
+      "value": "S",
+      "id": "size-s"
+    },
+    {
+      "label": "M",
+      "value": "M",
+      "id": "size-m"
+    },
+    {
+      "label": "L",
+      "value": "L",
+      "id": "size-l"
+    },
+    {
+      "label": "XL",
+      "value": "XL",
+      "id": "size-xl"
+    },
+    {
+      "label": "XXL",
+      "value": "XXL",
+      "id": "size-xxl"
+    }
+  ],
+  "project-status": [
+    {
+      "label": "In Progress",
+      "value": "in-progress",
+      "id": "status-in-progress"
+    },
+    {
+      "label": "Blueprint",
+      "value": "blueprint",
+      "id": "status-blueprint"
+    },
+    {
+      "label": "Completed",
+      "value": "completed",
+      "id": "status-completed"
+    }
+  ],
+  "garment-gender": [
+    {
+      "label": "men",
+      "value": "men",
+      "id": "8dd0"
+    },
+    {
+      "label": "women",
+      "value": "women",
+      "id": "b5b5"
+    },
+    {
+      "label": "unisex",
+      "value": "unisex",
+      "id": "f624"
+    },
+    {
+      "label": "kids",
+      "value": "kids",
+      "id": "6643"
+    }
+  ],
+  "orders": [
+    {
+      "id": "order-1",
+      "user_id": "user-1",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "status": "pending",
+      "total_amount": 100,
+      "transaction_id": null,
+      "description": "Near to the beach",
+      "shipping_address": {
+        "address": "123 Main St",
+        "city": "Anytown",
+        "country": "USA",
+        "state": "CA",
+        "zip": "12345"
+      },
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ],
+      "items": [
+        {
+          "id": "item-1",
+          "project_id": "project-1",
+          "quantity": 2,
+          "unit_price": 50
+        }
+      ]
+    },
+    {
+      "id": "order-2",
+      "user_id": "user-1",
+      "created_at": "2025-06-01T15:25:32.178Z",
+      "status": "completed",
+      "total_amount": 150,
+      "transaction_id": "txn-12345",
+      "description": "Office gift",
+      "shipping_address": {
+        "address": "456 Oak Avenue",
+        "city": "Metropolis",
+        "country": "USA",
+        "state": "NY",
+        "zip": "10001"
+      },
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ],
+      "items": [
+        {
+          "id": "item-2",
+          "project_id": "project-1",
+          "quantity": 3,
+          "unit_price": 50
+        }
+      ]
+    }
+  ],
+  "discounts_policies": [
+    {
+      "id": "discount-1",
+      "name": "Spring Sale",
+      "discount_percentage": 10,
+      "start_date": "2025-05-01",
+      "end_date": "2025-06-01",
+      "coupon_code": "spring-sale-2025",
+      "min_order_amount": 50
+    }
+  ],
+  "fulfillments": [
+    {
+      "id": "fulfillment-1",
+      "order_id": "order-1",
+      "status": "delivered",
+      "received_date": "2025-05-29T20:40:47.478Z",
+      "shipped_date": null,
+      "manufacturer_id": "manufacturer-1"
+    },
+    {
+      "id": "fulfillment-2",
+      "order_id": "order-1",
+      "status": "pending",
+      "received_date": "2025-05-29T20:40:47.478Z",
+      "shipped_date": "2025-05-30T20:40:47.478Z",
+      "manufacturer_id": "manufacturer-1"
+    },
+    {
+      "id": "fulfillment-l47tixs17",
+      "order_id": "order-1",
+      "manufacturer_id": "manufacturer-1",
+      "status": "pending",
+      "received_date": "2025-06-16T15:41:38.244Z",
+      "shipped_date": null
+    }
+  ],
+  "manufacturers": [
+    {
+      "id": "manufacturer-1",
+      "user_id": "user-2",
+      "name": "Manufacturer One",
+      "address": "456 Factory Ave",
+      "city": "Industriaville",
+      "country": "USA",
+      "state": "TX",
+      "zip": "75002"
+    }
+  ],
+  "catalog": [
+    {
+      "id": "product-1",
+      "project_id": "project-1",
+      "manufacturer_id": "manufacturer-1",
+      "price": 50,
+      "likes": 25,
+      "tags": [
+        "t-shirt",
+        "cotton"
+      ],
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "gallery": [
+        "https://picsum.photos/200/200",
+        "https://picsum.photos/200/300"
+      ],
+      "rating": 4.5,
+      "status": "available",
+      "comments": [
+        {
+          "id": "comment-1",
+          "user_id": "user-1",
+          "text": "Great design!",
+          "created_at": "2025-06-01T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "product-2",
+      "project_id": "project-3",
+      "manufacturer_id": "manufacturer-1",
+      "price": 60,
+      "likes": 30,
+      "tags": [
+        "modern",
+        "men"
+      ],
+      "created_at": "2025-06-13T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.7,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-3",
+      "project_id": "61430d53-94d5-4e7a-aa39-47614c438969",
+      "manufacturer_id": "manufacturer-1",
+      "price": 55,
+      "likes": 15,
+      "tags": [
+        "jacket",
+        "men"
+      ],
+      "created_at": "2025-06-13T17:29:42.729Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.2,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-4",
+      "project_id": "project-14-1",
+      "manufacturer_id": "manufacturer-1",
+      "price": 70,
+      "likes": 40,
+      "tags": [
+        "elegant",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.8,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-5",
+      "project_id": "project-14-4",
+      "manufacturer_id": "manufacturer-1",
+      "price": 65,
+      "likes": 35,
+      "tags": [
+        "garden",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.6,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-6",
+      "project_id": "project-14-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 80,
+      "likes": 50,
+      "tags": [
+        "memoir",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.9,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-7",
+      "project_id": "project-15-3",
+      "manufacturer_id": "manufacturer-1",
+      "price": 45,
+      "likes": 20,
+      "tags": [
+        "burst",
+        "men"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.3,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-8",
+      "project_id": "project-15-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 50,
+      "likes": 25,
+      "tags": [
+        "blueprint",
+        "men"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.4,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-9",
+      "project_id": "project-16-2",
+      "manufacturer_id": "manufacturer-1",
+      "price": 75,
+      "likes": 45,
+      "tags": [
+        "aurora",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.7,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-10",
+      "project_id": "project-16-4",
+      "manufacturer_id": "manufacturer-1",
+      "price": 85,
+      "likes": 55,
+      "tags": [
+        "sunset",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 4.9,
+      "status": "available",
+      "comments": []
+    },
+    {
+      "id": "product-11",
+      "project_id": "project-16-5",
+      "manufacturer_id": "manufacturer-1",
+      "price": 90,
+      "likes": 60,
+      "tags": [
+        "reflection",
+        "women"
+      ],
+      "created_at": "2025-06-16T12:00:00.000Z",
+      "gallery": [
+        "https://picsum.photos/200/200"
+      ],
+      "rating": 5,
+      "status": "available",
+      "comments": []
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn-12345",
+      "currency": "USD",
+      "status": "completed",
+      "created_at": "2025-05-29T20:40:47.478Z",
+      "total_amount": 118
+    }
+  ],
+  "userWithProfile": [
+    {
+      "id": "user-1",
+      "email": "alice@example.com",
+      "profile": {
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "gender": "women",
+        "addresses": [
+          {
+            "id": "address-1",
+            "address": "123 Main St",
+            "city": "Anytown",
+            "country": "USA",
+            "state": "CA",
+            "zip": "12345",
+            "profile_id": "profile-1"
+          }
+        ]
+      },
+      "rol": "customer"
+    },
+    {
+      "id": "user-2",
+      "email": "bob@example.com",
+      "password": "password",
+      "rol": "manufacturer",
+      "profile": {
+        "first_name": "Bob",
+        "last_name": "Builder",
+        "gender": "men",
+        "addresses": [
+          {
+            "id": "address-2",
+            "address": "456 Factory Ave",
+            "city": "Industriaville",
+            "country": "USA",
+            "state": "TX",
+            "zip": "75002",
+            "profile_id": "profile-bob"
+          }
+        ]
+      }
+    },
+    {
+      "id": "user-3",
+      "email": "charlie@example.com",
+      "password": "password",
+      "rol": "customer",
+      "profile": {
+        "first_name": "Charlie",
+        "last_name": "Johnson",
+        "gender": "women",
+        "addresses": []
+      }
+    }
+  ],
+  "customer_analytics": [
+    {
+      "user_id": "user-1",
+      "total_projects": 2,
+      "blueprints": 2,
+      "designed_garments": 0,
+      "completed": 0,
+      "id": "1ba3"
+    },
+    {
+      "user_id": "user-3",
+      "total_projects": 1,
+      "blueprints": 0,
+      "designed_garments": 1,
+      "completed": 0,
+      "id": "174f"
+    },
+    {
+      "user_id": "user-14",
+      "total_projects": 5,
+      "blueprints": 3,
+      "designed_garments": 1,
+      "completed": 1,
+      "id": "user-14-analytics"
+    },
+    {
+      "user_id": "user-15",
+      "total_projects": 5,
+      "blueprints": 2,
+      "designed_garments": 2,
+      "completed": 1,
+      "id": "user-15-analytics"
+    },
+    {
+      "user_id": "user-16",
+      "total_projects": 5,
+      "blueprints": 3,
+      "designed_garments": 1,
+      "completed": 1,
+      "id": "user-16-analytics"
+    }
+  ],
+  "manufacturer_analytics": [
+    {
+      "user_id": "user-2",
+      "total_orders_received": 0,
+      "pending_fulfillments": 0,
+      "produced_projects": 1,
+      "avg_fulfillment_time_days": 0,
+      "id": "9123"
+    }
+  ],
+  "carts": [
+    {
+      "id": "cart-1",
+      "user_id": "user-1",
+      "items": [
+        {
+          "project_id": "project-1",
+          "quantity": 3,
+          "unit_price": 50,
+          "projectName": "Project One",
+          "projectImage": "https://picsum.photos/150/150",
+          "projectDescription": ""
+        },
+        {
+          "project_id": "project-14-1",
+          "quantity": 3,
+          "unit_price": 50,
+          "projectName": "Misty Morning",
+          "projectImage": "https://picsum.photos/150/150",
+          "projectDescription": ""
+        }
+      ],
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ]
+    },
+    {
+      "id": "cart-2",
+      "user_id": "user-3",
+      "items": [
+        {
+          "project_id": "project-2",
+          "quantity": 2,
+          "unit_price": 50,
+          "projectName": "Project One",
+          "projectImage": "https://picsum.photos/150/150"
+        }
+      ],
+      "applied_discounts": [
+        {
+          "id": "discount-1"
+        }
+      ]
+    },
+    {
+      "id": "",
+      "user_id": "user-2",
+      "items": [
+        {
+          "project_id": "project-1",
+          "quantity": 1,
+          "unit_price": 50,
+          "projectImage": "https://picsum.photos/150/150",
+          "projectName": "Project One"
+        }
+      ],
+      "applied_discounts": []
     }
   ]
 }

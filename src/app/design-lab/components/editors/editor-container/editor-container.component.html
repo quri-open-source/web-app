@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-content>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+      <!-- T-shirt Color Editor Tab -->
+      <mat-tab label="Color" [disabled]="isTabDisabled('color')">
+        <app-tshirt-color-editor 
+          [selectedColor]="getCurrentColor()"
+          (colorSelected)="onColorSelected($event)">
+        </app-tshirt-color-editor>
+      </mat-tab>
+      
+      <!-- Text Editor Tab -->
+      <mat-tab label="Text" [disabled]="isTabDisabled('text')">
+        <app-text-editor 
+          [initialText]="initialTextProps"
+          [config]="config.textEditor"
+          [existingTextLayers]="textLayers"
+          (textAdded)="onTextAdded($event)"
+          (textLayerCreated)="onTextLayerCreated($event)"
+          #textEditorRef>
+        </app-text-editor>
+      </mat-tab>
+      
+      <!-- Image Editor Tab -->
+      <mat-tab label="Image" [disabled]="isTabDisabled('image')">
+        <app-image-editor
+          [config]="config.imageEditor"
+          [existingImageLayers]="imageLayers"
+          (imageAdded)="onImageAdded($event)"
+          (imageLayerCreated)="onImageLayerCreated($event)"
+          #imageEditorRef>
+        </app-image-editor>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
