@@ -46,6 +46,7 @@ export class ProjectPreviewComponent implements OnInit {
     }
 
     private loadProject(projectId: string): void {
+      console.log('Loading project with ID:', projectId);
         this.projectService.getProjectById(projectId).subscribe({
             next: (project) => {
                 console.log('Project loaded:', project);

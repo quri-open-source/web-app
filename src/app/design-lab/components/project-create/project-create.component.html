@@ -31,10 +31,10 @@
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Gender</mat-label>
                 <mat-select formControlName="gender">
-                  <mat-option value="women">Women</mat-option>
-                  <mat-option value="men">Men</mat-option>
-                  <mat-option value="kids">Kids</mat-option>
-                  <mat-option value="unisex">Unisex</mat-option>
+                  <mat-option value="WOMEN">Women</mat-option>
+                  <mat-option value="MEN">Men</mat-option>
+                  <mat-option value="KIDS">Kids</mat-option>
+                  <mat-option value="UNISEX">Unisex</mat-option>
                 </mat-select>
                 <mat-error
                   *ngIf="projectForm.get('gender')?.hasError('required')"
@@ -82,7 +82,7 @@
                 </mat-grid-list>
               </div>
             </div>
-            
+
             <div class="preview-container">
               <h2>Preview</h2>
               <div class="tshirt-preview">

@@ -10,7 +10,7 @@ import { ImageEditorComponent, ImageProperties, ImageEditorConfig } from '../ima
 
 // Import entities and related types
 import { Layer, TextLayer, ImageLayer } from '../../../model/layer.entity';
-import { LayerType, GARMENT_COLOR } from '../../../../const';
+import { GARMENT_COLOR } from '../../../../const';
 import { Project } from '../../../model/project.entity';
 
 export type EditorTab = 'color' | 'text' | 'image';
@@ -39,7 +39,7 @@ export interface EditorContainerConfig {
 })
 
 export class EditorContainerComponent implements OnInit {
-  @Input() currentColor: GARMENT_COLOR | null = null;
+  @Input() currentColor: string | null = null;
   @Input() initialTab: EditorTab = 'color';
   @Input() project: Project | null = null;
   @Input() textLayers: TextLayer[] = [];
@@ -100,7 +100,7 @@ export class EditorContainerComponent implements OnInit {
   // Enhanced color selection with entity awareness
   onColorSelected(color: GARMENT_COLOR): void {
     this.currentColor = color;
-    
+
     // Emit both legacy and new events
     this.colorSelected.emit(color);
     this.garmentColorChanged.emit(color);
@@ -144,18 +144,18 @@ export class EditorContainerComponent implements OnInit {
     return this.getTotalLayerCount() + 1;
   }
 
-  getAllLayers(): Layer[] {
-    return [...this.textLayers, ...this.imageLayers].sort((a, b) => a.zIndex - b.zIndex);
+  getAllLayersSorted(): (TextLayer | ImageLayer)[] {
+    return [...this.textLayers, ...this.imageLayers].sort((a, b) => a.z - b.z);
   }
 
   // Check if a specific tab should be disabled
-  isTabDisabled(tab: EditorTab): boolean {
+  isTabDisabled(_tab: EditorTab): boolean {
     // Add any business logic here to disable tabs based on project state
     return false;
   }
 
   // Get the current project's garment color for the color editor
-  getCurrentGarmentColor(): GARMENT_COLOR | null {
+  getCurrentColor(): string | null {
     return this.project?.garmentColor || this.currentColor;
   }
 }
