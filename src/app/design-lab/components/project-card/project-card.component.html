@@ -8,8 +8,8 @@
     class="project-preview"
     [style.background-color]="project.garmentColor || '#fff'"
   >
-    <ng-container *ngIf="project.previewImageUrl; else noPreview">
-      <img [src]="project.previewImageUrl" [alt]="project.name" />
+    <ng-container *ngIf="project.previewUrl; else noPreview">
+      <img [src]="project.previewUrl" [alt]="project.title" />
     </ng-container>
     <ng-template #noPreview>
       <div class="no-preview">
@@ -20,11 +20,11 @@
   </div>
 
   <mat-card-content>
-    <h3>{{ project.name }}</h3>
+    <h3>{{ project.title }}</h3>
 
     <!-- DESIGN-LAB DETAILS -->
     <div class="project-details-list">
-      <div class="detail-row">{{ project.gender | titlecase }}</div>
+      <div class="detail-row">{{ project.garmentGender | titlecase }}</div>
       <div class="detail-row">Size: {{ getSize(project) }}</div>
       <div class="detail-row">
         Last modified: {{ getLastModified(project) }}
