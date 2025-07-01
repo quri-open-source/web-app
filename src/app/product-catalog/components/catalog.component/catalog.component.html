@@ -5,7 +5,7 @@
 
     <div class="product-preview" [style.background-color]="product.projectDetails?.garmentColor">
       <ng-container *ngIf="(product.gallery ?? []).length > 0; else noPreview">
-        <img [src]="product.gallery[0]" [alt]="product.projectDetails?.name" />
+        <img [src]="product.gallery[0]" [alt]="product.projectDetails?.title" />
       </ng-container>
       <ng-template #noPreview>
         <div class="no-preview">
@@ -17,11 +17,11 @@
 
     <!-- Product Details -->
     <mat-card-content>
-      <h3>{{ product.projectDetails?.name }}</h3>
+      <h3>{{ product.projectDetails?.title }}</h3>
 
       <div class="product-details-list">
         <div class="detail-row" style="font-weight: 500">S/. {{ product.price | number:'1.2-2' }}</div>
-        <div class="detail-row"> {{ product.projectDetails?.gender | titlecase }}</div>
+        <div class="detail-row"> {{ product.projectDetails?.garmentGender | titlecase }}</div>
 
         <div class="detail-row-secondary" style="margin-top: 0.5rem;">
           <div class="icon-container">

@@ -39,14 +39,14 @@ export class ProjectCardComponent {
     }
 
     getLastModified(project: any): string {
-        // Busca lastModified o last_modified, y createdAt o created_at
+        // Busca updatedAt o lastModified o last_modified, y createdAt o created_at
         const getDate = (val: any) => {
             if (!val) return null;
             if (val instanceof Date && !isNaN(val.getTime())) return val;
             const d = new Date(val);
             return isNaN(d.getTime()) ? null : d;
         };
-        let date = getDate(project.lastModified || project.last_modified);
+        let date = getDate(project.updatedAt || project.lastModified || project.last_modified);
         if (!date) {
             date = getDate(project.createdAt || project.created_at);
         }

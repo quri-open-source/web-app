@@ -1,22 +1,22 @@
 <mat-card class="product-detail-dialog">
   <mat-card-header class="product-detail-header">
-    <mat-card-title> <strong> {{ product.projectDetails?.name }} </strong> </mat-card-title>
+    <mat-card-title> <strong> {{ product.projectDetails?.title }} </strong> </mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <div class="detail-image">
-      <img *ngIf="product.gallery?.length" [src]="product.gallery[0]" alt="{{ product.projectDetails?.name }}" />
+      <img *ngIf="product.gallery?.length" [src]="product.gallery[0]" alt="{{ product.projectDetails?.title }}" />
     </div>
     <div class="detail-info" *ngIf="product.projectDetails">
       <p><strong>User:</strong> {{ product.projectDetails.userId }}</p>
       <p><strong>Price:</strong> S/. {{ product.price | number:'1.2-2' }}</p>
       <p><strong>Color:</strong> <span [style.background-color]="product.projectDetails.garmentColor" class="color-box"></span> {{ product.projectDetails.garmentColor }}</p>
       <p><strong>Size:</strong> {{ product.projectDetails.garmentSize }}</p>
-      <p><strong>Gender:</strong> {{ product.projectDetails.gender | titlecase }}</p>
+      <p><strong>Gender:</strong> {{ product.projectDetails.garmentGender | titlecase }}</p>
       <p><strong>Rating:</strong> {{ product.rating }}</p>
       <p><strong>Likes:</strong> {{ product.likes }}</p>
       <p><strong>Tags:</strong> {{ product.tags.join(', ') }}</p>
       <p><strong>Created:</strong> {{ product.projectDetails.createdAt }} </p>
-      <p><strong>Last Modified:</strong> {{ product.projectDetails.lastModified }} </p>
+      <p><strong>Last Modified:</strong> {{ product.projectDetails.updatedAt }} </p>
     </div>
   </mat-card-content>
   <mat-card-actions align="start">
