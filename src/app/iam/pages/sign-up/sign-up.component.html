@@ -1,0 +1,81 @@
+<div class="sign-up-container">
+  <mat-card class="sign-up-card">
+    <mat-card-header>
+      <mat-card-title>Sign Up</mat-card-title>
+      <mat-card-subtitle>Create your account to get started</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput 
+                 type="text" 
+                 formControlName="username"
+                 placeholder="Choose a username">
+          <mat-error *ngIf="signUpForm.get('username')?.invalid && signUpForm.get('username')?.touched">
+            {{ getErrorMessage('username') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput 
+                 type="password" 
+                 formControlName="password"
+                 placeholder="Create a password">
+          <mat-error *ngIf="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
+            {{ getErrorMessage('password') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput 
+                 type="password" 
+                 formControlName="confirmPassword"
+                 placeholder="Confirm your password">
+          <mat-error *ngIf="signUpForm.get('confirmPassword')?.invalid && signUpForm.get('confirmPassword')?.touched">
+            {{ getErrorMessage('confirmPassword') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Account Type</mat-label>
+          <mat-select formControlName="role">
+            <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+              <div class="role-option">
+                <div class="role-label">{{ option.label }}</div>
+                <div class="role-description">{{ option.description }}</div>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched">
+            Account type is required
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit" 
+                  [disabled]="isLoading"
+                  class="full-width">
+            <span *ngIf="!isLoading">Sign Up</span>
+            <span *ngIf="isLoading">Creating Account...</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <div class="sign-in-link">
+        <p>Already have an account? 
+          <button mat-button color="primary" (click)="goToSignIn()">
+            Sign In
+          </button>
+        </p>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
