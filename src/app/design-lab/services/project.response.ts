@@ -4,7 +4,7 @@ export interface ProjectResponse {
     user_id: string;
     preview_url: string | null;
     status: string;
-    garment_color: number;
+    garment_color: string;
     garment_size: string;
     garment_gender: string;
     layers: LayerResponse[];

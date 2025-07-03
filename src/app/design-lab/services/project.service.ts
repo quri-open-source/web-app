@@ -4,21 +4,18 @@ import { map, Observable } from 'rxjs';
 import { AuthenticationService } from '../../iam/services/authentication.service';
 import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
+import { CreateProjectRequest } from './project.request';
 import { Project } from '../model/project.entity';
 import { environment } from '../../../environments/environment';
 
-// TODO: this must be removed when the backend is ready
-const GET_ALL_USER_BLUEPRINTS = (id: string) =>
-  `${environment.apiBaseUrl}/projects/users/${id}`;
-
-const GET_USER_BLUEPRINT_BY_ID = (id: string, userId: string) =>
-  `${environment.apiBaseUrl}/projects/users/${userId}`;
+// API Endpoints
+const GET_ALL_USER_PROJECTS = (userId: string) =>
+  `${environment.serverBaseUrl}/projects/users/${userId}`;
 
 const GET_PROJECT_BY_ID = (id: string) =>
-  `${environment.apiBaseUrl}/projects/users/${id}`;
+  `${environment.serverBaseUrl}/projects/${id}`;
 
-const GET_ALL_BLUEPRINTS = (userId: string) =>
-  `${environment.apiBaseUrl}/projects/users/${userId}`;
+const CREATE_PROJECT_URL = `${environment.serverBaseUrl}/projects`;
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +30,12 @@ export class ProjectService {
 
   private getCurrentUserId(): string | null {
     const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
     console.log('🔍 ProjectService - Current user ID from IAM:', userId);
+    console.log('🔑 ProjectService - Auth token present:', !!token);
+    if (token) {
+      console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+    }
     return userId;
   }
 
@@ -45,7 +47,7 @@ export class ProjectService {
 
     console.log('📡 Fetching all public projects for user:', userId);
     return this.http
-      .get<ProjectResponse[]>(GET_ALL_BLUEPRINTS(userId))
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ Projects fetched successfully:', projects);
@@ -62,7 +64,7 @@ export class ProjectService {
 
     console.log('📡 Fetching user blueprints for user:', userId);
     return this.http
-      .get<ProjectResponse[]>(GET_ALL_USER_BLUEPRINTS(userId))
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ User blueprints fetched successfully:', projects);
@@ -79,7 +81,7 @@ export class ProjectService {
 
     console.log('📡 Fetching user blueprint by ID:', id, 'for user:', userId);
     return this.http
-      .get<ProjectResponse>(GET_USER_BLUEPRINT_BY_ID(id, userId))
+      .get<ProjectResponse>(GET_PROJECT_BY_ID(id))
       .pipe(
         map((project: ProjectResponse) => {
           console.log('✅ User blueprint fetched successfully:', project);
@@ -88,40 +90,32 @@ export class ProjectService {
       );
   }
 
-  getProjectById(id: string): Observable<Project[]> {
+  getProjectById(id: string): Observable<Project> {
     console.log('📡 Fetching project by ID:', id);
     return this.http
-      .get<ProjectResponse[]>(GET_PROJECT_BY_ID(id))
+      .get<ProjectResponse>(GET_PROJECT_BY_ID(id))
       .pipe(
-        map((projects: ProjectResponse[]) => {
-          console.log('✅ Projects response:', projects);
-          if (projects && projects.length > 0) {
-            return ProjectAssembler.toEntitiesFromResponse(projects);
-          }
-          throw new Error('Project not found');
+        map((project: ProjectResponse) => {
+          console.log('✅ Project response:', project);
+          return ProjectAssembler.toEntityFromResponse(project);
         })
       );
   }
 
-  createProject(payload: {
-    title: string;
-    userId: string;
-    garmentColor: string;
-    garmentGender: string;
-    garmentSize: string
-  }): Observable<Project> {
+  createProject(request: CreateProjectRequest): Observable<Project> {
     const userId = this.getCurrentUserId();
     if (!userId) {
       throw new Error('No authenticated user found');
     }
 
-    // Use the authenticated user ID instead of the payload userId
-    const projectPayload = { ...payload, userId };
-    const url = `${environment.apiBaseUrl}/projects/create`;
+    // Use the authenticated user ID
+    const projectPayload = { ...request, userId };
 
     console.log('📡 Creating project for user:', userId, 'with payload:', projectPayload);
+    console.log('🌐 POST URL:', CREATE_PROJECT_URL);
+    
     return this.http
-      .post<ProjectResponse>(url, projectPayload)
+      .post<ProjectResponse>(CREATE_PROJECT_URL, projectPayload)
       .pipe(
         map((response: ProjectResponse) => {
           console.log('✅ Project created successfully:', response);
@@ -138,7 +132,7 @@ export class ProjectService {
 
     console.log('📡 Fetching all public projects for authenticated user:', userId);
     return this.http
-      .get<ProjectResponse[]>(`${environment.apiBaseUrl}/projects/users/${userId}`)
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ Public projects fetched successfully:', projects);
@@ -153,7 +147,7 @@ export class ProjectService {
       throw new Error('No authenticated user found');
     }
 
-    const url = `${environment.apiBaseUrl}/projects/${id}`;
+    const url = `${environment.serverBaseUrl}/projects/${id}`;
     console.log('📡 Updating project:', id, 'for user:', userId, 'with data:', projectData);
 
     return this.http
