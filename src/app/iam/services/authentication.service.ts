@@ -23,8 +23,8 @@ export class AuthenticationService {
   private signedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );
-  private signedInUserId: BehaviorSubject<number> = new BehaviorSubject<number>(
-    0
+  private signedInUserId: BehaviorSubject<string> = new BehaviorSubject<string>(
+    ''
   );
   private signedInUsername: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
@@ -64,7 +64,7 @@ export class AuthenticationService {
 
     if (token && userId && username) {
       this.signedIn.next(true);
-      this.signedInUserId.next(parseInt(userId));
+      this.signedInUserId.next(userId);
       this.signedInUsername.next(username);
     }
   }
@@ -150,7 +150,7 @@ export class AuthenticationService {
         },
         error: (error) => {
           this.signedIn.next(false);
-          this.signedInUserId.next(0);
+          this.signedInUserId.next('');
           this.signedInUsername.next('');
           console.error(`Error while signing in: ${error}`);
           this.router.navigate(['/sign-in']).then();
@@ -187,7 +187,7 @@ export class AuthenticationService {
     this.signedInUserId.next(response.id);
     this.signedInUsername.next(response.username);
     localStorage.setItem('token', response.token);
-    localStorage.setItem('userId', response.id.toString());
+    localStorage.setItem('userId', response.id);
     localStorage.setItem('username', response.username);
   }
 
@@ -199,7 +199,7 @@ export class AuthenticationService {
    */
   signOut() {
     this.signedIn.next(false);
-    this.signedInUserId.next(0);
+    this.signedInUserId.next('');
     this.signedInUsername.next('');
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
