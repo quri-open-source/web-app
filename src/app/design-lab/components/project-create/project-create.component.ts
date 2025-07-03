@@ -12,6 +12,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {ProjectService} from '../../services/project.service';
+import {CreateProjectRequest} from '../../services/project.request';
 import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER} from '../../../const';
 
 interface GarmentColorOption {
@@ -81,7 +82,7 @@ export class ProjectCreateComponent {
   }
 
   selectColor(colorValue: string): void {
-    this.projectForm.get('garmentColor')?.setValue(colorValue);
+    this.projectForm.get('garmentColor')?.setValue(colorValue as GARMENT_COLOR);
   }
 
   getGenderLabel(value: PROJECT_GENDER): string {
@@ -121,13 +122,24 @@ export class ProjectCreateComponent {
 
     // Get userId from localStorage (IAM system)
     const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    console.log('🔍 Create Project - User ID:', userId);
+    console.log('🔑 Create Project - Token present:', !!token);
+    
     if (!userId) {
       this.snackBar.open('User not authenticated', 'Close', { duration: 3000 });
       this.isSubmitting = false;
       return;
     }
 
-    const payload = {
+    if (!token) {
+      this.snackBar.open('Authentication token missing', 'Close', { duration: 3000 });
+      this.isSubmitting = false;
+      return;
+    }
+
+    const payload: CreateProjectRequest = {
       title: formValue.name,
       userId: userId,
       garmentColor: formValue.garmentColor,
