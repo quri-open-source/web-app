@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { roleGuard } from './access-security/model/access.entity';
 import { authenticationGuard } from './iam/services/authentication.guard';
+import { redirectAuthenticatedGuard } from './iam/services/redirect-authenticated.guard';
 
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'sign-up',
+        redirectTo: 'home',
         pathMatch: 'full',
     },
     {
@@ -14,6 +15,7 @@ export const routes: Routes = [
             import('./iam/pages/sign-in/sign-in.component').then(
                 (m) => m.SignInComponent
             ),
+        canActivate: [redirectAuthenticatedGuard]
     },
     {
         path: 'sign-up',
@@ -21,6 +23,7 @@ export const routes: Routes = [
             import('./iam/pages/sign-up/sign-up.component').then(
                 (m) => m.SignUpComponent
             ),
+        canActivate: [redirectAuthenticatedGuard]
     },
     {
         path: 'home',

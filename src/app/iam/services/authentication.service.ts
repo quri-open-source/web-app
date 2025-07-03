@@ -146,7 +146,7 @@ export class AuthenticationService {
           console.log(
             `Signed in as ${response.username} with token ${response.token}`
           );
-          this.router.navigate(['/']).then();
+          this.router.navigate(['/home']).then();
         },
         error: (error) => {
           this.signedIn.next(false);

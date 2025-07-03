@@ -65,7 +65,7 @@ export class SignInComponent {
             panelClass: ['success-snackbar'],
           });
           this.isLoading = false;
-          this.router.navigate(['/']);
+          this.router.navigate(['/home']);
         },
         error: (error: any) => {
           this.snackBar.open(
