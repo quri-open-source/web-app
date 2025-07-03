@@ -19,10 +19,10 @@ export enum PROJECT_STATUS {
 }
 
 export enum PROJECT_GENDER {
-    MEN = 'men',
-    WOMEN = 'women',
-    UNISEX = 'unisex',
-    KIDS = 'kids',
+    MEN = 'MEN',
+    WOMEN = 'WOMEN',
+    UNISEX = 'UNISEX',
+    KIDS = 'KIDS',
 }
 
 export enum GARMENT_COLOR {
@@ -54,6 +54,6 @@ export enum GARMENT_SIZE {
 }
 
 export enum LayerType {
-    IMAGE = 'image',
-    TEXT = 'text',
+    IMAGE = 'IMAGE',
+    TEXT = 'TEXT',
 }
