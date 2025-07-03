@@ -130,8 +130,8 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
     this.loading = true;
     this.error = null;
-    // Fetch all projects for the dev user and filter by id
-    this.projectService.getAllPublicProjectsForDevUser().subscribe({
+    // Fetch all projects for the user and filter by id
+    this.projectService.getAllPublicProjectsForUser().subscribe({
       next: (projects: Project[]) => {
         const found = projects.find((p: Project) => p.id === this.projectId);
         if (!found) {
@@ -277,12 +277,12 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       updatedAt: new Date().toISOString(),
     };
 
-    this.projectService.update(this.project.id, projectResponse).subscribe({
+    this.projectService.updateProject(this.project.id, projectResponse).subscribe({
       next: () => {
         this.loading = false;
         this.goBack();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error saving project:', err);
         this.error = 'Failed to save project. Please try again.';
         this.loading = false;

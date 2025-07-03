@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { Cart, CartItem } from '../../model/cart.entity';
 import { DiscountPolicyService } from '../../services/discount-policy.service';
 import { CartDiscountAssembler, CartWithDiscount } from '../../services/cart-discount.assembler';
-import { UserDomainService, User } from '../../../access-security/services/user-domain.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -24,30 +24,45 @@ export class ShoppingCartPopoverComponent implements OnInit, OnDestroy {
   environment = environment;
   projects: any[] = [];
   discountPolicies: any[] = [];
-  private userDomainService: UserDomainService;
+  private authService: AuthenticationService;
   private userSubscription: Subscription | null = null;
-  currentUser: User | null = null;
+  private userIdSubscription: Subscription | null = null;
+  currentUserId: string | null = null;
 
   constructor(
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
     private router: Router,
-    userDomainService: UserDomainService
+    authService: AuthenticationService
   ) {
-    this.userDomainService = userDomainService;
+    this.authService = authService;
   }
 
   ngOnInit() {
-    this.userSubscription = this.userDomainService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if (user) {
-        this.loadCartForUser(user.id);
+    console.log('🛒 [DEBUG] ShoppingCartPopover - Initializing with IAM');
+
+    // Subscribe to authentication changes
+    this.userSubscription = this.authService.isSignedIn.subscribe((isSignedIn: boolean) => {
+      console.log('🛒 [DEBUG] ShoppingCartPopover - Authentication state:', isSignedIn);
+      if (isSignedIn) {
+        // Get current user ID from localStorage (set by IAM)
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          this.currentUserId = userId;
+          console.log('🛒 [DEBUG] ShoppingCartPopover - Loading cart for user:', userId);
+          this.loadCartForUser(userId);
+        }
       } else {
+        console.log('🛒 [DEBUG] ShoppingCartPopover - User not signed in, clearing cart');
+        this.currentUserId = null;
         this.cart = null;
         this.cartWithDiscount = null;
       }
     });
-    this.cartService.getCartUpdates().subscribe((updatedCart) => {
+
+    // Subscribe to cart updates
+    this.cartService.getCartUpdates().subscribe((updatedCart: Cart | null) => {
+      console.log('🛒 [DEBUG] ShoppingCartPopover - Cart update received:', updatedCart);
       if (updatedCart && updatedCart.items.length > 0) {
         this.cart = this.restoreCartItemPrototypes(updatedCart);
         this.loadDiscountsAndAssemble();
@@ -83,7 +98,9 @@ export class ShoppingCartPopoverComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('🛒 [DEBUG] ShoppingCartPopover - Destroying component, unsubscribing');
     this.userSubscription?.unsubscribe();
+    this.userIdSubscription?.unsubscribe();
   }
 
   loadDiscountsAndAssemble() {

@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { map } from 'rxjs';
-import { UserService } from '../../user-management/services/user.service';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { AuthenticationService } from '../../iam/services/authentication.service';
 import { ProjectAssembler } from './project.assembler';
 import { ProjectResponse } from './project.response';
-import { BaseService } from '../../access-security/services/access.service';
+import { Project } from '../model/project.entity';
 import { environment } from '../../../environments/environment';
 
 // TODO: this must be removed when the backend is ready
@@ -22,66 +23,146 @@ const GET_ALL_BLUEPRINTS = (userId: string) =>
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectService extends BaseService<ProjectResponse> {
-  protected userService = inject(UserService);
+export class ProjectService {
+  private http = inject(HttpClient);
+  private authService = inject(AuthenticationService);
 
   constructor() {
-    super('projects');
+    console.log('🎨 ProjectService initialized with IAM integration');
   }
 
-  getAllPublicProjects() {
-    const userId = this.userService.getSessionUserId();
+  private getCurrentUserId(): string | null {
+    const userId = localStorage.getItem('userId');
+    console.log('🔍 ProjectService - Current user ID from IAM:', userId);
+    return userId;
+  }
 
+  getAllPublicProjects(): Observable<Project[]> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    console.log('📡 Fetching all public projects for user:', userId);
     return this.http
       .get<ProjectResponse[]>(GET_ALL_BLUEPRINTS(userId))
       .pipe(
-        map((projects) => ProjectAssembler.toEntitiesFromResponse(projects))
+        map((projects: ProjectResponse[]) => {
+          console.log('✅ Projects fetched successfully:', projects);
+          return ProjectAssembler.toEntitiesFromResponse(projects);
+        })
       );
   }
 
-  getUserBlueprints() {
-    const userId = this.userService.getSessionUserId();
+  getUserBlueprints(): Observable<Project[]> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    console.log('📡 Fetching user blueprints for user:', userId);
     return this.http
       .get<ProjectResponse[]>(GET_ALL_USER_BLUEPRINTS(userId))
       .pipe(
-        map((projects) => ProjectAssembler.toEntitiesFromResponse(projects))
+        map((projects: ProjectResponse[]) => {
+          console.log('✅ User blueprints fetched successfully:', projects);
+          return ProjectAssembler.toEntitiesFromResponse(projects);
+        })
       );
   }
 
-  getUserBlueprintById(id: string) {
+  getUserBlueprintById(id: string): Observable<Project> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    console.log('📡 Fetching user blueprint by ID:', id, 'for user:', userId);
     return this.http
-      .get<ProjectResponse>(
-        GET_USER_BLUEPRINT_BY_ID(id, this.userService.getSessionUserId())
-      )
-      .pipe(map((project) => ProjectAssembler.toEntityFromResponse(project)));
-  }
-  getProjectById(id: string) {
-    return this.http.get<ProjectResponse[]>(GET_PROJECT_BY_ID(id)).pipe(
-      map((projects) => {
-        console.log('Projects response:', projects);
-        if (projects && projects.length > 0) {
-          return ProjectAssembler.toEntitiesFromResponse(projects);
-        }
-        throw new Error('Project not found');
-      })
-    );
+      .get<ProjectResponse>(GET_USER_BLUEPRINT_BY_ID(id, userId))
+      .pipe(
+        map((project: ProjectResponse) => {
+          console.log('✅ User blueprint fetched successfully:', project);
+          return ProjectAssembler.toEntityFromResponse(project);
+        })
+      );
   }
 
-  // Method to create project and return Project entity
-  createProject(payload: { title: string; userId: string; garmentColor: string; garmentGender: string; garmentSize: string }) {
+  getProjectById(id: string): Observable<Project[]> {
+    console.log('📡 Fetching project by ID:', id);
+    return this.http
+      .get<ProjectResponse[]>(GET_PROJECT_BY_ID(id))
+      .pipe(
+        map((projects: ProjectResponse[]) => {
+          console.log('✅ Projects response:', projects);
+          if (projects && projects.length > 0) {
+            return ProjectAssembler.toEntitiesFromResponse(projects);
+          }
+          throw new Error('Project not found');
+        })
+      );
+  }
+
+  createProject(payload: {
+    title: string;
+    userId: string;
+    garmentColor: string;
+    garmentGender: string;
+    garmentSize: string
+  }): Observable<Project> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    // Use the authenticated user ID instead of the payload userId
+    const projectPayload = { ...payload, userId };
     const url = `${environment.apiBaseUrl}/projects/create`;
-    return this.http
-      .post<any>(url, payload)
-      .pipe(map((response) => {
-        console.log('Project created response:', response);
 
-        return ProjectAssembler.toEntityFromResponse(response)
-      }));
+    console.log('📡 Creating project for user:', userId, 'with payload:', projectPayload);
+    return this.http
+      .post<ProjectResponse>(url, projectPayload)
+      .pipe(
+        map((response: ProjectResponse) => {
+          console.log('✅ Project created successfully:', response);
+          return ProjectAssembler.toEntityFromResponse(response);
+        })
+      );
   }
 
-  getAllPublicProjectsForDevUser() {
+  getAllPublicProjectsForUser(): Observable<Project[]> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    console.log('📡 Fetching all public projects for authenticated user:', userId);
     return this.http
-      .get<ProjectResponse[]>(`${environment.apiBaseUrl}/projects/users/${environment.devUser}`)
-      .pipe(map((projects) => ProjectAssembler.toEntitiesFromResponse(projects)));
+      .get<ProjectResponse[]>(`${environment.apiBaseUrl}/projects/users/${userId}`)
+      .pipe(
+        map((projects: ProjectResponse[]) => {
+          console.log('✅ Public projects fetched successfully:', projects);
+          return ProjectAssembler.toEntitiesFromResponse(projects);
+        })
+      );
+  }
+
+  updateProject(id: string, projectData: ProjectResponse): Observable<Project> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      throw new Error('No authenticated user found');
+    }
+
+    const url = `${environment.apiBaseUrl}/projects/${id}`;
+    console.log('📡 Updating project:', id, 'for user:', userId, 'with data:', projectData);
+
+    return this.http
+      .put<ProjectResponse>(url, projectData)
+      .pipe(
+        map((response: ProjectResponse) => {
+          console.log('✅ Project updated successfully:', response);
+          return ProjectAssembler.toEntityFromResponse(response);
+        })
+      );
   }
 }

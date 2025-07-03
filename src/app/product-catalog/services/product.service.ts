@@ -1,9 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { map, switchMap, forkJoin } from 'rxjs';
-import { UserService} from '../../user-management/services/user.service';
 import { ProductAssembler } from './product.assembler';
 import { ProductResponse } from './product.response';
-import { BaseService } from '../../access-security/services/access.service';
 import { ProjectResponse } from '../../design-lab/services/project.response';
 import { ProjectService } from '../../design-lab/services/project.service';
 import { Project } from '../../design-lab/model/project.entity';
@@ -27,15 +25,19 @@ const GET_PROJECT_BY_ID = (id: string) =>
 @Injectable({
   providedIn: 'root',
 })
-export class ProductService extends BaseService<ProductResponse> {
-    protected userService = inject(UserService);
+export class ProductService {
+    private http = inject(HttpClient);
+    private projectService = inject(ProjectService);
 
     private productsUrl = 'http://localhost:3000/catalog';
     private projectsUrl = 'http://localhost:3000/projects';
 
-    constructor(public projectService: ProjectService, override http: HttpClient) {
-        super('products');
-      }
+    /**
+     * Get current user ID from localStorage (IAM system)
+     */
+    private getCurrentUserId(): string | null {
+        return localStorage.getItem('userId');
+    }
 
     getAllProducts() {
         return this.http
@@ -48,7 +50,14 @@ export class ProductService extends BaseService<ProductResponse> {
     }
 
     getUserProducts() {
-        const userId = this.userService.getSessionUserId();
+        const userId = this.getCurrentUserId();
+
+        if (!userId) {
+            console.error('No user ID found in localStorage');
+            return this.http.get<ProductResponse[]>('').pipe(
+                map(() => []) // Return empty array if no user
+            );
+        }
 
         return this.http
             .get<ProjectResponse[]>(`http://localhost:3000/projects?user_id=${userId}`)
@@ -67,7 +76,7 @@ export class ProductService extends BaseService<ProductResponse> {
         return this.http.get<ProductResponse[]>(GET_PRODUCT_BY_ID(productId)).pipe(
           map((products) => products[0]),
           switchMap((product) =>
-            this.projectService.getAllPublicProjectsForDevUser().pipe(
+            this.projectService.getAllPublicProjectsForUser().pipe(
               map((projects: Project[]) => {
                 const found = projects.find((p: Project) => p.id === product.project_id);
                 return found ? found.title : '';

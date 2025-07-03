@@ -14,7 +14,7 @@ import { ProjectService } from '../../../../app/design-lab/services/project.serv
 import { RouterModule, Router } from '@angular/router';
 import { CartDiscountAssembler, CartWithDiscount } from '../../../../app/orders-fulfillments/services/cart-discount.assembler';
 import { Cart, CartItem } from '../../../../app/orders-fulfillments/model/cart.entity';
-import { UserDomainService, User } from '../../../access-security/services/user-domain.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { Subscription } from 'rxjs';
 import { OrderService, OrderResponse } from '../../../orders-fulfillments/services/order.service';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -44,32 +44,39 @@ export class ShoppingCart implements OnInit, OnDestroy {
   loadingProjects = false;
   error: string | null = null;
   private projects: any[] = [];
-  private userDomainService: UserDomainService;
+  private authService: AuthenticationService;
   private userSubscription: Subscription | null = null;
-  currentUser: User | null = null;
+  currentUserId: string | null = null;
 
   constructor(
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
     private projectService: ProjectService,
-    userDomainService: UserDomainService,
+    authService: AuthenticationService,
     private router: Router,
     private orderService: OrderService,
     private snackBar: MatSnackBar
   ) {
-    this.userDomainService = userDomainService;
+    this.authService = authService;
   }
 
   ngOnInit() {
-    this.userSubscription = this.userDomainService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if (user) {
-        this.loadCartForUser(user.id);
+    // Subscribe to authentication changes
+    this.userSubscription = this.authService.isSignedIn.subscribe((isSignedIn: boolean) => {
+      if (isSignedIn) {
+        // Get current user ID from localStorage (set by IAM)
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          this.currentUserId = userId;
+          this.loadCartForUser(userId);
+        }
       } else {
+        this.currentUserId = null;
         this.cart = null;
         this.cartWithDiscount = null;
       }
     });
+
     this.cartService.getCartUpdates().subscribe((updatedCart) => {
       if (updatedCart && updatedCart.items.length > 0) {
         this.cart = this.restoreCartItemPrototypes(updatedCart);
@@ -157,7 +164,7 @@ export class ShoppingCart implements OnInit, OnDestroy {
   }
 
   updateCartOnServer() {
-    if (!this.cart || !this.currentUser) return;
+    if (!this.cart || !this.currentUserId) return;
     this.cartService.updateCart(this.cart).subscribe((updatedCart: Cart) => {
       this.cart = this.restoreCartItemPrototypes(updatedCart);
       if (this.cart && this.cart.items.length > 0) {
@@ -184,14 +191,14 @@ export class ShoppingCart implements OnInit, OnDestroy {
   }
 
   makeOrder() {
-    if (!this.cartWithDiscount || !this.currentUser) {
+    if (!this.cartWithDiscount || !this.currentUserId) {
       this.snackBar.open('Cannot create order. Please check cart or login.', 'Close', { duration: 3000 });
       return;
     }
 
     // Create new order from cart
     const newOrder: Partial<OrderResponse> = {
-      user_id: this.currentUser.id,
+      user_id: this.currentUserId,
       total_amount: this.cartWithDiscount.total,
       description: `Order ${new Date().toISOString()}`,
       status: 'pending',
@@ -208,8 +215,8 @@ export class ShoppingCart implements OnInit, OnDestroy {
         quantity: item.quantity,
         unit_price: item.unit_price
       })),
-      applied_discounts: this.cartWithDiscount.discountPolicy 
-        ? [{ id: this.cartWithDiscount.discountPolicy.id }] 
+      applied_discounts: this.cartWithDiscount.discountPolicy
+        ? [{ id: this.cartWithDiscount.discountPolicy.id }]
         : []
     };
 
@@ -219,7 +226,7 @@ export class ShoppingCart implements OnInit, OnDestroy {
     this.orderService.placeOrder(newOrder).subscribe({
       next: (response: OrderResponse) => {
         this.snackBar.open('Order created successfully!', 'Close', { duration: 2000 });
-        
+
         // Clear the cart after successful order creation
         if (this.cart) {
           this.cartService.clearCart(this.cart).subscribe({
