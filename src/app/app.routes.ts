@@ -1,11 +1,26 @@
 import { Routes } from '@angular/router';
 import { roleGuard } from './access-security/model/access.entity';
+import { authenticationGuard } from './iam/services/authentication.guard';
 
 export const routes: Routes = [
     {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full',
+    },
+    {
+        path: 'sign-in',
+        loadComponent: () =>
+            import('./iam/pages/sign-in/sign-in.component').then(
+                (m) => m.SignInComponent
+            ),
+    },
+    {
+        path: 'sign-up',
+        loadComponent: () =>
+            import('./iam/pages/sign-up/sign-up.component').then(
+                (m) => m.SignUpComponent
+            ),
     },
     {
         path: 'home',
@@ -20,6 +35,7 @@ export const routes: Routes = [
             import('./public/pages/design-lab/design-lab.component').then(
                 (m) => m.DesignLabComponent
             ),
+        canActivate: [authenticationGuard]
     },
     {
       path: 'explore',
@@ -34,6 +50,7 @@ export const routes: Routes = [
             import('./design-lab/components/project-create/project-create.component').then(
                 (m) => m.ProjectCreateComponent
             ),
+        canActivate: [authenticationGuard]
     },
     {
         path: 'design-lab/:id',
@@ -41,6 +58,7 @@ export const routes: Routes = [
             import('./design-lab/components/project-preview/project-preview.component').then(
                 (m) => m.ProjectPreviewComponent
             ),
+        canActivate: [authenticationGuard]
     },
     {
         path: 'design-lab/:id/edit',
@@ -48,12 +66,14 @@ export const routes: Routes = [
             import('./design-lab/components/project-edit/project-edit.component').then(
                 (m) => m.ProjectEditComponent
             ),
+        canActivate: [authenticationGuard]
     },    {
         path: 'profile',
         loadComponent: () =>
             import('./public/pages/profile/profile.component').then(
                 (m) => m.ProfileComponent
             ),
+        canActivate: [authenticationGuard]
     },
     {
         path: 'shopping-cart',
@@ -61,6 +81,7 @@ export const routes: Routes = [
             import('./public/pages/shopping-cart/shopping-cart').then(
                 (m) => m.ShoppingCart
             ),
+        canActivate: [authenticationGuard]
     },
 
     {
@@ -69,6 +90,7 @@ export const routes: Routes = [
             import('./public/pages/choose-manufacturer/choose-manufacturer.component').then(
                 (m) => m.ChooseManufacturerComponent
             ),
+        canActivate: [authenticationGuard]
     },
     {
       path: 'my-fulfillments',
@@ -76,6 +98,7 @@ export const routes: Routes = [
         import('./public/pages/my-fulfillments/my-fulfillments.component').then(
           (m) => m.FulfillmentsListComponent
         ),
+      canActivate: [authenticationGuard]
     },
   {
     path: 'analytics',
@@ -83,6 +106,7 @@ export const routes: Routes = [
       import('./public/pages/analytics/analytics.component').then(
         (m) => m.AnalyticsComponent
       ),
+    canActivate: [authenticationGuard]
   },
   {
     path: 'dashboard',
@@ -95,7 +119,7 @@ export const routes: Routes = [
       import('./public/pages/manufacturer-dashboard/manufacturer-dashboard.component').then(
         (m) => m.ManufacturerDashboardComponent
       ),
-    canActivate: [roleGuard(['manufacturer'])]
+    canActivate: [authenticationGuard, roleGuard(['manufacturer'])]
   },
   {
     path: 'manufacturer-orders',
@@ -103,7 +127,7 @@ export const routes: Routes = [
       import('./public/pages/manufacturer-orders/manufacturer-orders-page.component').then(
         (m) => m.ManufacturerOrdersPageComponent
       ),
-    canActivate: [roleGuard(['manufacturer'])]
+    canActivate: [authenticationGuard, roleGuard(['manufacturer'])]
   },
   {
     path: 'manufacturer-orders/:id',
@@ -111,6 +135,6 @@ export const routes: Routes = [
       import('./orders-fulfillments/components/manufacturer-orders/manufacturer-orders.component').then(
         (m) => m.ManufacturerOrdersComponent
       ),
-    canActivate: [roleGuard(['manufacturer'])]
+    canActivate: [authenticationGuard, roleGuard(['manufacturer'])]
   }
 ];
