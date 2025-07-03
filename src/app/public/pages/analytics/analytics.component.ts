@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { UserService } from '../../../user-management/services/user.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 
 @Component({
   selector: 'app-analytics',
@@ -45,13 +45,13 @@ export class AnalyticsComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private router: Router,
-    private userService: UserService
+    private authService: AuthenticationService
   ) {}
 
-
   ngOnInit(): void {
-    this.userId = this.userService.getSessionUserId();
-    this.userRole = this.userService.getUserRole();
+    // Get user ID and role from localStorage (IAM system)
+    this.userId = localStorage.getItem('userId') || '';
+    this.userRole = localStorage.getItem('userRole') || '';
     this.loadDashboard();
   }
 

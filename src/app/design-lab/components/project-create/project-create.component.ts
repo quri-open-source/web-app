@@ -12,7 +12,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {ProjectService} from '../../services/project.service';
-import {UserService} from '../../../user-management/services/user.service';
 import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER} from '../../../const';
 
 interface GarmentColorOption {
@@ -44,7 +43,6 @@ export class ProjectCreateComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private projectService = inject(ProjectService);
-  private userService = inject(UserService);
   private snackBar = inject(MatSnackBar);
 
   projectForm: FormGroup;
@@ -117,21 +115,36 @@ export class ProjectCreateComponent {
 
   onSubmit(): void {
     if (this.projectForm.invalid) return;
+
     this.isSubmitting = true;
     const formValue = this.projectForm.value;
+
+    // Get userId from localStorage (IAM system)
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      this.snackBar.open('User not authenticated', 'Close', { duration: 3000 });
+      this.isSubmitting = false;
+      return;
+    }
+
     const payload = {
       title: formValue.name,
-      userId: '8b3c1e7e-0d6a-4f6f-915a-77cfb0f9c8c1', // userId fijo de environment
+      userId: userId,
       garmentColor: formValue.garmentColor,
       garmentGender: formValue.gender,
       garmentSize: formValue.garmentSize,
     };
+
+    console.log('Creating project with payload:', payload);
+
     this.projectService.createProject(payload).subscribe({
       next: (project) => {
+        console.log('Project created successfully:', project);
         this.snackBar.open('Project created successfully!', 'Close', { duration: 2000 });
         this.router.navigate(['/design-lab', project.id, 'edit']);
       },
-      error: () => {
+      error: (error) => {
+        console.error('Failed to create project:', error);
         this.snackBar.open('Failed to create project', 'Close', { duration: 2000 });
         this.isSubmitting = false;
       },

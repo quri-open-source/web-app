@@ -1,11 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { UserService } from '../../../user-management/services/user.service';
-import { User } from '../../../user-management/model/user.entity';
+import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { UserInfoComponent } from '../../../user-management/components/user-info/user-info.component';
 import { CommonModule } from '@angular/common';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 
 @Component({
     selector: 'app-profile',
@@ -13,25 +11,38 @@ import { CommonModule } from '@angular/common';
         MatCardModule,
         MatIconModule,
         MatFormFieldModule,
-        UserInfoComponent,
         CommonModule,
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
-    private userService = inject(UserService);
-    user!: User;
+    userEmail: string = '';
+    userId: string = '';
+    userRole: string = '';
+    isSignedIn: boolean = false;
+
+    constructor(private authService: AuthenticationService) {}
 
     ngOnInit(): void {
-        console.log('ProfileComponent: Starting to load user data...');
-        this.userService.getCurrentUser().subscribe({
-            next: (user) => {
-                console.log('ProfileComponent: User data loaded successfully:', user);
-                this.user = user;
-            },
-            error: (error) => {
-                console.error('ProfileComponent: Error loading user data:', error);
+        console.log('ProfileComponent: Loading user profile from localStorage...');
+
+        // Get user data from localStorage (IAM system)
+        this.userId = localStorage.getItem('userId') || '';
+        this.userEmail = localStorage.getItem('userEmail') || '';
+        this.userRole = localStorage.getItem('userRole') || '';
+
+        // Check if user is signed in
+        this.authService.isSignedIn.subscribe(isSignedIn => {
+            this.isSignedIn = isSignedIn;
+            if (!isSignedIn) {
+                console.log('ProfileComponent: User not signed in');
+            } else {
+                console.log('ProfileComponent: User profile loaded:', {
+                    userId: this.userId,
+                    email: this.userEmail,
+                    role: this.userRole
+                });
             }
         });
     }

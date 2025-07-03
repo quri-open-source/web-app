@@ -1,80 +1,105 @@
 <div class="app-container">
-    <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav
-            #sidenav
-            [mode]="isMobile() ? 'over' : 'side'"
-            class="sidenav"
-            [opened]="isOpened()"
-            [fixedInViewport]="isMobile()"
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      #sidenav
+      [mode]="isMobile() ? 'over' : 'side'"
+      class="sidenav"
+      [opened]="isOpened()"
+      [fixedInViewport]="isMobile()"
+    >
+      <div class="logo-container">
+        <h1 class="app-logo">Quri</h1>
+      </div>
+
+      <div class="nav-items">
+        <!-- Debug info -->
+        <div
+          style="
+            background: #f0f0f0;
+            padding: 8px;
+            margin: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+          "
         >
-            <div class="logo-container">
-                <h1 class="app-logo">Quri</h1>
-            </div>
+          <strong>Debug Info:</strong><br />
+          {{ getDebugInfo() }}<br />
+          Routes available: {{ routes.length }}
+        </div>
 
-            <div class="nav-items">
-                @for (route of routes; track route.path) {
-                <a
-                    [routerLink]="route.path"
-                    routerLinkActive="active-link"
-                    class="nav-item"
-                >
-                    <mat-icon>{{ route.icon }}</mat-icon>
-                    <span>{{ route.label }}</span>
-                </a>
-                }
-            </div>
-        </mat-sidenav>
-        <mat-sidenav-content class="content">
-            <div class="toolbar">
-                <div class="toolbar-left">
-                    @if (isMobile()) {
-                    <button
-                        mat-icon-button
-                        color="primary"
-                        aria-label="Toggle sidenav"
-                        (click)="sidenav.toggle()"
-                    >
-                        <mat-icon>menu</mat-icon>
-                    </button>
-                    } @if (currentPage) {
-                    <h2>{{currentPage}}</h2>
-                    }
-                </div>
-                <div class="toolbar-right">
-                    <button
-                        mat-icon-button
-                        color="primary"
-                        aria-label="Create new item"
-                        [routerLink]="['/design-lab/create']"
-                    >
-                        <mat-icon>add</mat-icon>
-                    </button>
-                    <button
-                        mat-icon-button
-                        color="primary"
-                        aria-label="Shopping cart"
-                        [matMenuTriggerFor]="cartMenu"
-                    >
-                        <mat-icon>shopping_cart</mat-icon>
-                    </button>            
-                    
-                    <mat-menu #cartMenu="matMenu" class="cart-menu">
-                        <app-shopping-cart-popover></app-shopping-cart-popover>
-                    </mat-menu>
-                    <button
-                        mat-icon-button
-                        color="primary"
-                        aria-label="User profile"
-                        [routerLink]="['/profile']"
-                    >
-                        <mat-icon>person</mat-icon>
-                    </button>
-                </div>
-            </div>
+        @for (route of routes; track route.path) {
+        <a
+          [routerLink]="route.path"
+          routerLinkActive="active-link"
+          class="nav-item"
+        >
+          <mat-icon>{{ route.icon }}</mat-icon>
+          <span>{{ route.label }}</span>
+        </a>
+        }
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          @if (isMobile()) {
+          <button
+            mat-icon-button
+            color="primary"
+            aria-label="Toggle sidenav"
+            (click)="sidenav.toggle()"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
+          } @if (currentPage) {
+          <h2>{{ currentPage }}</h2>
+          }
+        </div>
+        <div class="toolbar-right">
+          <!-- Debug button -->
+          <button
+            mat-icon-button
+            color="accent"
+            aria-label="Debug routes"
+            (click)="forceRouteUpdate()"
+            title="Force route update (debug)"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="primary"
+            aria-label="Create new item"
+            [routerLink]="['/design-lab/create']"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="primary"
+            aria-label="Shopping cart"
+            [matMenuTriggerFor]="cartMenu"
+          >
+            <mat-icon>shopping_cart</mat-icon>
+          </button>
 
-            <div class="main-content">
-                <router-outlet></router-outlet>
-            </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+          <mat-menu #cartMenu="matMenu" class="cart-menu">
+            <app-shopping-cart-popover></app-shopping-cart-popover>
+          </mat-menu>
+          <button
+            mat-icon-button
+            color="primary"
+            aria-label="User profile"
+            [routerLink]="['/profile']"
+          >
+            <mat-icon>person</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { BaseService } from '../../access-security/services/access.service';
+import { environment } from '../../../environments/environment';
 import { Manufacturer } from '../model/manufacturer.entity';
 import { Fulfillment } from '../model/fulfillment.entity';
 import { ManufacturerAssembler } from './manufacturer.assembler';
@@ -14,13 +15,17 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class ManufacturerService extends BaseService<ManufacturerResponse> {
-  constructor() {
-    super('/manufacturers');
+export class ManufacturerService {
+  private http = inject(HttpClient);
+  private baseUrl = environment.serverBaseUrl;
+  private resourceEndpoint = 'manufacturers';
+
+  private getResourceUrl(): string {
+    return `${this.baseUrl}/${this.resourceEndpoint}`;
   }
 
   getAllManufacturers(): Observable<Manufacturer[]> {
-    return this.getAll().pipe(
+    return this.http.get<ManufacturerResponse[]>(this.getResourceUrl()).pipe(
       map((response: ManufacturerResponse[]) =>
         response.map(manufacturerResponse =>
           ManufacturerAssembler.toEntityFromResource(manufacturerResponse)
@@ -30,12 +35,13 @@ export class ManufacturerService extends BaseService<ManufacturerResponse> {
   }
 
   getManufacturerById(id: string): Observable<Manufacturer> {
-    return this.getById(id).pipe(
+    return this.http.get<ManufacturerResponse>(`${this.getResourceUrl()}/${id}`).pipe(
       map((response: ManufacturerResponse) =>
         ManufacturerAssembler.toEntityFromResource(response)
       )
     );
   }
+
   createFulfillment(request: CreateFulfillmentRequest): Observable<Fulfillment> {
     const fulfillmentData = {
       id: this.generateId(),
@@ -45,7 +51,7 @@ export class ManufacturerService extends BaseService<ManufacturerResponse> {
       shipped_date: request.shipped_date || null
     };
 
-    return this.http.post<CreateFulfillmentResponse>(`${this.apiUrl}/fulfillments`, fulfillmentData).pipe(
+    return this.http.post<CreateFulfillmentResponse>(`${this.baseUrl}/fulfillments`, fulfillmentData).pipe(
       map((response: CreateFulfillmentResponse) =>
         FulfillmentAssembler.toEntityFromResource(response)
       )

@@ -6,7 +6,7 @@ import { ManufacturerService } from '../../../orders-fulfillments/services/manuf
 import { Manufacturer } from '../../../orders-fulfillments/model/manufacturer.entity';
 import { Fulfillment } from '../../../orders-fulfillments/model/fulfillment.entity';
 import { environment } from '../../../../environments/environment';
-import { UserService } from '../../../user-management/services/user.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import {
   ChooseManufacturerFormComponent
 } from '../../../orders-fulfillments/components/choose-manufacturer-form/choose-manufacturer-form.component';
@@ -54,11 +54,12 @@ export class ChooseManufacturerComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
-    private userService: UserService
+    private authService: AuthenticationService
   ) {}
+
   ngOnInit(): void {
-    // Check if user is logged in
-    const userId = this.userService.getSessionUserId();
+    // Check if user is logged in using localStorage (IAM system)
+    const userId = localStorage.getItem('userId');
     if (!userId) {
       this.error = 'No active user. Please log in to continue.';
       setTimeout(() => {
@@ -85,7 +86,8 @@ export class ChooseManufacturerComponent implements OnInit {
     this.error = '';
 
     console.log('Starting manufacturer loading...');
-    console.log('Service URL:', this.manufacturerService.getURL());
+    // Service URL not available in new implementation
+    // console.log('Service URL:', this.manufacturerService.getURL());
 
     this.manufacturerService.getAllManufacturers().subscribe({
       next: (manufacturers: Manufacturer[]) => {
@@ -126,10 +128,10 @@ export class ChooseManufacturerComponent implements OnInit {
       verticalPosition: 'bottom'
     });
   }  onOrderSubmitted(data: { orderId: string; manufacturerId: string }): void {
-    // Check if user is logged in and has customer role
-    const userId = this.userService.getSessionUserId();
-    const userRole = this.userService.getUserRole();
-    
+    // Check if user is logged in and has customer role using localStorage (IAM system)
+    const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+
     if (!userId) {
       this.error = 'No active user. Please log in to continue.';
       this.snackBar.open('Please log in to submit orders', 'Close', {
@@ -138,7 +140,7 @@ export class ChooseManufacturerComponent implements OnInit {
       });
       return;
     }
-    
+
     if (userRole !== 'customer') {
       this.error = 'Only customers can submit orders. Please switch to customer role.';
       this.snackBar.open('Please switch to customer role to place orders', 'Close', {
@@ -147,7 +149,7 @@ export class ChooseManufacturerComponent implements OnInit {
       });
       return;
     }
-    
+
     if (!data.orderId || !data.manufacturerId) {
       this.error = 'Please complete all required fields.';
       this.snackBar.open('Please complete all required fields.', 'Close', {
