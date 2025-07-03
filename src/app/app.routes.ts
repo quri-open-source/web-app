@@ -5,7 +5,7 @@ import { authenticationGuard } from './iam/services/authentication.guard';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'sign-up',
         pathMatch: 'full',
     },
     {
