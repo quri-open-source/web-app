@@ -1,7 +1,7 @@
-import {CanActivateFn, Router} from '@angular/router';
-import {inject} from "@angular/core";
-import {AuthenticationService} from "./authentication.service";
-import {map, take} from "rxjs";
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthenticationService } from './authentication.service';
+import { map, take } from 'rxjs';
 
 /**
  * Guard for checking if the user is signed in.
@@ -11,15 +11,17 @@ import {map, take} from "rxjs";
  * @param route The route object.
  * @param state The state object.
  */
-export const authenticationGuard: CanActivateFn = (route,
-                                                   state) => {
+export const authenticationGuard: CanActivateFn = (route, state) => {
   const authenticationService = inject(AuthenticationService);
   const router = inject(Router);
-  return authenticationService.isSignedIn.pipe(take(1), map(isSignedIn => {
-    if (isSignedIn) return true;
-    else {
-      router.navigate(['/sign-in']).then();
-      return false;
-    }
-  }));
+  return authenticationService.isSignedIn.pipe(
+    take(1),
+    map((isSignedIn) => {
+      if (isSignedIn) return true;
+      else {
+        router.navigate(['/sign-in']).then();
+        return false;
+      }
+    })
+  );
 };

@@ -1,30 +1,37 @@
-import {Injectable} from '@angular/core';
-import {environment} from "../../../environments/environment";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {BehaviorSubject} from "rxjs";
-import {Router} from "@angular/router";
-import {SignUpRequest} from "../model/sign-up.request";
-import {SignUpResponse} from "../model/sign-up.response";
-import {SignInRequest} from "../model/sign-in.request";
-import {SignInResponse} from "../model/sign-in.response";
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
+import { SignUpRequest } from '../model/sign-up.request';
+import { SignUpResponse } from '../model/sign-up.response';
+import { SignInRequest } from '../model/sign-in.request';
+import { SignInResponse } from '../model/sign-in.response';
 
 /**
  * Service for handling authentication operations.
  * @summary
  * This service is responsible for handling authentication operations like sign-up, sign-in, and sign-out.
  */
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   basePath: string = `${environment.serverBaseUrl}`;
-  httpOptions = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  };
 
-  private signedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private signedInUserId: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  private signedInUsername: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private signedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  private signedInUserId: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
+  private signedInUsername: BehaviorSubject<string> =
+    new BehaviorSubject<string>('');
 
   /**
    * Constructor for the AuthenticationService.
-    * @param router The router service.
+   * @param router The router service.
    * @param http The HttpClient service.
    */
   constructor(private router: Router, private http: HttpClient) {
@@ -54,7 +61,7 @@ export class AuthenticationService {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
-    
+
     if (token && userId && username) {
       this.signedIn.next(true);
       this.signedInUserId.next(parseInt(userId));
@@ -72,16 +79,23 @@ export class AuthenticationService {
    * @returns The {@link SignUpResponse} object containing the user's id and username.
    */
   signUp(signUpRequest: SignUpRequest) {
-    return this.http.post<SignUpResponse>(`${this.basePath}/auth/sign-up`, signUpRequest, this.httpOptions)
+    return this.http
+      .post<SignUpResponse>(
+        `${this.basePath}/auth/sign-up`,
+        signUpRequest,
+        this.httpOptions
+      )
       .subscribe({
         next: (response) => {
-          console.log(`Signed up as ${response.username} with id ${response.id}`);
+          console.log(
+            `Signed up as ${response.username} with id ${response.id}`
+          );
           this.router.navigate(['/sign-in']).then();
         },
         error: (error) => {
           console.error(`Error while signing up: ${error}`);
           this.router.navigate(['/sign-up']).then();
-        }
+        },
       });
   }
 
@@ -97,8 +111,12 @@ export class AuthenticationService {
     console.log('📡 Sending POST to:', `${this.basePath}/auth/sign-up`);
     console.log('📝 Request body:', JSON.stringify(signUpRequest));
     console.log('🔧 HTTP Options:', this.httpOptions);
-    
-    return this.http.post<SignUpResponse>(`${this.basePath}/auth/sign-up`, signUpRequest, this.httpOptions);
+
+    return this.http.post<SignUpResponse>(
+      `${this.basePath}/auth/sign-up`,
+      signUpRequest,
+      this.httpOptions
+    );
   }
 
   /**
@@ -116,11 +134,18 @@ export class AuthenticationService {
    */
   signIn(signInRequest: SignInRequest) {
     console.log(signInRequest);
-    return this.http.post<SignInResponse>(`${this.basePath}/auth/sign-in`, signInRequest, this.httpOptions)
+    return this.http
+      .post<SignInResponse>(
+        `${this.basePath}/auth/sign-in`,
+        signInRequest,
+        this.httpOptions
+      )
       .subscribe({
         next: (response) => {
           this.updateAuthenticationState(response);
-          console.log(`Signed in as ${response.username} with token ${response.token}`);
+          console.log(
+            `Signed in as ${response.username} with token ${response.token}`
+          );
           this.router.navigate(['/']).then();
         },
         error: (error) => {
@@ -129,7 +154,7 @@ export class AuthenticationService {
           this.signedInUsername.next('');
           console.error(`Error while signing in: ${error}`);
           this.router.navigate(['/sign-in']).then();
-        }
+        },
       });
   }
 
@@ -145,8 +170,12 @@ export class AuthenticationService {
     console.log('📡 Sending POST to:', `${this.basePath}/auth/sign-in`);
     console.log('📝 Request body:', JSON.stringify(signInRequest));
     console.log('🔧 HTTP Options:', this.httpOptions);
-    
-    return this.http.post<SignInResponse>(`${this.basePath}/auth/sign-in`, signInRequest, this.httpOptions);
+
+    return this.http.post<SignInResponse>(
+      `${this.basePath}/auth/sign-in`,
+      signInRequest,
+      this.httpOptions
+    );
   }
 
   /**
@@ -177,5 +206,4 @@ export class AuthenticationService {
     localStorage.removeItem('username');
     this.router.navigate(['/sign-in']).then();
   }
-
 }

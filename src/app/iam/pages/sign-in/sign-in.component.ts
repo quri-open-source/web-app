@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { SignInRequest } from '../../model/sign-in.request';
@@ -20,10 +25,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.css'
+  styleUrl: './sign-in.component.css',
 })
 export class SignInComponent {
   signInForm: FormGroup;
@@ -37,7 +42,7 @@ export class SignInComponent {
   ) {
     this.signInForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -54,21 +59,25 @@ export class SignInComponent {
         next: (response: any) => {
           // Update authentication state
           this.authService.updateAuthenticationState(response);
-          
+
           this.snackBar.open(`Welcome back, ${response.username}!`, 'Close', {
             duration: 3000,
-            panelClass: ['success-snackbar']
+            panelClass: ['success-snackbar'],
           });
           this.isLoading = false;
           this.router.navigate(['/']);
         },
         error: (error: any) => {
-          this.snackBar.open('Invalid username or password. Please try again.', 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-          });
+          this.snackBar.open(
+            'Invalid username or password. Please try again.',
+            'Close',
+            {
+              duration: 5000,
+              panelClass: ['error-snackbar'],
+            }
+          );
           this.isLoading = false;
-        }
+        },
       });
     } else {
       this.markFormGroupTouched();
@@ -76,7 +85,7 @@ export class SignInComponent {
   }
 
   private markFormGroupTouched() {
-    Object.keys(this.signInForm.controls).forEach(key => {
+    Object.keys(this.signInForm.controls).forEach((key) => {
       const control = this.signInForm.get(key);
       control?.markAsTouched();
     });

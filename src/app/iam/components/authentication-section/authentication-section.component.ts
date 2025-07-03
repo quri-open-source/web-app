@@ -19,10 +19,10 @@ import { MatDividerModule } from '@angular/material/divider';
     MatMenuModule,
     MatIconModule,
     MatToolbarModule,
-    MatDividerModule
+    MatDividerModule,
   ],
   templateUrl: './authentication-section.component.html',
-  styleUrl: './authentication-section.component.css'
+  styleUrl: './authentication-section.component.css',
 })
 export class AuthenticationSectionComponent implements OnInit {
   isSignedIn$: Observable<boolean>;
