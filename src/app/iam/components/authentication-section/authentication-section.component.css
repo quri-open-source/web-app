@@ -1,0 +1,58 @@
+.authentication-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signed-in-section {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.user-menu-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.username {
+  font-weight: 500;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signed-out-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sign-in-button {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 8px 20px;
+  transition: all 0.2s;
+}
+
+.sign-in-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.sign-up-button {
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 500;
+}
