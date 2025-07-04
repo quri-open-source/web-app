@@ -13,9 +13,9 @@ import { DesignLabCommandService } from './commands/design-lab-command.service';
 import { DesignLabQueryService } from './queries/design-lab-query.service';
 
 // Commands
-import { 
-    CreateProjectCommand, 
-    UpdateProjectCommand, 
+import {
+    CreateProjectCommand,
+    UpdateProjectCommand,
     DeleteProjectCommand,
     ProjectCommandResult
 } from './commands/project-commands';
@@ -65,7 +65,7 @@ export class DesignLabApplicationService {
      */
     createProject(command: CreateProjectCommand): Observable<ProjectCommandResult> {
         console.log('🚀 DesignLabApplicationService - Creating project:', command.title);
-        
+
         return from(this.commandService.createProject(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Project created successfully');
@@ -83,7 +83,7 @@ export class DesignLabApplicationService {
      */
     updateProject(command: UpdateProjectCommand): Observable<ProjectCommandResult> {
         console.log('📝 DesignLabApplicationService - Updating project:', command.id);
-        
+
         return from(this.commandService.updateProject(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Project updated successfully');
@@ -101,7 +101,7 @@ export class DesignLabApplicationService {
      */
     deleteProject(command: DeleteProjectCommand): Observable<ProjectCommandResult> {
         console.log('🗑️ DesignLabApplicationService - Deleting project:', command.projectId);
-        
+
         return from(this.commandService.deleteProject(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Project deleted successfully');
@@ -119,9 +119,9 @@ export class DesignLabApplicationService {
      */
     getAllProjectsByUserId(userId: string): Observable<Project[]> {
         console.log('🔍 DesignLabApplicationService - Getting projects for user:', userId);
-        
+
         const query: GetAllProjectsByUserIdQuery = { userId };
-        
+
         return from(this.queryService.getAllProjectsByUserId(query)).pipe(
             map(result => {
                 if (result.success && result.data) {
@@ -142,9 +142,9 @@ export class DesignLabApplicationService {
      */
     getProjectById(projectId: string): Observable<Project> {
         console.log('🔍 DesignLabApplicationService - Getting project by ID:', projectId);
-        
+
         const query: GetProjectByIdQuery = { projectId };
-        
+
         return from(this.queryService.getProjectById(query)).pipe(
             map(result => {
                 if (result.success && result.data) {
@@ -165,9 +165,9 @@ export class DesignLabApplicationService {
      */
     getProjectDetailsForProduct(projectId: string): Observable<any> {
         console.log('🔍 DesignLabApplicationService - Getting project details for product:', projectId);
-        
+
         const query: GetProjectDetailsForProductQuery = { projectId };
-        
+
         return from(this.queryService.getProjectDetailsForProduct(query)).pipe(
             map(result => {
                 if (result.success && result.data) {
@@ -190,7 +190,7 @@ export class DesignLabApplicationService {
      */
     createTextLayer(command: CreateTextLayerCommand): Observable<LayerCommandResult> {
         console.log('📝 DesignLabApplicationService - Creating text layer');
-        
+
         return from(this.commandService.createTextLayer(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Text layer created successfully');
@@ -208,7 +208,7 @@ export class DesignLabApplicationService {
      */
     createImageLayer(command: CreateImageLayerCommand): Observable<LayerCommandResult> {
         console.log('🖼️ DesignLabApplicationService - Creating image layer');
-        
+
         return from(this.commandService.createImageLayer(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Image layer created successfully');
@@ -226,7 +226,7 @@ export class DesignLabApplicationService {
      */
     updateTextLayerDetails(command: UpdateTextLayerDetailsCommand): Observable<LayerCommandResult> {
         console.log('📝 DesignLabApplicationService - Updating text layer details');
-        
+
         return from(this.commandService.updateTextLayerDetails(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Text layer details updated successfully');
@@ -244,7 +244,7 @@ export class DesignLabApplicationService {
      */
     updateImageLayerDetails(command: UpdateImageLayerDetailsCommand): Observable<LayerCommandResult> {
         console.log('🖼️ DesignLabApplicationService - Updating image layer details');
-        
+
         return from(this.commandService.updateImageLayerDetails(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Image layer details updated successfully');
@@ -262,7 +262,7 @@ export class DesignLabApplicationService {
      */
     updateLayerCoordinates(command: UpdateLayerCoordinatesCommand): Observable<LayerCommandResult> {
         console.log('📍 DesignLabApplicationService - Updating layer coordinates');
-        
+
         return from(this.commandService.updateLayerCoordinates(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Layer coordinates updated successfully');
@@ -280,7 +280,7 @@ export class DesignLabApplicationService {
      */
     deleteLayer(command: DeleteLayerCommand): Observable<LayerCommandResult> {
         console.log('🗑️ DesignLabApplicationService - Deleting layer');
-        
+
         return from(this.commandService.deleteLayer(command)).pipe(
             map(result => {
                 console.log('✅ DesignLabApplicationService - Layer deleted successfully');
@@ -298,9 +298,9 @@ export class DesignLabApplicationService {
      */
     getLayersByProjectId(projectId: string): Observable<Layer[]> {
         console.log('🔍 DesignLabApplicationService - Getting layers for project:', projectId);
-        
+
         const query: GetLayersByProjectIdQuery = { projectId };
-        
+
         return from(this.queryService.getLayersByProjectId(query)).pipe(
             map(result => {
                 if (result.success && result.data) {
@@ -321,9 +321,9 @@ export class DesignLabApplicationService {
      */
     getLayersByType(projectId: string, type: 'TEXT' | 'IMAGE'): Observable<Layer[]> {
         console.log('🔍 DesignLabApplicationService - Getting layers by type:', type);
-        
+
         const query: GetLayersByTypeQuery = { projectId, type };
-        
+
         return from(this.queryService.getLayersByType(query)).pipe(
             map(result => {
                 if (result.success && result.data) {

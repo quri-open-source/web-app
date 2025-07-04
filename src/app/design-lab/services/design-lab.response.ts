@@ -20,7 +20,7 @@ export interface LayerResponse {
         isBold?: boolean;
         isItalic?: boolean;
         isUnderlined?: boolean;
-        
+
         // Image Layer Details
         imageUrl?: string;
         width?: number;

@@ -70,8 +70,8 @@ export class DesignLabService {
             console.warn('🔓 Unauthorized access detected, clearing session');
             this.authService.signOut();
             return throwError(() => new Error('Authentication required. Please sign in again.'));
-        } 
-        
+        }
+
         // Handle authorization errors
         if (error.status === 403) {
             console.warn('🚫 Forbidden access - insufficient permissions');
@@ -109,8 +109,8 @@ export class DesignLabService {
     getAllProjectsByUserId(userId: string): Observable<ProjectResponse[]> {
         console.log('🔍 DesignLabService - Getting projects for user:', userId);
 
-        return this.http.get<ProjectResponse[]>(`${BASE_URL}?userId=${userId}`, { 
-            headers: this.getAuthHeaders() 
+        return this.http.get<ProjectResponse[]>(`${BASE_URL}?userId=${userId}`, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Projects fetched successfully:', response.length);
@@ -127,8 +127,8 @@ export class DesignLabService {
     getProjectById(projectId: string): Observable<ProjectResponse> {
         console.log('🔍 DesignLabService - Getting project by ID:', projectId);
 
-        return this.http.get<ProjectResponse>(`${BASE_URL}/${projectId}`, { 
-            headers: this.getAuthHeaders() 
+        return this.http.get<ProjectResponse>(`${BASE_URL}/${projectId}`, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project fetched successfully:', response.id);
@@ -145,8 +145,8 @@ export class DesignLabService {
     createProject(request: CreateProjectRequest): Observable<ProjectResponse> {
         console.log('🆕 DesignLabService - Creating new project:', request);
 
-        return this.http.post<ProjectResponse>(BASE_URL, request, { 
-            headers: this.getAuthHeaders() 
+        return this.http.post<ProjectResponse>(BASE_URL, request, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project created successfully:', response.id);
@@ -163,8 +163,8 @@ export class DesignLabService {
     getProjectDetailsForProduct(projectId: string): Observable<ProjectDetailsResponse> {
         console.log('🔍 DesignLabService - Getting project details for product:', projectId);
 
-        return this.http.get<ProjectDetailsResponse>(`${BASE_URL}/${projectId}/details`, { 
-            headers: this.getAuthHeaders() 
+        return this.http.get<ProjectDetailsResponse>(`${BASE_URL}/${projectId}/details`, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project details fetched successfully');
@@ -181,8 +181,8 @@ export class DesignLabService {
     updateProjectDetails(projectId: string, request: UpdateProjectDetailsRequest): Observable<ProjectResponse> {
         console.log('📝 DesignLabService - Updating project details:', projectId, request);
 
-        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}/details`, request, { 
-            headers: this.getAuthHeaders() 
+        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}/details`, request, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project details updated successfully');
@@ -199,8 +199,8 @@ export class DesignLabService {
     updateProject(projectId: string, request: UpdateProjectRequest): Observable<ProjectResponse> {
         console.log('📝 DesignLabService - Updating entire project:', projectId);
 
-        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}`, request, { 
-            headers: this.getAuthHeaders() 
+        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}`, request, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project updated successfully');
@@ -217,8 +217,8 @@ export class DesignLabService {
     deleteProject(projectId: string): Observable<DeleteProjectResponse> {
         console.log('🗑️ DesignLabService - Deleting project:', projectId);
 
-        return this.http.delete<DeleteProjectResponse>(`${BASE_URL}/${projectId}`, { 
-            headers: this.getAuthHeaders() 
+        return this.http.delete<DeleteProjectResponse>(`${BASE_URL}/${projectId}`, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Project deleted successfully');
@@ -237,8 +237,8 @@ export class DesignLabService {
     createTextLayer(projectId: string, request: CreateTextLayerRequest): Observable<TextLayerResponse> {
         console.log('📝 DesignLabService - Creating text layer for project:', projectId, request);
 
-        return this.http.post<TextLayerResponse>(`${BASE_URL}/${projectId}/texts`, request, { 
-            headers: this.getAuthHeaders() 
+        return this.http.post<TextLayerResponse>(`${BASE_URL}/${projectId}/texts`, request, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Text layer created successfully:', response.id);
@@ -255,8 +255,8 @@ export class DesignLabService {
     createImageLayer(projectId: string, request: CreateImageLayerRequest): Observable<ImageLayerResponse> {
         console.log('🖼️ DesignLabService - Creating image layer for project:', projectId, request);
 
-        return this.http.post<ImageLayerResponse>(`${BASE_URL}/${projectId}/images`, request, { 
-            headers: this.getAuthHeaders() 
+        return this.http.post<ImageLayerResponse>(`${BASE_URL}/${projectId}/images`, request, {
+            headers: this.getAuthHeaders()
         }).pipe(
             map((response) => {
                 console.log('✅ DesignLabService - Image layer created successfully:', response.id);
@@ -271,15 +271,15 @@ export class DesignLabService {
      * PUT /api/v1/projects/{projectId}/layers/{layerId}/text-details
      */
     updateTextLayerDetails(
-        projectId: string, 
-        layerId: string, 
+        projectId: string,
+        layerId: string,
         request: UpdateTextLayerDetailsRequest
     ): Observable<TextLayerResponse> {
         console.log('📝 DesignLabService - Updating text layer details:', projectId, layerId, request);
 
         return this.http.put<TextLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/text-details`, 
-            request, 
+            `${BASE_URL}/${projectId}/layers/${layerId}/text-details`,
+            request,
             { headers: this.getAuthHeaders() }
         ).pipe(
             map((response) => {
@@ -295,15 +295,15 @@ export class DesignLabService {
      * PUT /api/v1/projects/{projectId}/layers/{layerId}/image-details
      */
     updateImageLayerDetails(
-        projectId: string, 
-        layerId: string, 
+        projectId: string,
+        layerId: string,
         request: UpdateImageLayerDetailsRequest
     ): Observable<ImageLayerResponse> {
         console.log('🖼️ DesignLabService - Updating image layer details:', projectId, layerId, request);
 
         return this.http.put<ImageLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/image-details`, 
-            request, 
+            `${BASE_URL}/${projectId}/layers/${layerId}/image-details`,
+            request,
             { headers: this.getAuthHeaders() }
         ).pipe(
             map((response) => {
@@ -319,15 +319,15 @@ export class DesignLabService {
      * PUT /api/v1/projects/{projectId}/layers/{layerId}/coordinates
      */
     updateLayerCoordinates(
-        projectId: string, 
-        layerId: string, 
+        projectId: string,
+        layerId: string,
         request: UpdateLayerCoordinatesRequest
     ): Observable<LayerResponse> {
         console.log('📍 DesignLabService - Updating layer coordinates:', projectId, layerId, request);
 
         return this.http.put<LayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`, 
-            request, 
+            `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`,
+            request,
             { headers: this.getAuthHeaders() }
         ).pipe(
             map((response) => {
@@ -346,7 +346,7 @@ export class DesignLabService {
         console.log('🗑️ DesignLabService - Deleting layer:', projectId, layerId);
 
         return this.http.delete<DeleteLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}`, 
+            `${BASE_URL}/${projectId}/layers/${layerId}`,
             { headers: this.getAuthHeaders() }
         ).pipe(
             map((response) => {

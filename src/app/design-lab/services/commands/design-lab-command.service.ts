@@ -9,9 +9,9 @@ import { environment } from '../../../../environments/environment';
 import { AuthenticationService } from '../../../iam/services/authentication.service';
 
 // Commands
-import { 
-    CreateProjectCommand, 
-    UpdateProjectCommand, 
+import {
+    CreateProjectCommand,
+    UpdateProjectCommand,
     DeleteProjectCommand,
     ProjectCommandResult
 } from '../commands/project-commands';
@@ -53,7 +53,7 @@ export class DesignLabCommandService {
     async createProject(command: CreateProjectCommand): Promise<ProjectCommandResult> {
         try {
             console.log('🚀 DesignLabCommandService - Creating project:', command);
-            
+
             const request = {
                 title: command.title,
                 userId: command.userId,
@@ -63,13 +63,13 @@ export class DesignLabCommandService {
             };
 
             const response = await this.http.post<ProjectResponse>(
-                BASE_URL, 
-                request, 
+                BASE_URL,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Project created successfully:', response?.id);
-            
+
             return {
                 success: true,
                 projectId: response?.id,
@@ -90,7 +90,7 @@ export class DesignLabCommandService {
     async updateProject(command: UpdateProjectCommand): Promise<ProjectCommandResult> {
         try {
             console.log('📝 DesignLabCommandService - Updating project:', command);
-            
+
             const request = {
                 previewUrl: command.previewUrl,
                 status: command.status,
@@ -100,13 +100,13 @@ export class DesignLabCommandService {
             };
 
             await this.http.put<ProjectResponse>(
-                `${BASE_URL}/${command.id}/details`, 
-                request, 
+                `${BASE_URL}/${command.id}/details`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Project updated successfully');
-            
+
             return {
                 success: true,
                 projectId: command.id,
@@ -127,14 +127,14 @@ export class DesignLabCommandService {
     async deleteProject(command: DeleteProjectCommand): Promise<ProjectCommandResult> {
         try {
             console.log('🗑️ DesignLabCommandService - Deleting project:', command);
-            
+
             await this.http.delete<DeleteProjectResponse>(
-                `${BASE_URL}/${command.projectId}`, 
+                `${BASE_URL}/${command.projectId}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Project deleted successfully');
-            
+
             return {
                 success: true,
                 projectId: command.projectId,
@@ -157,7 +157,7 @@ export class DesignLabCommandService {
     async createTextLayer(command: CreateTextLayerCommand): Promise<LayerCommandResult> {
         try {
             console.log('📝 DesignLabCommandService - Creating text layer:', command);
-            
+
             const request = {
                 text: command.text,
                 fontColor: command.fontColor,
@@ -170,13 +170,13 @@ export class DesignLabCommandService {
             };
 
             const response = await this.http.post<TextLayerResponse>(
-                `${BASE_URL}/${command.projectId}/texts`, 
-                request, 
+                `${BASE_URL}/${command.projectId}/texts`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Text layer created successfully:', response?.id);
-            
+
             return {
                 success: true,
                 layerId: response?.id,
@@ -198,7 +198,7 @@ export class DesignLabCommandService {
     async createImageLayer(command: CreateImageLayerCommand): Promise<LayerCommandResult> {
         try {
             console.log('🖼️ DesignLabCommandService - Creating image layer:', command);
-            
+
             const request = {
                 imageUrl: command.imageUrl,
                 width: command.width,
@@ -207,13 +207,13 @@ export class DesignLabCommandService {
             };
 
             const response = await this.http.post<ImageLayerResponse>(
-                `${BASE_URL}/${command.projectId}/images`, 
-                request, 
+                `${BASE_URL}/${command.projectId}/images`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Image layer created successfully:', response?.id);
-            
+
             return {
                 success: true,
                 layerId: response?.id,
@@ -235,7 +235,7 @@ export class DesignLabCommandService {
     async updateTextLayerDetails(command: UpdateTextLayerDetailsCommand): Promise<LayerCommandResult> {
         try {
             console.log('📝 DesignLabCommandService - Updating text layer details:', command);
-            
+
             const request = {
                 text: command.text,
                 fontColor: command.fontColor,
@@ -247,13 +247,13 @@ export class DesignLabCommandService {
             };
 
             await this.http.put<TextLayerResponse>(
-                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/text-details`, 
-                request, 
+                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/text-details`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Text layer details updated successfully');
-            
+
             return {
                 success: true,
                 layerId: command.layerId,
@@ -275,7 +275,7 @@ export class DesignLabCommandService {
     async updateImageLayerDetails(command: UpdateImageLayerDetailsCommand): Promise<LayerCommandResult> {
         try {
             console.log('🖼️ DesignLabCommandService - Updating image layer details:', command);
-            
+
             const request = {
                 imageUrl: command.imageUrl,
                 width: command.width,
@@ -283,13 +283,13 @@ export class DesignLabCommandService {
             };
 
             await this.http.put<ImageLayerResponse>(
-                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/image-details`, 
-                request, 
+                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/image-details`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Image layer details updated successfully');
-            
+
             return {
                 success: true,
                 layerId: command.layerId,
@@ -311,7 +311,7 @@ export class DesignLabCommandService {
     async updateLayerCoordinates(command: UpdateLayerCoordinatesCommand): Promise<LayerCommandResult> {
         try {
             console.log('📍 DesignLabCommandService - Updating layer coordinates:', command);
-            
+
             const request = {
                 x: command.x,
                 y: command.y,
@@ -319,13 +319,13 @@ export class DesignLabCommandService {
             };
 
             await this.http.put<LayerResponse>(
-                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/coordinates`, 
-                request, 
+                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/coordinates`,
+                request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Layer coordinates updated successfully');
-            
+
             return {
                 success: true,
                 layerId: command.layerId,
@@ -347,14 +347,14 @@ export class DesignLabCommandService {
     async deleteLayer(command: DeleteLayerCommand): Promise<LayerCommandResult> {
         try {
             console.log('🗑️ DesignLabCommandService - Deleting layer:', command);
-            
+
             await this.http.delete<DeleteLayerResponse>(
-                `${BASE_URL}/${command.projectId}/layers/${command.layerId}`, 
+                `${BASE_URL}/${command.projectId}/layers/${command.layerId}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabCommandService - Layer deleted successfully');
-            
+
             return {
                 success: true,
                 layerId: command.layerId,

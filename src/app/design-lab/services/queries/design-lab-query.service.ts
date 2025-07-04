@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthenticationService } from '../../../iam/services/authentication.service';
 
 // Queries
-import { 
+import {
     GetAllProjectsByUserIdQuery,
     GetProjectByIdQuery,
     GetProjectDetailsForProductQuery,
@@ -50,14 +50,14 @@ export class DesignLabQueryService {
     async getAllProjectsByUserId(query: GetAllProjectsByUserIdQuery): Promise<ProjectQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting projects for user:', query.userId);
-            
+
             const response = await this.http.get<ProjectResponse[]>(
                 `${BASE_URL}?userId=${query.userId}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Projects fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],
@@ -78,14 +78,14 @@ export class DesignLabQueryService {
     async getProjectById(query: GetProjectByIdQuery): Promise<ProjectQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting project by ID:', query.projectId);
-            
+
             const response = await this.http.get<ProjectResponse>(
                 `${BASE_URL}/${query.projectId}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Project fetched successfully:', response?.id);
-            
+
             return {
                 success: true,
                 data: response,
@@ -106,14 +106,14 @@ export class DesignLabQueryService {
     async getProjectDetailsForProduct(query: GetProjectDetailsForProductQuery): Promise<ProjectQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting project details for product:', query.projectId);
-            
+
             const response = await this.http.get<ProjectDetailsResponse>(
                 `${BASE_URL}/${query.projectId}/details`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Project details fetched successfully');
-            
+
             return {
                 success: true,
                 data: response,
@@ -134,14 +134,14 @@ export class DesignLabQueryService {
     async getProjectsByStatus(query: GetProjectsByStatusQuery): Promise<ProjectQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting projects by status:', query);
-            
+
             const response = await this.http.get<ProjectResponse[]>(
                 `${BASE_URL}?userId=${query.userId}&status=${query.status}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Projects by status fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],
@@ -162,14 +162,14 @@ export class DesignLabQueryService {
     async getProjectsByGarmentColor(query: GetProjectsByGarmentColorQuery): Promise<ProjectQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting projects by garment color:', query);
-            
+
             const response = await this.http.get<ProjectResponse[]>(
                 `${BASE_URL}?userId=${query.userId}&garmentColor=${query.garmentColor}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Projects by garment color fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],
@@ -192,14 +192,14 @@ export class DesignLabQueryService {
     async getLayerById(query: GetLayerByIdQuery): Promise<LayerQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting layer by ID:', query);
-            
+
             const response = await this.http.get<LayerResponse>(
                 `${BASE_URL}/${query.projectId}/layers/${query.layerId}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Layer fetched successfully:', response?.id);
-            
+
             return {
                 success: true,
                 data: response,
@@ -220,14 +220,14 @@ export class DesignLabQueryService {
     async getLayersByProjectId(query: GetLayersByProjectIdQuery): Promise<LayerQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting layers by project ID:', query.projectId);
-            
+
             const response = await this.http.get<LayerResponse[]>(
                 `${BASE_URL}/${query.projectId}/layers`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Layers fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],
@@ -248,14 +248,14 @@ export class DesignLabQueryService {
     async getLayersByType(query: GetLayersByTypeQuery): Promise<LayerQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting layers by type:', query);
-            
+
             const response = await this.http.get<LayerResponse[]>(
                 `${BASE_URL}/${query.projectId}/layers?type=${query.type}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Layers by type fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],
@@ -276,14 +276,14 @@ export class DesignLabQueryService {
     async getVisibleLayers(query: GetVisibleLayersQuery): Promise<LayerQueryResult> {
         try {
             console.log('🔍 DesignLabQueryService - Getting visible layers:', query);
-            
+
             const response = await this.http.get<LayerResponse[]>(
                 `${BASE_URL}/${query.projectId}/layers?visible=${query.isVisible}`,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
 
             console.log('✅ DesignLabQueryService - Visible layers fetched successfully:', response?.length);
-            
+
             return {
                 success: true,
                 data: response || [],

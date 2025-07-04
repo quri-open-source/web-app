@@ -1,8 +1,8 @@
 import { Layer, TextLayer, ImageLayer } from '../model/layer.entity';
 import { Project } from '../model/project.entity';
-import { 
-    LayerResponse, 
-    TextLayerResponse, 
+import {
+    LayerResponse,
+    TextLayerResponse,
     ImageLayerResponse,
     ProjectResponse,
     ProjectDetailsResponse
@@ -199,13 +199,13 @@ export class DesignLabAssembler {
             response.isVisible,
             response.details.imageUrl
         );
-        
+
         // Set width and height from response details
         imageLayer.details = {
             width: response.details.width,
             height: response.details.height
         };
-        
+
         return imageLayer;
     }
 
