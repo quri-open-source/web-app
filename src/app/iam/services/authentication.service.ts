@@ -63,10 +63,24 @@ export class AuthenticationService {
     const username = localStorage.getItem('username');
 
     if (token && userId && username) {
+      // For now, assume the token is valid if it exists
+      // The interceptor will handle invalid tokens and clear the session
       this.signedIn.next(true);
       this.signedInUserId.next(userId);
       this.signedInUsername.next(username);
     }
+  }
+
+  /**
+   * Clear the current session data
+   */
+  public clearSession() {
+    this.signedIn.next(false);
+    this.signedInUserId.next('');
+    this.signedInUsername.next('');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
   }
 
   /**

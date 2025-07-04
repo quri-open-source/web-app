@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sign-up',
@@ -23,7 +24,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslateModule
   ],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
@@ -37,7 +39,8 @@ export class SignUpComponent {
     private fb: FormBuilder,
     private authService: AuthenticationService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.signUpForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -50,13 +53,13 @@ export class SignUpComponent {
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-    
+
     if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
     } else if (confirmPassword?.hasError('passwordMismatch')) {
       confirmPassword.setErrors(null);
     }
-    
+
     return null;
   }
 
@@ -64,13 +67,13 @@ export class SignUpComponent {
     console.log('📋 Form submitted!');
     console.log('✅ Form valid:', this.signUpForm.valid);
     console.log('📝 Form values:', this.signUpForm.value);
-    
+
     if (this.signUpForm.valid) {
       this.isLoading = true;
       const selectedRole = this.signUpForm.get('role')?.value;
-      
+
       console.log('🎯 Selected role:', selectedRole);
-      
+
       const signUpRequest = new SignUpRequest(
         this.signUpForm.get('username')?.value,
         this.signUpForm.get('password')?.value,
@@ -83,7 +86,7 @@ export class SignUpComponent {
       this.authService.signUpWithCallback(signUpRequest).subscribe({
         next: (response: any) => {
           console.log('✅ Sign-up successful:', response);
-          this.snackBar.open('Account created successfully! Please sign in.', 'Close', {
+          this.snackBar.open(this.translate.instant('auth.account_created_success'), this.translate.instant('common.close'), {
             duration: 5000,
             panelClass: ['success-snackbar']
           });
@@ -92,7 +95,7 @@ export class SignUpComponent {
         },
         error: (error: any) => {
           console.error('❌ Sign-up error:', error);
-          this.snackBar.open('Error creating account. Please try again.', 'Close', {
+          this.snackBar.open(this.translate.instant('auth.error_creating_account'), this.translate.instant('common.close'), {
             duration: 5000,
             panelClass: ['error-snackbar']
           });
@@ -119,14 +122,22 @@ export class SignUpComponent {
   getErrorMessage(fieldName: string): string {
     const control = this.signUpForm.get(fieldName);
     if (control?.hasError('required')) {
-      return `${fieldName} is required`;
+      return `${this.translate.instant('auth.' + fieldName)} ${this.translate.instant('auth.required_field')}`;
     }
     if (control?.hasError('minlength')) {
-      return `${fieldName} must be at least ${control.errors?.['minlength']?.requiredLength} characters long`;
+      return `${this.translate.instant('auth.' + fieldName)} ${this.translate.instant('auth.min_length')} ${control.errors?.['minlength']?.requiredLength} ${this.translate.instant('auth.characters_long')}`;
     }
     if (control?.hasError('passwordMismatch')) {
-      return 'Passwords do not match';
+      return this.translate.instant('auth.passwords_do_not_match');
     }
     return '';
+  }
+
+  getRoleLabel(role: string): string {
+    return this.translate.instant('auth.role_' + role.toLowerCase().replace('role_', ''));
+  }
+
+  getRoleDescription(role: string): string {
+    return this.translate.instant('auth.role_' + role.toLowerCase().replace('role_', '') + '_desc');
   }
 }

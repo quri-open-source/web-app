@@ -10,6 +10,9 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { ShoppingCartPopoverComponent } from '../app/orders-fulfillments/components/shopping-cart-popover/shopping-cart-popover.component';
 import { AuthenticationService } from './iam/services/authentication.service';
+import { LanguageService } from './shared/services/language.service';
+import { LanguageSelectorComponent } from './shared/components/language-selector/language-selector.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface AppRoute {
   path: string;
@@ -28,6 +31,8 @@ export interface AppRoute {
     MatIconModule,
     MatMenuModule,
     ShoppingCartPopoverComponent,
+    LanguageSelectorComponent,
+    TranslateModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -48,27 +53,27 @@ export class App implements OnDestroy, OnInit {
   private customerRoutes: AppRoute[] = [
     {
       path: 'home',
-      label: 'Home',
+      label: 'navigation.home',
       icon: 'home',
     },
     {
       path: 'analytics',
-      label: 'Analytics',
+      label: 'navigation.analytics',
       icon: 'bar_chart',
     },
     {
       path: 'explore',
-      label: 'Explore',
+      label: 'navigation.catalog',
       icon: 'explore',
     },
     {
       path: 'design-lab',
-      label: 'Design Lab',
+      label: 'navigation.design_lab',
       icon: 'brush',
     },
     {
       path: 'settings',
-      label: 'Settings',
+      label: 'navigation.settings',
       icon: 'settings',
     },
   ];
@@ -76,43 +81,44 @@ export class App implements OnDestroy, OnInit {
   private manufacturerRoutes: AppRoute[] = [
     {
       path: 'home',
-      label: 'Home',
+      label: 'navigation.home',
       icon: 'home',
     },
     {
       path: 'manufacturer-dashboard',
-      label: 'Dashboard',
+      label: 'navigation.dashboard',
       icon: 'dashboard',
     },
     {
       path: 'manufacturer-orders',
-      label: 'Order Management',
+      label: 'navigation.orders',
       icon: 'list_alt',
     },
     {
       path: 'dashboard',
-      label: 'Analytics',
+      label: 'navigation.analytics',
       icon: 'bar_chart',
     },
     {
       path: 'explore',
-      label: 'Explore',
+      label: 'navigation.catalog',
       icon: 'explore',
     },
     {
       path: 'design-lab',
-      label: 'Design Lab',
+      label: 'navigation.design_lab',
       icon: 'brush',
     },
     {
       path: 'settings',
-      label: 'Settings',
+      label: 'navigation.settings',
       icon: 'settings',
     },
   ];
   constructor(
     private router: Router,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private languageService: LanguageService
   ) {
     console.log('🚀 [DEBUG] App Component - Constructor initialized with IAM');
 

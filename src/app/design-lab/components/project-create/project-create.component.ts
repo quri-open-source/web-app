@@ -11,6 +11,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {ProjectService} from '../../services/project.service';
 import {CreateProjectRequest} from '../../services/project.request';
 import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER} from '../../../const';
@@ -35,6 +36,7 @@ interface GarmentColorOption {
     MatGridListModule,
     MatTooltipModule,
     MatSnackBarModule,
+    TranslateModule,
   ],
   templateUrl: './project-create.component.html',
   styleUrls: ['./project-create.component.css'],
@@ -45,6 +47,7 @@ export class ProjectCreateComponent {
   private router = inject(Router);
   private projectService = inject(ProjectService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   projectForm: FormGroup;
   isSubmitting = false;
@@ -53,20 +56,20 @@ export class ProjectCreateComponent {
   garmentColors: GarmentColorOption[] = [
     { label: 'black', value: GARMENT_COLOR.BLACK },
     { label: 'gray', value: GARMENT_COLOR.GRAY },
-    { label: 'light-gray', value: GARMENT_COLOR.LIGHT_GRAY },
+    { label: 'light_gray', value: GARMENT_COLOR.LIGHT_GRAY },
     { label: 'white', value: GARMENT_COLOR.WHITE },
     { label: 'red', value: GARMENT_COLOR.RED },
     { label: 'pink', value: GARMENT_COLOR.PINK },
-    { label: 'light-purple', value: GARMENT_COLOR.LIGHT_PURPLE },
+    { label: 'light_purple', value: GARMENT_COLOR.LIGHT_PURPLE },
     { label: 'purple', value: GARMENT_COLOR.PURPLE },
-    { label: 'light-blue', value: GARMENT_COLOR.LIGHT_BLUE },
+    { label: 'light_blue', value: GARMENT_COLOR.LIGHT_BLUE },
     { label: 'cyan', value: GARMENT_COLOR.CYAN },
-    { label: 'sky-blue', value: GARMENT_COLOR.SKY_BLUE },
+    { label: 'sky_blue', value: GARMENT_COLOR.SKY_BLUE },
     { label: 'blue', value: GARMENT_COLOR.BLUE },
     { label: 'green', value: GARMENT_COLOR.GREEN },
-    { label: 'light-green', value: GARMENT_COLOR.LIGHT_GREEN },
+    { label: 'light_green', value: GARMENT_COLOR.LIGHT_GREEN },
     { label: 'yellow', value: GARMENT_COLOR.YELLOW },
-    { label: 'dark-yellow', value: GARMENT_COLOR.DARK_YELLOW },
+    { label: 'dark_yellow', value: GARMENT_COLOR.DARK_YELLOW },
   ];
 
   garmentColorImages =
@@ -87,10 +90,10 @@ export class ProjectCreateComponent {
 
   getGenderLabel(value: PROJECT_GENDER): string {
     const genderMap: { [key in PROJECT_GENDER]: string } = {
-      [PROJECT_GENDER.WOMEN]: 'Women',
-      [PROJECT_GENDER.MEN]: 'Men',
-      [PROJECT_GENDER.KIDS]: 'Kids',
-      [PROJECT_GENDER.UNISEX]: 'Unisex',
+      [PROJECT_GENDER.WOMEN]: this.translate.instant('design.women'),
+      [PROJECT_GENDER.MEN]: this.translate.instant('design.men'),
+      [PROJECT_GENDER.KIDS]: this.translate.instant('design.kids'),
+      [PROJECT_GENDER.UNISEX]: this.translate.instant('design.unisex'),
     };
     return genderMap[value] || value;
   }
@@ -99,7 +102,7 @@ export class ProjectCreateComponent {
     const foundColor = this.garmentColors.find(
       (color) => color.value === value
     );
-    return foundColor ? foundColor.label : 'Custom';
+    return foundColor ? this.translate.instant(`design.${foundColor.label}`) : this.translate.instant('design.custom');
   }
 
   getBackgroundPosition(colorValue: GARMENT_COLOR): string {
@@ -123,18 +126,18 @@ export class ProjectCreateComponent {
     // Get userId from localStorage (IAM system)
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
-    
+
     console.log('🔍 Create Project - User ID:', userId);
     console.log('🔑 Create Project - Token present:', !!token);
-    
+
     if (!userId) {
-      this.snackBar.open('User not authenticated', 'Close', { duration: 3000 });
+      this.snackBar.open(this.translate.instant('design.user_not_authenticated'), this.translate.instant('common.close'), { duration: 3000 });
       this.isSubmitting = false;
       return;
     }
 
     if (!token) {
-      this.snackBar.open('Authentication token missing', 'Close', { duration: 3000 });
+      this.snackBar.open(this.translate.instant('design.authentication_token_missing'), this.translate.instant('common.close'), { duration: 3000 });
       this.isSubmitting = false;
       return;
     }
@@ -152,12 +155,12 @@ export class ProjectCreateComponent {
     this.projectService.createProject(payload).subscribe({
       next: (project) => {
         console.log('Project created successfully:', project);
-        this.snackBar.open('Project created successfully!', 'Close', { duration: 2000 });
+        this.snackBar.open(this.translate.instant('design.project_created_success'), this.translate.instant('common.close'), { duration: 2000 });
         this.router.navigate(['/design-lab', project.id, 'edit']);
       },
       error: (error) => {
         console.error('Failed to create project:', error);
-        this.snackBar.open('Failed to create project', 'Close', { duration: 2000 });
+        this.snackBar.open(this.translate.instant('design.failed_to_create_project'), this.translate.instant('common.close'), { duration: 2000 });
         this.isSubmitting = false;
       },
     });

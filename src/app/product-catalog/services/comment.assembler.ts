@@ -6,9 +6,9 @@ export class CommentAssembler {
   static toEntityFromResponse(response: CommentResponse): Comment {
     return new Comment(
       response.id,
+      response.text,
       response.user_id,
-      response.content,
-      response.created_at,
+      new Date(response.created_at)
     );
   };
 

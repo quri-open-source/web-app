@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { CartService } from '../../../orders-fulfillments/services/cart.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../../../iam/services/authentication.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-catalog',
@@ -21,7 +22,8 @@ import { AuthenticationService } from '../../../iam/services/authentication.serv
     MatIconModule,
     MatCardModule,
     MatIcon,
-    MatDialogModule
+    MatDialogModule,
+    TranslateModule
   ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.css'
@@ -35,11 +37,12 @@ export class CatalogComponent implements OnInit {
     private dialog: MatDialog,
     private cartService: CartService,
     private snackBar: MatSnackBar,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
-    this.productService.getAllProductsWithProjects().subscribe((products) => {
+    this.productService.getAllProductsWithProjects().subscribe((products: Product[]) => {
       this.products = products;
       this.cdr.detectChanges();
     });
@@ -59,9 +62,11 @@ export class CatalogComponent implements OnInit {
     const userId = localStorage.getItem('userId');
 
     if (!userId) {
-      this.snackBar.open('No active user. Please log in.', 'Close', {
-        duration: 2000,
-        verticalPosition: 'top',
+      this.translate.get('auth.sign_in_required').subscribe((message: string) => {
+        this.snackBar.open(message || 'No active user. Please log in.', this.translate.instant('common.close'), {
+          duration: 2000,
+          verticalPosition: 'top',
+        });
       });
       return;
     }
@@ -70,16 +75,20 @@ export class CatalogComponent implements OnInit {
 
     this.cartService.addToCart(product, userId).subscribe({
       next: () => {
-        this.snackBar.open('Product added to cart', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
+        this.translate.get('product.product_added_to_cart').subscribe((message: string) => {
+          this.snackBar.open(message || 'Product added to cart', this.translate.instant('common.close'), {
+            duration: 2000,
+            verticalPosition: 'top',
+          });
         });
       },
       error: (error) => {
         console.error('Error adding product to cart:', error);
-        this.snackBar.open('Error adding product to cart', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
+        this.translate.get('errors.operation_failed').subscribe((message: string) => {
+          this.snackBar.open(message || 'Error adding product to cart', this.translate.instant('common.close'), {
+            duration: 2000,
+            verticalPosition: 'top',
+          });
         });
       }
     });

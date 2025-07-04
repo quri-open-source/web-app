@@ -14,6 +14,14 @@ export class Product {
   createdAt: Date;
   updatedAt: Date;
 
+  // Additional properties for UI compatibility
+  price: number; // Alias for priceAmount
+  likes: number; // Alias for likeCount
+  rating: number;
+  gallery: string[];
+  tags: string[];
+  projectDetails?: Project;
+
   constructor(
     id: string,
     projectId: string,
@@ -25,7 +33,11 @@ export class Product {
     projectUserId: string,
     likeCount: number,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    rating: number = 0,
+    gallery: string[] = [],
+    tags: string[] = [],
+    projectDetails?: Project
   ) {
     this.id = id;
     this.projectId = projectId;
@@ -38,5 +50,13 @@ export class Product {
     this.likeCount = likeCount;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.rating = rating;
+    this.gallery = gallery;
+    this.tags = tags;
+    this.projectDetails = projectDetails;
+
+    // Set aliases
+    this.price = priceAmount;
+    this.likes = likeCount;
   }
 }

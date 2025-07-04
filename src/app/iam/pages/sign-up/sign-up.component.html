@@ -1,78 +1,78 @@
 <div class="sign-up-container">
   <mat-card class="sign-up-card">
     <mat-card-header>
-      <mat-card-title>Sign Up</mat-card-title>
-      <mat-card-subtitle>Create your account to get started</mat-card-subtitle>
+      <mat-card-title>{{ 'auth.sign_up' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'auth.create_account' | translate }}</mat-card-subtitle>
     </mat-card-header>
-    
+
     <mat-card-content>
       <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput 
-                 type="text" 
+          <mat-label>{{ 'auth.username' | translate }}</mat-label>
+          <input matInput
+                 type="text"
                  formControlName="username"
-                 placeholder="Choose a username">
+                 [placeholder]="'auth.choose_username' | translate">
           <mat-error *ngIf="signUpForm.get('username')?.invalid && signUpForm.get('username')?.touched">
             {{ getErrorMessage('username') }}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput 
-                 type="password" 
+          <mat-label>{{ 'auth.password' | translate }}</mat-label>
+          <input matInput
+                 type="password"
                  formControlName="password"
-                 placeholder="Create a password">
+                 [placeholder]="'auth.create_password' | translate">
           <mat-error *ngIf="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
             {{ getErrorMessage('password') }}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Confirm Password</mat-label>
-          <input matInput 
-                 type="password" 
+          <mat-label>{{ 'auth.confirm_password' | translate }}</mat-label>
+          <input matInput
+                 type="password"
                  formControlName="confirmPassword"
-                 placeholder="Confirm your password">
+                 [placeholder]="'auth.confirm_your_password' | translate">
           <mat-error *ngIf="signUpForm.get('confirmPassword')?.invalid && signUpForm.get('confirmPassword')?.touched">
             {{ getErrorMessage('confirmPassword') }}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Account Type</mat-label>
+          <mat-label>{{ 'auth.account_type' | translate }}</mat-label>
           <mat-select formControlName="role">
             <mat-option *ngFor="let option of roleOptions" [value]="option.value">
               <div class="role-option">
-                <div class="role-label">{{ option.label }}</div>
-                <div class="role-description">{{ option.description }}</div>
+                <div class="role-label">{{ getRoleLabel(option.value) }}</div>
+                <div class="role-description">{{ getRoleDescription(option.value) }}</div>
               </div>
             </mat-option>
           </mat-select>
           <mat-error *ngIf="signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched">
-            Account type is required
+            {{ getErrorMessage('role') }}
           </mat-error>
         </mat-form-field>
 
         <div class="form-actions">
-          <button mat-raised-button 
-                  color="primary" 
-                  type="submit" 
+          <button mat-raised-button
+                  color="primary"
+                  type="submit"
                   [disabled]="isLoading"
                   class="full-width">
-            <span *ngIf="!isLoading">Sign Up</span>
-            <span *ngIf="isLoading">Creating Account...</span>
+            <span *ngIf="!isLoading">{{ 'auth.sign_up' | translate }}</span>
+            <span *ngIf="isLoading">{{ 'auth.creating_account' | translate }}</span>
           </button>
         </div>
       </form>
     </mat-card-content>
-    
+
     <mat-card-actions>
       <div class="sign-in-link">
-        <p>Already have an account? 
+        <p>{{ 'auth.already_have_account' | translate }}
           <button mat-button color="primary" (click)="goToSignIn()">
-            Sign In
+            {{ 'auth.sign_in' | translate }}
           </button>
         </p>
       </div>

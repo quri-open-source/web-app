@@ -1,23 +1,23 @@
-<h2>Manufacturer Analytics Dashboard</h2>
+<h2>{{ 'analytics.manufacturer_analytics' | translate }}</h2>
 <div *ngIf="error" class="error-message">{{ error }}</div>
 <div *ngIf="!error && analytics as a" class="dashboard-stats">
   <div class="stat-card">
-    <div class="stat-title">Total Orders Received</div>
+    <div class="stat-title">{{ 'analytics.total_orders_received' | translate }}</div>
     <div class="stat-value">{{ a.totalOrdersReceived }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-title">Pending Fulfillments</div>
+    <div class="stat-title">{{ 'analytics.pending_fulfillments' | translate }}</div>
     <div class="stat-value">{{ a.pendingFulfillments }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-title">Produced Projects</div>
+    <div class="stat-title">{{ 'analytics.produced_projects' | translate }}</div>
     <div class="stat-value">{{ a.producedProjects }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-title">Avg. Fulfillment Time (days)</div>
+    <div class="stat-title">{{ 'analytics.avg_fulfillment_time_days' | translate }}</div>
     <div class="stat-value">{{ a.avgFulfillmentTimeDays }}</div>
   </div>
 </div>
 <ng-template #loading>
-  <div class="dashboard-stats">Loading...</div>
+  <div class="dashboard-stats">{{ 'common.loading' | translate }}</div>
 </ng-template>

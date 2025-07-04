@@ -10,11 +10,13 @@ import { DiscountPolicyService } from '../../services/discount-policy.service';
 import { CartDiscountAssembler, CartWithDiscount } from '../../services/cart-discount.assembler';
 import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-shopping-cart-popover',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, CommonModule],
+  imports: [MatButtonModule, MatIconModule, CommonModule, TranslateModule],
   templateUrl: './shopping-cart-popover.component.html',
   styleUrls: ['./shopping-cart-popover.component.css']
 })
@@ -33,7 +35,9 @@ export class ShoppingCartPopoverComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private discountPolicyService: DiscountPolicyService,
     private router: Router,
-    authService: AuthenticationService
+    authService: AuthenticationService,
+    private translate: TranslateService,
+    private snackBar: MatSnackBar
   ) {
     this.authService = authService;
   }

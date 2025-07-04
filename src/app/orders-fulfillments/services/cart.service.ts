@@ -67,9 +67,9 @@ export class CartService {
       const newItem = new CartItem();
       newItem.project_id = product.projectId;
       newItem.quantity = 1;
-      newItem.unit_price = product.price;
-      newItem.projectName = product.projectDetails?.title || '';
-      newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
+      newItem.unit_price = product.priceAmount;
+      newItem.projectName = product.projectDetails?.title || product.projectTitle;
+      newItem.projectImage = product.projectDetails?.previewUrl || product.projectPreviewUrl || environment.defaultPreviewImageUrl;
       cart.items.push(newItem);
     }
     this.saveLocalCart(cart);
@@ -89,9 +89,9 @@ export class CartService {
     const newItem = new CartItem();
     newItem.project_id = product.projectId;
     newItem.quantity = 1;
-    newItem.unit_price = product.price;
-    newItem.projectName = product.projectDetails?.title || '';
-    newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
+    newItem.unit_price = product.priceAmount;
+    newItem.projectName = product.projectDetails?.title || product.projectTitle;
+    newItem.projectImage = product.projectDetails?.previewUrl || product.projectPreviewUrl || environment.defaultPreviewImageUrl;
     cart.items = [newItem];
     return this.http.post<Cart>(`${environment.apiBaseUrl}/carts`, cart).pipe(
       map((createdCart) => {
