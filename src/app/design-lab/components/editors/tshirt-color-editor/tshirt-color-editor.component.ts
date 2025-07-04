@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GARMENT_COLOR } from '../../../../const';
 
 interface GarmentColorOption {
@@ -14,7 +15,7 @@ interface GarmentColorOption {
 @Component({
   selector: 'app-tshirt-color-editor',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatGridListModule, MatTooltipModule],
+  imports: [CommonModule, MatCardModule, MatGridListModule, MatTooltipModule, TranslateModule],
   templateUrl: './tshirt-color-editor.component.html',
   styleUrls: ['./tshirt-color-editor.component.css'],
 })
@@ -22,6 +23,8 @@ interface GarmentColorOption {
 export class TshirtColorEditorComponent {
   @Input() selectedColor: GARMENT_COLOR | null = null;
   @Output() colorSelected = new EventEmitter<GARMENT_COLOR>();
+
+  constructor(private translate: TranslateService) {}
 
   garmentColors: GarmentColorOption[] = [
     { label: 'black', value: GARMENT_COLOR.BLACK, hexValue: '#161615' },
@@ -76,7 +79,7 @@ export class TshirtColorEditorComponent {
     const selectedColorObj = this.garmentColors.find(
       color => color.value === this.selectedColor
     );
-    return selectedColorObj ? selectedColorObj.label : '';
+    return selectedColorObj ? this.translate.instant(`design.${selectedColorObj.label}`) : '';
   }
 
   isColorSelected(colorValue: GARMENT_COLOR): boolean {

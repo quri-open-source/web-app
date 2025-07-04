@@ -14,7 +14,7 @@
     <ng-template #noPreview>
       <div class="no-preview">
         <mat-icon>image</mat-icon>
-        <span>No preview</span>
+        <span>{{ 'product.no_preview' | translate }}</span>
       </div>
     </ng-template>
   </div>
@@ -25,9 +25,9 @@
     <!-- DESIGN-LAB DETAILS -->
     <div class="project-details-list">
       <div class="detail-row">{{ project.garmentGender | titlecase }}</div>
-      <div class="detail-row">Size: {{ getSize(project) }}</div>
+      <div class="detail-row">{{ 'product.size' | translate }}: {{ getSize(project) }}</div>
       <div class="detail-row">
-        Last modified: {{ getLastModified(project) }}
+        {{ 'product.last_modified' | translate }}: {{ getLastModified(project) }}
       </div>
     </div>
   </mat-card-content>
@@ -35,10 +35,10 @@
   <mat-card-actions>
     <!-- ACTIONS DESIGN-LAB -->
     <button mat-button color="primary">
-      <mat-icon>edit</mat-icon> Edit
+      <mat-icon>edit</mat-icon> {{ 'common.edit' | translate }}
     </button>
     <button mat-button color="warn">
-      <mat-icon>delete</mat-icon> Delete
+      <mat-icon>delete</mat-icon> {{ 'common.delete' | translate }}
     </button>
   </mat-card-actions>
 </mat-card>

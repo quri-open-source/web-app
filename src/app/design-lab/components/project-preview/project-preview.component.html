@@ -2,15 +2,15 @@
   @if (loading) {
     <div class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading project...</p>
+      <p>{{ 'design.loading_project_preview' | translate }}</p>
     </div>
   } @else if (error) {
     <div class="error-container">
       <mat-icon>error</mat-icon>
-      <h2>Error</h2>
-      <p>{{ error }}</p>
+      <h2>{{ 'common.error' | translate }}</h2>
+      <p>{{ error | translate }}</p>
       <button mat-raised-button color="primary" routerLink="/design-lab">
-        Back to Projects
+        {{ 'design.go_back' | translate }}
       </button>
     </div>
   } @else if (project) {
@@ -19,8 +19,8 @@
       <div class="project-meta">
         <mat-chip-listbox>
           <mat-chip>{{ project.status | titlecase }}</mat-chip>
-          <mat-chip>{{ project.garmentGender | titlecase }}</mat-chip>
-          <mat-chip>Size: {{ project.garmentSize }}</mat-chip>
+          <mat-chip>{{ ('design.' + project.garmentGender) | translate | titlecase }}</mat-chip>
+          <mat-chip>{{ 'design.size' | translate }}: {{ project.garmentSize }}</mat-chip>
         </mat-chip-listbox>
       </div>
     </div>    <div class="project-content">
@@ -111,7 +111,7 @@
               @for (layer of project.layers; track layer.id) {
                 <div class="layer-item">
                   <mat-icon>{{ layer.type === 'image' ? 'image' : 'text_fields' }}</mat-icon>
-                  <span>{{ layer.type | titlecase }} Layer</span>
+                  <span>{{ ('design.' + layer.type) | translate | titlecase }} {{ 'design.layer' | translate }}</span>
                   @if (layer.type === 'text') {
                     <span class="layer-content">- "{{ layer.getContent() }}"</span>
                   }
@@ -124,11 +124,11 @@
     </div>    <div class="action-buttons">
       <button mat-raised-button color="primary" [routerLink]="['/design-lab', project.id, 'edit']">
         <mat-icon>edit</mat-icon>
-        Edit Design
+        {{ 'design.edit_this_project' | translate }}
       </button>
       <button mat-stroked-button routerLink="/design-lab">
         <mat-icon>arrow_back</mat-icon>
-        Back to Projects
+        {{ 'design.go_back' | translate }}
       </button>
     </div>
   }

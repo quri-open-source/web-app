@@ -7,11 +7,12 @@ import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-project-card',
     standalone: true,
-    imports: [CommonModule, MatCardModule, RouterLink, MatIconModule, MatButtonModule],
+    imports: [CommonModule, MatCardModule, RouterLink, MatIconModule, MatButtonModule, TranslateModule],
     templateUrl: './project-card.component.html',
     styleUrl: './project-card.component.css',
 })
@@ -19,7 +20,8 @@ export class ProjectCardComponent {
     @Input() project!: Project;
     @Input() context: ProjectCardContext = 'explore';
     @Output() deleted = new EventEmitter<string>();
-    constructor() {}
+
+    constructor(private translate: TranslateService) {}
 
     deleteProject() {
         this.deleted.emit(this.project.id);
@@ -33,7 +35,7 @@ export class ProjectCardComponent {
         // Busca garmentSize o tshirt_size, y valida que no sea vacío
         const size = project.garmentSize || project.tshirt_size;
         if (!size || (typeof size === 'string' && size.trim() === '')) {
-            return 'N/A';
+            return this.translate.instant('product.no_preview');
         }
         return size;
     }
@@ -53,7 +55,7 @@ export class ProjectCardComponent {
         if (date) {
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
         }
-        return 'N/A';
+        return this.translate.instant('product.no_preview');
     }
 
     get isDesignLab()   { return this.context === 'design-lab'; }

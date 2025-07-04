@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Add Image</mat-card-title>
+    <mat-card-title>{{ 'design.add_image' | translate }}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <!-- Image Upload Section -->
@@ -8,14 +8,14 @@
       <div class="upload-area" *ngIf="!previewImageUrl">
         <div class="upload-prompt">
           <mat-icon>cloud_upload</mat-icon>
-          <p>Click to select an image from Cloudinary</p>
-          <button mat-raised-button 
-            color="primary" 
+          <p>{{ 'design.click_to_select_image' | translate }}</p>
+          <button mat-raised-button
+            color="primary"
             (click)="openCloudinaryUpload()"
             [disabled]="uploading">
             <mat-icon *ngIf="!uploading">cloud_upload</mat-icon>
             <mat-icon *ngIf="uploading" class="spinning">hourglass_empty</mat-icon>
-            {{ uploading ? 'Uploading...' : 'Choose Image' }}
+            {{ uploading ? ('design.uploading' | translate) : ('design.choose_image' | translate) }}
           </button>
         </div>
       </div>
@@ -23,36 +23,36 @@
       <!-- Image Preview and Options -->
       <div class="image-preview-container" *ngIf="previewImageUrl">
         <div class="image-preview">
-          <img [src]="previewImageUrl" 
-               [style.transform]="'scale(' + imageScale + ')'" 
-               alt="Preview">
+          <img [src]="previewImageUrl"
+               [style.transform]="'scale(' + imageScale + ')'"
+               [alt]="'design.preview_image' | translate">
         </div>
-        
+
         <!-- Scale Slider -->
         <div class="scale-slider">
-          <label>Scale: {{imageScale}}x</label>
+          <label>{{ 'design.scale' | translate }}: {{imageScale}}x</label>
           <mat-slider min="0.5" max="2" step="0.1" color="primary">
             <input matSliderThumb [(ngModel)]="imageScale">
           </mat-slider>
         </div>
-        
+
         <!-- Image Controls -->
         <div class="image-controls">
           <button mat-button color="warn" (click)="removeImage()">
             <mat-icon>delete</mat-icon>
-            Remove
+            {{ 'common.remove' | translate }}
           </button>
           <button mat-raised-button color="primary" (click)="addImage()">
             <mat-icon>add</mat-icon>
-            Add to Design
+            {{ 'design.add_to_design' | translate }}
           </button>
         </div>
       </div>
-      
+
       <!-- Upload Progress Bar -->
-      <mat-progress-bar 
-        *ngIf="uploading" 
-        mode="indeterminate" 
+      <mat-progress-bar
+        *ngIf="uploading"
+        mode="indeterminate"
         class="upload-progress">
       </mat-progress-bar>
     </div>
