@@ -5,4 +5,6 @@ export interface FulfillmentResponse {
   received_date: string;
   shipped_date: string | null;
   manufacturer_id: string;
+  created_at: string;
+  updated_at: string;
 }

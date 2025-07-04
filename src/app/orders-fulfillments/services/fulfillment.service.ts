@@ -29,6 +29,7 @@ export class FulfillmentService {
   }
 
   getFulfillmentsByManufacturer(manufacturerId: string): Observable<Fulfillment[]> {
+    // use snake_case query params to match backend
     return this.http.get<FulfillmentResponse[]>(`${this.getResourceUrl()}?manufacturer_id=${manufacturerId}`).pipe(
       map((response: FulfillmentResponse[]) =>
         response.map(fulfillmentResponse =>
@@ -39,6 +40,7 @@ export class FulfillmentService {
   }
 
   getFulfillmentsByOrder(orderId: string): Observable<Fulfillment[]> {
+    // use snake_case query params to match backend
     return this.http.get<FulfillmentResponse[]>(`${this.getResourceUrl()}?order_id=${orderId}`).pipe(
       map((response: FulfillmentResponse[]) =>
         response.map(fulfillmentResponse =>

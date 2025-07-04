@@ -1,29 +1,35 @@
 export class Fulfillment {
   id: string;
-  order_id: string;
+  orderId: string;
   status: string;
-  received_date: string;
-  shipped_date: string | null;
-  manufacturer_id: string;
+  receivedDate: string;
+  shippedDate: string | null;
+  manufacturerId: string;
+  createdAt: string;
+  updatedAt: string;
 
   constructor(fulfillment: {
     id?: string;
-    order_id?: string;
+    orderId?: string;
     status?: string;
-    received_date?: string;
-    shipped_date?: string | null;
-    manufacturer_id?: string;
+    receivedDate?: string;
+    shippedDate?: string | null;
+    manufacturerId?: string;
+    createdAt?: string;
+    updatedAt?: string;
   }) {
     this.id = fulfillment.id || '';
-    this.order_id = fulfillment.order_id || '';
+    this.orderId = fulfillment.orderId || '';
     this.status = fulfillment.status || 'pending';
-    this.received_date = fulfillment.received_date || new Date().toISOString();
-    this.shipped_date = fulfillment.shipped_date || null;
-    this.manufacturer_id = fulfillment.manufacturer_id || '';
+    this.receivedDate = fulfillment.receivedDate || new Date().toISOString();
+    this.shippedDate = fulfillment.shippedDate || null;
+    this.manufacturerId = fulfillment.manufacturerId || '';
+    this.createdAt = fulfillment.createdAt || new Date().toISOString();
+    this.updatedAt = fulfillment.updatedAt || new Date().toISOString();
   }
   // Utility methods
   get formattedReceivedDate(): string {
-    return new Date(this.received_date).toLocaleDateString('en-US', {
+    return new Date(this.receivedDate).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -31,8 +37,8 @@ export class Fulfillment {
   }
 
   get formattedShippedDate(): string {
-    if (!this.shipped_date) return 'Not shipped';
-    return new Date(this.shipped_date).toLocaleDateString('en-US', {
+    if (!this.shippedDate) return 'Not shipped';
+    return new Date(this.shippedDate).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

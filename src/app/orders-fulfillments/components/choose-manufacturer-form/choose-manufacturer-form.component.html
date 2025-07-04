@@ -10,13 +10,13 @@
       <div class="form-section">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Manufacturer</mat-label>
-          <mat-select 
+          <mat-select
             [(ngModel)]="selectedManufacturerId"
             (selectionChange)="onManufacturerChange($event.value)"
             [disabled]="isLoading"
             placeholder="Select a manufacturer">
-            <mat-option 
-              *ngFor="let manufacturer of manufacturers" 
+            <mat-option
+              *ngFor="let manufacturer of manufacturers"
               [value]="manufacturer.id">
               {{ manufacturer.name }}
             </mat-option>
@@ -27,7 +27,7 @@
 
       <div class="manufacturer-preview" *ngIf="selectedManufacturer">
         <mat-card class="preview-card" appearance="outlined">
-          
+
           <mat-card-content class="preview-content">            <div class="info-row">
               <mat-icon>location_on</mat-icon>
               <div class="info-content">
@@ -35,7 +35,7 @@
                 <p>{{ selectedManufacturer.fullAddress }}</p>
               </div>
             </div>
-            
+
             <div class="info-row">
               <mat-icon>badge</mat-icon>
               <div class="info-content">
@@ -43,12 +43,12 @@
                 <span>{{ selectedManufacturer.id }}</span>
               </div>
             </div>
-            
+
             <div class="info-row">
               <mat-icon>person</mat-icon>
               <div class="info-content">
                 <strong>User ID:</strong>
-                <span>{{ selectedManufacturer.user_id }}</span>
+                <span>{{ selectedManufacturer.userId }}</span>
               </div>
             </div>
           </mat-card-content>
@@ -57,7 +57,7 @@
     </mat-card-content>
 
     <mat-card-actions class="form-actions">
-      <button 
+      <button
         mat-raised-button
         color="primary"
         [disabled]="!isFormValid"

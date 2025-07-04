@@ -4,7 +4,7 @@ export class ManufacturerAssembler {
   public static toResourceFromEntity(entity: Manufacturer): any {
     return {
       id: entity.id,
-      user_id: entity.user_id,
+      userId: entity.userId,
       name: entity.name,
       address: entity.address,
       city: entity.city,
@@ -17,7 +17,7 @@ export class ManufacturerAssembler {
   public static toEntityFromResource(resource: any): Manufacturer {
     return new Manufacturer({
       id: resource.id,
-      user_id: resource.user_id,
+      userId: resource.userId,
       name: resource.name,
       address: resource.address,
       city: resource.city,

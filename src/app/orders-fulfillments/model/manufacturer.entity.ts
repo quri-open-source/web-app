@@ -1,6 +1,6 @@
 export class Manufacturer {
   id: string;
-  user_id: string;
+  userId: string;
   name: string;
   address: string;
   city: string;
@@ -10,7 +10,7 @@ export class Manufacturer {
 
   constructor(manufacturer: {
     id?: string;
-    user_id?: string;
+    userId?: string;
     name?: string;
     address?: string;
     city?: string;
@@ -19,7 +19,7 @@ export class Manufacturer {
     zip?: string;
   }) {
     this.id = manufacturer.id || '';
-    this.user_id = manufacturer.user_id || '';
+    this.userId = manufacturer.userId || '';
     this.name = manufacturer.name || '';
     this.address = manufacturer.address || '';
     this.city = manufacturer.city || '';

@@ -87,9 +87,9 @@ export class ManufacturerOrdersComponent implements OnInit {
         // Find and update the local order with response data
         const orderIndex = this.orders.findIndex(o => o.id === orderId);
         if (orderIndex >= 0) {
-          // Update the order status and shipped date
+          // Update the order status and shipped date using camelCase field from Fulfillment entity
           this.orders[orderIndex].status = updatedFulfillment.status;
-          this.orders[orderIndex].shippedDate = updatedFulfillment.shipped_date;
+          this.orders[orderIndex].shippedDate = updatedFulfillment.shippedDate;
           
           // Display success message briefly
           this.errorMessage = `Order status updated to ${updatedFulfillment.status}`;

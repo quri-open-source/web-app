@@ -4,22 +4,26 @@ export class FulfillmentAssembler {
   public static toResourceFromEntity(entity: Fulfillment): any {
     return {
       id: entity.id,
-      order_id: entity.order_id,
+      order_id: entity.orderId,
       status: entity.status,
-      received_date: entity.received_date,
-      shipped_date: entity.shipped_date,
-      manufacturer_id: entity.manufacturer_id
+      received_date: entity.receivedDate,
+      shipped_date: entity.shippedDate,
+      manufacturer_id: entity.manufacturerId,
+      created_at: entity.createdAt,
+      updated_at: entity.updatedAt
     };
   }
 
   public static toEntityFromResource(resource: any): Fulfillment {
     return new Fulfillment({
       id: resource.id,
-      order_id: resource.order_id,
+      orderId: resource.order_id,
       status: resource.status,
-      received_date: resource.received_date,
-      shipped_date: resource.shipped_date,
-      manufacturer_id: resource.manufacturer_id
+      receivedDate: resource.received_date,
+      shippedDate: resource.shipped_date,
+      manufacturerId: resource.manufacturer_id,
+      createdAt: resource.created_at,
+      updatedAt: resource.updated_at
     });
   }
 }

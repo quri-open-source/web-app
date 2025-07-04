@@ -163,9 +163,10 @@ export class ChooseManufacturerComponent implements OnInit {
     this.error = '';
     this.success = '';
 
+    // Build request payload with camelCase keys to match CreateFulfillmentRequest
     const fulfillmentRequest = {
-      order_id: data.orderId,
-      manufacturer_id: data.manufacturerId,
+      orderId: data.orderId,
+      manufacturerId: data.manufacturerId,
       status: 'pending'
     };
 
