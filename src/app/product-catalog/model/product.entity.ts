@@ -4,40 +4,39 @@ import { Project } from '../../design-lab/model/project.entity';
 export class Product {
   id: string;
   projectId: string;
-  manufacturerId: string;
-  price: number;
-  likes: number;
-  tags: string[];
-  createdAt: Date;
-  gallery: string[];
-  rating: number;
+  priceAmount: number;
+  priceCurrency: string;
   status: string;
-  comments: Comment[];
-  projectDetails?: Partial<Project>;
+  projectTitle: string;
+  projectPreviewUrl: string | null;
+  projectUserId: string;
+  likeCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 
   constructor(
     id: string,
     projectId: string,
-    manufacturerId: string,
-    price: number,
-    likes: number,
-    tags: string[],
-    createdAt: Date,
-    gallery: string[],
-    rating: number,
+    priceAmount: number,
+    priceCurrency: string,
     status: string,
-    comments: Comment[]
+    projectTitle: string,
+    projectPreviewUrl: string | null,
+    projectUserId: string,
+    likeCount: number,
+    createdAt: Date,
+    updatedAt: Date
   ) {
     this.id = id;
     this.projectId = projectId;
-    this.manufacturerId = manufacturerId;
-    this.price = price;
-    this.likes = likes;
-    this.tags = tags;
-    this.createdAt = createdAt;
-    this.gallery = gallery;
-    this.rating = rating;
+    this.priceAmount = priceAmount;
+    this.priceCurrency = priceCurrency;
     this.status = status;
-    this.comments = comments;
+    this.projectTitle = projectTitle;
+    this.projectPreviewUrl = projectPreviewUrl;
+    this.projectUserId = projectUserId;
+    this.likeCount = likeCount;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 }
