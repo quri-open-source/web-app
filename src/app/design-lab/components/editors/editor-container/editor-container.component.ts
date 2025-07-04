@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TshirtColorEditorComponent } from '../tshirt-color-editor/tshirt-color-editor.component';
 import { TextEditorComponent, TextProperties, TextEditorConfig } from '../text-editor/text-editor.component';
@@ -30,6 +31,7 @@ export interface EditorContainerConfig {
     MatTabsModule,
     MatCardModule,
     MatIconModule,
+    TranslateModule,
     TshirtColorEditorComponent,
     TextEditorComponent,
     ImageEditorComponent

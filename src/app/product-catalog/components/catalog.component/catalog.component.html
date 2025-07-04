@@ -10,7 +10,7 @@
       <ng-template #noPreview>
         <div class="no-preview">
           <mat-icon>image</mat-icon>
-          <span>No preview</span>
+          <span>{{ 'product.no_preview' | translate }}</span>
         </div>
       </ng-template>
     </div>
@@ -39,10 +39,10 @@
     <!-- Product Actions -->
     <mat-card-actions>
       <button mat-button color="primary" (click)="openDetail(product)">
-        <mat-icon>visibility</mat-icon> View
+        <mat-icon>visibility</mat-icon> {{ 'common.view' | translate }}
       </button>
       <button mat-button color="accent" (click)="addToCart(product)">
-        <mat-icon>shopping_cart</mat-icon>Add to Cart
+        <mat-icon>shopping_cart</mat-icon>{{ 'product.add_to_cart' | translate }}
       </button>
     </mat-card-actions>
   </mat-card>

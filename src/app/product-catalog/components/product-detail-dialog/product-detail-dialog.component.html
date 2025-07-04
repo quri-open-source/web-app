@@ -7,20 +7,20 @@
       <img *ngIf="product.gallery?.length" [src]="product.gallery[0]" alt="{{ product.projectDetails?.title }}" />
     </div>
     <div class="detail-info" *ngIf="product.projectDetails">
-      <p><strong>User:</strong> {{ product.projectDetails.userId }}</p>
-      <p><strong>Price:</strong> S/. {{ product.price | number:'1.2-2' }}</p>
-      <p><strong>Color:</strong> <span [style.background-color]="product.projectDetails.garmentColor" class="color-box"></span> {{ product.projectDetails.garmentColor }}</p>
-      <p><strong>Size:</strong> {{ product.projectDetails.garmentSize }}</p>
-      <p><strong>Gender:</strong> {{ product.projectDetails.garmentGender | titlecase }}</p>
-      <p><strong>Rating:</strong> {{ product.rating }}</p>
-      <p><strong>Likes:</strong> {{ product.likes }}</p>
-      <p><strong>Tags:</strong> {{ product.tags.join(', ') }}</p>
-      <p><strong>Created:</strong> {{ product.projectDetails.createdAt }} </p>
-      <p><strong>Last Modified:</strong> {{ product.projectDetails.updatedAt }} </p>
+      <p><strong>{{ 'product.user' | translate }}:</strong> {{ product.projectDetails.userId }}</p>
+      <p><strong>{{ 'product.price' | translate }}:</strong> S/. {{ product.price | number:'1.2-2' }}</p>
+      <p><strong>{{ 'product.color' | translate }}:</strong> <span [style.background-color]="product.projectDetails.garmentColor" class="color-box"></span> {{ product.projectDetails.garmentColor }}</p>
+      <p><strong>{{ 'product.size' | translate }}:</strong> {{ product.projectDetails.garmentSize }}</p>
+      <p><strong>{{ 'product.gender' | translate }}:</strong> {{ product.projectDetails.garmentGender | titlecase }}</p>
+      <p><strong>{{ 'product.rating' | translate }}:</strong> {{ product.rating }}</p>
+      <p><strong>{{ 'product.likes' | translate }}:</strong> {{ product.likes }}</p>
+      <p><strong>{{ 'product.tags' | translate }}:</strong> {{ product.tags.join(', ') }}</p>
+      <p><strong>{{ 'product.created' | translate }}:</strong> {{ product.projectDetails.createdAt }} </p>
+      <p><strong>{{ 'product.last_modified' | translate }}:</strong> {{ product.projectDetails.updatedAt }} </p>
     </div>
   </mat-card-content>
   <mat-card-actions align="start">
-    <button mat-button (click)="close()"><mat-icon>close</mat-icon> Close</button>
+    <button mat-button (click)="close()"><mat-icon>close</mat-icon> {{ 'common.close' | translate }}</button>
   </mat-card-actions>
 </mat-card>
 

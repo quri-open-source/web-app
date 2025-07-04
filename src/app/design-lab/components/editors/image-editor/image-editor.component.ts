@@ -8,8 +8,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ImageLayer } from '../../../model/layer.entity';
-import { LayerType } from '../../../../const';
 import { CloudinaryService } from '../../../services/cloudinary.service';
 
 export interface ImageProperties {
@@ -41,6 +41,7 @@ export interface ImageEditorConfig {
     MatSliderModule,
     MatTooltipModule,
     MatSnackBarModule,
+    TranslateModule,
   ],
   templateUrl: './image-editor.component.html',
   styleUrls: ['./image-editor.component.css'],
@@ -68,7 +69,7 @@ export class ImageEditorComponent {
   actualHeight: number = 0;
   uploadError: string | null = null;
 
-  constructor(private snackBar: MatSnackBar, private cloudinaryService: CloudinaryService) {}
+  constructor(private snackBar: MatSnackBar, private cloudinaryService: CloudinaryService, private translate: TranslateService) {}
 
   formatLabel(value: number): string {
     return `${value}x`;
@@ -78,10 +79,10 @@ export class ImageEditorComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // Validate file type
       if (!this.config.allowedFileTypes.includes(file.type)) {
-        this.showError('Invalid file type. Please select a valid image file.');
+        this.showError(this.translate.instant('design.invalid_file_type'));
         this.resetFileInput(input);
         return;
       }
@@ -89,7 +90,7 @@ export class ImageEditorComponent {
       // Validate file size
       if (file.size > this.config.maxFileSize) {
         const maxSizeMB = this.config.maxFileSize / (1024 * 1024);
-        this.showError(`File size too large. Maximum allowed size is ${maxSizeMB}MB.`);
+        this.showError(this.translate.instant('design.file_size_too_large', { size: maxSizeMB }));
         this.resetFileInput(input);
         return;
       }
@@ -103,12 +104,12 @@ export class ImageEditorComponent {
         this.previewImageUrl = reader.result as string;
         this.processImage();
       };
-      
+
       reader.onerror = () => {
-        this.showError('Failed to read the selected file.');
+        this.showError(this.translate.instant('design.failed_to_read_file'));
         this.uploading = false;
       };
-      
+
       reader.readAsDataURL(file);
     }
   }
@@ -142,12 +143,12 @@ export class ImageEditorComponent {
         this.uploading = false;
       }, 1500);
     };
-    
+
     img.onerror = () => {
-      this.showError('Failed to process the selected image.');
+      this.showError(this.translate.instant('design.failed_to_process_image'));
       this.uploading = false;
     };
-    
+
     img.src = this.previewImageUrl;
   }
 
@@ -157,7 +158,7 @@ export class ImageEditorComponent {
 
   private showError(message: string): void {
     this.uploadError = message;
-    this.snackBar.open(message, 'Close', {
+    this.snackBar.open(message, this.translate.instant('common.close'), {
       duration: 5000,
       panelClass: ['error-snackbar']
     });
@@ -197,6 +198,16 @@ export class ImageEditorComponent {
       // Clear the preview after adding to design
       this.resetForm();
       console.log('✅ Image added to design and form reset');
+
+      // Show success message
+      this.snackBar.open(
+        this.translate.instant('design.image_added_to_design'),
+        this.translate.instant('common.close'),
+        {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        }
+      );
     } else {
       console.warn('⚠️ No preview image URL available');
     }
@@ -204,7 +215,7 @@ export class ImageEditorComponent {
 
   private createImageLayer(imageProps: ImageProperties): ImageLayer {
     const id = 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
+
     // Calculate z-index based on existing layers
     const zIndex = this.existingImageLayers.length + this.config.defaultZIndex;
 
@@ -260,7 +271,7 @@ export class ImageEditorComponent {
       })
       .catch((error) => {
         console.error('❌ Error uploading to Cloudinary:', error);
-        this.showError('Failed to upload image to Cloudinary. Please try again.');
+        this.showError(this.translate.instant('design.failed_to_process_image'));
         this.uploading = false;
       });
   }
@@ -308,13 +319,13 @@ export class ImageEditorComponent {
 
       console.log('✅ Cloudinary image processed successfully');
     };
-    
+
     img.onerror = () => {
       console.error('❌ Error loading Cloudinary image:', imageUrl);
-      this.showError('Failed to load the uploaded image.');
+      this.showError(this.translate.instant('design.failed_to_process_image'));
       this.uploading = false;
     };
-    
+
     img.src = imageUrl;
   }
 }

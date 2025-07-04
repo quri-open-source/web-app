@@ -2,27 +2,27 @@
   <mat-card class="status-card error-card">
     <mat-card-header class="status-header">
       <mat-icon mat-card-avatar>error</mat-icon>
-      <mat-card-title>Error</mat-card-title>
+      <mat-card-title>{{ 'common.error' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content class="status-content">
       <div class="error-message">
-        {{ errorMessage }}
+        {{ errorMessage || ('manufacturer.manufacturer_error' | translate) }}
       </div>      <div class="error-details">
         <h4>
           <mat-icon>help_outline</mat-icon>
-          What you can try:
+          {{ 'errors.what_you_can_try' | translate }}:
         </h4>
         <ul>
-          <li>Check internet connection</li>
-          <li>Reload the page</li>
-          <li>Contact support if it persists</li>
+          <li>{{ 'errors.check_connection' | translate }}</li>
+          <li>{{ 'errors.reload_page' | translate }}</li>
+          <li>{{ 'errors.contact_support' | translate }}</li>
         </ul>
       </div>
     </mat-card-content>
     <mat-card-actions *ngIf="showRetryButton" class="status-actions">
       <button mat-raised-button (click)="onRetry()">
         <mat-icon>refresh</mat-icon>
-        {{ retryButtonText }}
+        {{ retryButtonText || ('errors.try_again' | translate) }}
       </button>
     </mat-card-actions>
   </mat-card>

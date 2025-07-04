@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../../design-lab/services/project.service';
 import { Project } from '../../../design-lab/model/project.entity';
 import { ProjectCardComponent } from '../../../design-lab/components/project-card/project-card.component';
@@ -18,6 +19,7 @@ import { ProjectCardComponent } from '../../../design-lab/components/project-car
         MatProgressSpinnerModule,
         ProjectCardComponent,
         RouterLink,
+        TranslateModule,
     ],
     templateUrl: './design-lab.component.html',
     styleUrl: './design-lab.component.css',
@@ -28,6 +30,7 @@ export class DesignLabComponent implements OnInit {
     loading = true;
     error: string | null = null;
     protected projectService = inject(ProjectService);
+    private translate = inject(TranslateService);
 
     constructor() {}
 
@@ -39,7 +42,7 @@ export class DesignLabComponent implements OnInit {
         console.log('🔍 DesignLabComponent - Loading user projects...');
         this.loading = true;
         this.error = null;
-        
+
         this.projectService.getUserBlueprints().subscribe({
             next: (projects) => {
                 console.log('✅ DesignLabComponent - Projects loaded:', projects.length);
@@ -50,7 +53,7 @@ export class DesignLabComponent implements OnInit {
                 console.error('❌ DesignLabComponent - Error fetching projects:', err);
                 console.error('❌ Error status:', err.status);
                 console.error('❌ Error URL:', err.url);
-                this.error = 'Failed to load projects. Please try again later.';
+                this.error = 'errors.failed_to_load_projects';
                 this.loading = false;
             }
         });

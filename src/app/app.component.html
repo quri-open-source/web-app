@@ -34,7 +34,7 @@
           class="nav-item"
         >
           <mat-icon>{{ route.icon }}</mat-icon>
-          <span>{{ route.label }}</span>
+          <span>{{ route.label | translate }}</span>
         </a>
         }
       </div>
@@ -52,10 +52,13 @@
             <mat-icon>menu</mat-icon>
           </button>
           } @if (currentPage) {
-          <h2>{{ currentPage }}</h2>
+          <h2>{{ currentPage | translate }}</h2>
           }
         </div>
         <div class="toolbar-right">
+          <!-- Language Selector -->
+          <app-language-selector></app-language-selector>
+
           <!-- Debug button -->
           <button
             mat-icon-button

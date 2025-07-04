@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sign-in',
@@ -26,6 +27,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    TranslateModule,
   ],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.css',
@@ -38,7 +40,8 @@ export class SignInComponent {
     private fb: FormBuilder,
     private authService: AuthenticationService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.signInForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -60,22 +63,26 @@ export class SignInComponent {
           // Update authentication state
           this.authService.updateAuthenticationState(response);
 
-          this.snackBar.open(`Welcome back, ${response.username}!`, 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar'],
+          this.translate.get('auth.sign_in_success', { username: response.username }).subscribe((message: string) => {
+            this.snackBar.open(message || `Welcome back, ${response.username}!`, this.translate.instant('common.close'), {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
           });
           this.isLoading = false;
           this.router.navigate(['/home']);
         },
-        error: (error: any) => {
-          this.snackBar.open(
-            'Invalid username or password. Please try again.',
-            'Close',
-            {
-              duration: 5000,
-              panelClass: ['error-snackbar'],
-            }
-          );
+        error: (_error: any) => {
+          this.translate.get('auth.invalid_credentials').subscribe((message: string) => {
+            this.snackBar.open(
+              message || 'Invalid username or password. Please try again.',
+              this.translate.instant('common.close'),
+              {
+                duration: 5000,
+                panelClass: ['error-snackbar'],
+              }
+            );
+          });
           this.isLoading = false;
         },
       });

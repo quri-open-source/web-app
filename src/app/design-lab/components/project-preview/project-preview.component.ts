@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslateModule } from '@ngx-translate/core';
 import { ProjectService } from '../../services/project.service';
 import { Project } from '../../model/project.entity';
 
@@ -20,6 +21,7 @@ import { Project } from '../../model/project.entity';
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    TranslateModule,
   ],
   templateUrl: './project-preview.component.html',
   styleUrl: './project-preview.component.css',
@@ -40,7 +42,7 @@ export class ProjectPreviewComponent implements OnInit {
             console.log('Project ID from route:', projectId);
             this.loadProject(projectId);
         } else {
-            this.error = 'No project ID provided';
+            this.error = 'design.no_project_id';
             this.loading = false;
         }
     }
@@ -53,7 +55,7 @@ export class ProjectPreviewComponent implements OnInit {
 
                 const project = projects.find((p: Project) => p.id === projectId);
                 if (!project) {
-                    this.error = 'Project not found';
+                    this.error = 'design.project_not_found';
                     this.loading = false;
                     return;
                 }
@@ -63,7 +65,7 @@ export class ProjectPreviewComponent implements OnInit {
             },
             error: (err: any) => {
                 console.error('Error loading project:', err);
-                this.error = 'Failed to load project';
+                this.error = 'design.loading_project';
                 this.loading = false;
             }
         });
