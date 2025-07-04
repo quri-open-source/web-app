@@ -16,6 +16,29 @@ const GET_PROJECT_BY_ID = (id: string) =>
 
 const CREATE_PROJECT_URL = `${environment.serverBaseUrl}/projects`;
 
+// New endpoints for layers
+const CREATE_TEXT_LAYER_URL = `${environment.serverBaseUrl}/projects/layers/texts`;
+const CREATE_IMAGE_LAYER_URL = (projectId: string) => 
+  `${environment.serverBaseUrl}/projects/${projectId}/images`;
+
+// Layer request interfaces
+interface CreateTextLayerRequest {
+  projectId: string;
+  text: string;
+  fontColor: string;
+  fontFamily: string;
+  fontSize: number;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderlined: boolean;
+}
+
+interface CreateImageLayerRequest {
+  imageUrl: string;
+  width: string;
+  height: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -151,19 +174,84 @@ export class ProjectService {
 
   updateProject(id: string, projectData: ProjectResponse): Observable<Project> {
     const userId = this.getCurrentUserId();
+    const token = localStorage.getItem('token');
+    
+    console.log('📡 Updating project with full debugging:');
+    console.log('  - Project ID:', id);
+    console.log('  - User ID from IAM:', userId);
+    console.log('  - Token present:', !!token);
+    console.log('  - Token preview:', token ? token.substring(0, 20) + '...' : 'NO TOKEN');
+    console.log('  - Project data:', projectData);
+    
     if (!userId) {
+      console.error('❌ No authenticated user found for project update');
       throw new Error('No authenticated user found');
     }
 
+    if (!token) {
+      console.error('❌ No authentication token found for project update');
+      throw new Error('User not authenticated - no token');
+    }
+
     const url = `${environment.serverBaseUrl}/projects/${id}`;
-    console.log('📡 Updating project:', id, 'for user:', userId, 'with data:', projectData);
+    console.log('🌐 PUT URL:', url);
+
+    // Create explicit headers to ensure they're sent correctly
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    console.log('📋 Explicit headers being set:', headers);
 
     return this.http
-      .put<ProjectResponse>(url, projectData)
+      .put<ProjectResponse>(url, projectData, { headers })
       .pipe(
         map((response: ProjectResponse) => {
           console.log('✅ Project updated successfully:', response);
           return ProjectAssembler.toEntityFromResponse(response);
+        })
+      );
+  }
+
+  createTextLayer(request: CreateTextLayerRequest): Observable<any> {
+    console.log('📡 Creating text layer with request:', request);
+    
+    const token = localStorage.getItem('token');
+    console.log('🔑 Text layer - Token present:', !!token);
+    
+    return this.http
+      .post<any>(CREATE_TEXT_LAYER_URL, request)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Text layer created successfully:', response);
+          return response;
+        })
+      );
+  }
+
+  createImageLayer(projectId: string, request: CreateImageLayerRequest): Observable<any> {
+    const endpoint = CREATE_IMAGE_LAYER_URL(projectId);
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    console.log('📡 Creating image layer for project:', projectId);
+    console.log('🌐 POST URL:', endpoint);
+    console.log('📝 Request payload:', request);
+    console.log('🔑 Auth token present:', !!token);
+    console.log('👤 User ID:', userId);
+    
+    if (!token) {
+      console.error('❌ No authentication token found!');
+      throw new Error('User not authenticated');
+    }
+    
+    return this.http
+      .post<any>(endpoint, request)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Image layer created successfully on server:', response);
+          return response;
         })
       );
   }
