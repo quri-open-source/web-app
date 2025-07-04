@@ -318,8 +318,13 @@ export class DesignLabCommandService {
                 z: command.z
             };
 
+            const url = `${BASE_URL}/${command.projectId}/layers/${command.layerId}/coordinates`;
+            console.log('🌐 Request URL:', url);
+            console.log('📦 Request payload:', request);
+            console.log('🔑 Request headers:', this.getAuthHeaders());
+
             await this.http.put<LayerResponse>(
-                `${BASE_URL}/${command.projectId}/layers/${command.layerId}/coordinates`,
+                url,
                 request,
                 { headers: this.getAuthHeaders() }
             ).toPromise();
@@ -332,8 +337,15 @@ export class DesignLabCommandService {
                 projectId: command.projectId,
                 message: 'Layer coordinates updated successfully'
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error('❌ DesignLabCommandService - Error updating layer coordinates:', error);
+            console.error('❌ Full error details:', {
+                status: error?.status,
+                statusText: error?.statusText,
+                url: error?.url,
+                message: error?.message,
+                error: error?.error
+            });
             return {
                 success: false,
                 error: this.getErrorMessage(error)
@@ -376,6 +388,7 @@ export class DesignLabCommandService {
         const token = localStorage.getItem('token');
         return {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': token ? `Bearer ${token}` : ''
         };
     }

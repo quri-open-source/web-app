@@ -12,6 +12,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
+import { DesignLabApplicationService } from '../../services/design-lab-application.service';
+import { UpdateLayerCoordinatesCommand } from '../../services/commands/layer-commands';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
 import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
@@ -58,6 +60,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
   // For dragging functionality
   private draggedLayer: Layer | null = null;
+  private originalPosition: { x: number; y: number } | null = null;
   private startX: number = 0;
   private startY: number = 0;
   private boundMouseMove: any;
@@ -107,7 +110,8 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private projectService: ProjectService,
-    private cloudinaryService: CloudinaryService
+    private cloudinaryService: CloudinaryService,
+    private designLabService: DesignLabApplicationService
   ) {}
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -550,8 +554,18 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     event.preventDefault();
 
     this.draggedLayer = layer;
+    // Store original position to check if it changed
+    this.originalPosition = { x: layer.x, y: layer.y };
     this.startX = event.clientX - layer.x;
     this.startY = event.clientY - layer.y;
+
+    // Add dragging class for visual feedback
+    const target = event.target as HTMLElement;
+    if (target && (target.classList.contains('text-layer') || target.classList.contains('image-layer'))) {
+      target.classList.add('dragging');
+    }
+
+    console.log('🎯 Started dragging layer:', layer.id, 'from position:', this.originalPosition);
   }
 
   // Handle mouse move for dragging
@@ -566,9 +580,79 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.draggedLayer.x = newX;
     this.draggedLayer.y = newY;
   }
-  // End dragging
+  // End dragging and update coordinates
   onMouseUp(): void {
+    // Remove dragging class from all layers
+    const draggingElements = document.querySelectorAll('.dragging');
+    draggingElements.forEach(element => {
+      element.classList.remove('dragging');
+    });
+
+    if (this.draggedLayer && this.project && this.originalPosition) {
+      // Check if position actually changed
+      const currentX = Math.round(this.draggedLayer.x);
+      const currentY = Math.round(this.draggedLayer.y);
+      const originalX = Math.round(this.originalPosition.x);
+      const originalY = Math.round(this.originalPosition.y);
+
+      if (currentX !== originalX || currentY !== originalY) {
+        console.log(`📍 Position changed from (${originalX}, ${originalY}) to (${currentX}, ${currentY})`);
+        // Update coordinates on the server
+        this.updateLayerCoordinates(this.draggedLayer);
+      } else {
+        console.log('📍 Position unchanged, skipping coordinate update');
+      }
+    }
+
+    // Reset drag state
     this.draggedLayer = null;
+    this.originalPosition = null;
+  }
+
+  // Update layer coordinates on the server
+  private updateLayerCoordinates(layer: Layer): void {
+    if (!this.project) {
+      console.warn('⚠️ No project available for coordinate update');
+      return;
+    }
+
+    const command: UpdateLayerCoordinatesCommand = {
+      projectId: this.project.id,
+      layerId: layer.id,
+      x: Math.round(layer.x), // Round to avoid decimal precision issues
+      y: Math.round(layer.y),
+      z: layer.z
+    };
+
+    console.log('📍 Updating layer coordinates:', command);
+
+    this.designLabService.updateLayerCoordinates(command).subscribe({
+      next: (result) => {
+        if (result.success) {
+          console.log('✅ Layer coordinates updated successfully:', result.layerId);
+          // Very subtle success feedback - short duration
+          this.snackBar.open('Position saved', '', {
+            duration: 800,
+            panelClass: ['success-snackbar'],
+            horizontalPosition: 'end',
+            verticalPosition: 'bottom'
+          });
+        } else {
+          console.error('❌ Failed to update layer coordinates:', result.error);
+          this.snackBar.open('Failed to save position', 'Retry', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error updating layer coordinates:', error);
+        this.snackBar.open('Error saving position', 'Retry', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
   // Delete a layer

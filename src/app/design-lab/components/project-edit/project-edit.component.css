@@ -215,3 +215,37 @@ h3 {
   margin-bottom: 16px;
   color: #333;
 }
+
+/* Snackbar Styles */
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+::ng-deep .success-snackbar .mat-simple-snackbar {
+  color: white !important;
+}
+
+::ng-deep .error-snackbar .mat-simple-snackbar {
+  color: white !important;
+}
+
+/* Layer interaction feedback */
+.text-layer:hover,
+.image-layer:hover {
+  cursor: move;
+  opacity: 0.9;
+}
+
+.text-layer.dragging,
+.image-layer.dragging {
+  cursor: grabbing;
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}

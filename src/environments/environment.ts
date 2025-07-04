@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   serverBaseUrl: 'http://localhost:8080/api/v1',
-  apiBaseUrl: 'http://localhost:8080/api/',
+  apiBaseUrl: 'http://localhost:8080/api/v1',
   projectsApiBaseUrl: 'http://localhost:8080/api/v1/projects',
   cloudinaryApiBaseUrl: 'https://api.cloudinary.com/v1_1/dpprgycup/image',
   cloudinaryPresetName: 'Teelab',
