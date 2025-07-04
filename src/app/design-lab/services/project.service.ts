@@ -21,6 +21,16 @@ const CREATE_TEXT_LAYER_URL = `${environment.serverBaseUrl}/projects/layers/text
 const CREATE_IMAGE_LAYER_URL = (projectId: string) => 
   `${environment.serverBaseUrl}/projects/${projectId}/images`;
 
+// Update endpoints for layers
+const UPDATE_TEXT_LAYER_URL = (projectId: string, layerId: string) => 
+  `${environment.serverBaseUrl}/projects/${projectId}/layers/${layerId}/text-details`;
+const UPDATE_IMAGE_LAYER_URL = (projectId: string, layerId: string) => 
+  `${environment.serverBaseUrl}/projects/${projectId}/layers/${layerId}/image-details`;
+
+// Update project details endpoint
+const UPDATE_PROJECT_DETAILS_URL = (projectId: string) => 
+  `${environment.serverBaseUrl}/projects/${projectId}/details`;
+
 // Layer request interfaces
 interface CreateTextLayerRequest {
   projectId: string;
@@ -37,6 +47,32 @@ interface CreateImageLayerRequest {
   imageUrl: string;
   width: string;
   height: string;
+}
+
+// Update layer request interfaces
+interface UpdateTextLayerRequest {
+  text: string;
+  fontColor: string;
+  fontFamily: string;
+  fontSize: number;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderlined: boolean;
+}
+
+interface UpdateImageLayerRequest {
+  imageUrl: string;
+  width: string;
+  height: string;
+}
+
+// Update project details request interface
+interface UpdateProjectDetailsRequest {
+  previewUrl?: string;
+  status?: string;
+  garmentColor?: string;
+  garmentSize?: string;
+  garmentGender?: string;
 }
 
 @Injectable({
@@ -251,6 +287,108 @@ export class ProjectService {
       .pipe(
         map((response: any) => {
           console.log('✅ Image layer created successfully on server:', response);
+          return response;
+        })
+      );
+  }
+
+  // Update text layer details
+  updateTextLayer(projectId: string, layerId: string, request: UpdateTextLayerRequest): Observable<any> {
+    const endpoint = UPDATE_TEXT_LAYER_URL(projectId, layerId);
+    const token = localStorage.getItem('token');
+    
+    console.log('📡 Updating text layer:', layerId, 'for project:', projectId);
+    console.log('🌐 PUT URL:', endpoint);
+    console.log('📝 Request payload:', request);
+    console.log('🔑 Auth token present:', !!token);
+    
+    if (!token) {
+      console.error('❌ No authentication token found!');
+      throw new Error('User not authenticated');
+    }
+    
+    return this.http
+      .put<any>(endpoint, request)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Text layer updated successfully:', response);
+          return response;
+        })
+      );
+  }
+
+  // Update image layer details
+  updateImageLayer(projectId: string, layerId: string, request: UpdateImageLayerRequest): Observable<any> {
+    const endpoint = UPDATE_IMAGE_LAYER_URL(projectId, layerId);
+    const token = localStorage.getItem('token');
+    
+    console.log('📡 Updating image layer:', layerId, 'for project:', projectId);
+    console.log('🌐 PUT URL:', endpoint);
+    console.log('📝 Request payload:', request);
+    console.log('🔑 Auth token present:', !!token);
+    
+    if (!token) {
+      console.error('❌ No authentication token found!');
+      throw new Error('User not authenticated');
+    }
+    
+    return this.http
+      .put<any>(endpoint, request)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Image layer updated successfully:', response);
+          return response;
+        })
+      );
+  }
+
+  // Update project preview URL
+  updateProjectPreview(projectId: string, previewUrl: string): Observable<any> {
+    const endpoint = `${environment.serverBaseUrl}/projects/${projectId}/preview`;
+    const token = localStorage.getItem('token');
+    
+    console.log('📡 Updating project preview URL for project:', projectId);
+    console.log('🌐 PUT URL:', endpoint);
+    console.log('🖼️ Preview URL:', previewUrl);
+    console.log('🔑 Auth token present:', !!token);
+    
+    if (!token) {
+      console.error('❌ No authentication token found!');
+      throw new Error('User not authenticated');
+    }
+    
+    const requestBody = { previewUrl };
+    
+    return this.http
+      .put<any>(endpoint, requestBody)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Project preview URL updated successfully:', response);
+          return response;
+        })
+      );
+  }
+
+  // Update project details (new endpoint)
+  updateProjectDetails(projectId: string, request: UpdateProjectDetailsRequest): Observable<any> {
+    const endpoint = UPDATE_PROJECT_DETAILS_URL(projectId);
+    const token = localStorage.getItem('token');
+    
+    console.log('📡 Updating project details for project:', projectId);
+    console.log('🌐 PUT URL:', endpoint);
+    console.log('📝 Request payload:', request);
+    console.log('🔑 Auth token present:', !!token);
+    
+    if (!token) {
+      console.error('❌ No authentication token found!');
+      throw new Error('User not authenticated');
+    }
+    
+    return this.http
+      .put<any>(endpoint, request)
+      .pipe(
+        map((response: any) => {
+          console.log('✅ Project details updated successfully:', response);
           return response;
         })
       );

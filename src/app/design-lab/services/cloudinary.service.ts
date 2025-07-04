@@ -58,4 +58,38 @@ export class CloudinaryService {
       widget.open();
     });
   }
+
+  /**
+   * Uploads a blob to Cloudinary
+   * @param blob The blob to upload
+   * @param folder Optional folder name
+   * @returns Promise with the uploaded image URL
+   */
+  uploadBlob(blob: Blob, folder: string = 'teelab_previews'): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append('file', blob, 'project-preview.png');
+      formData.append('upload_preset', this.uploadPreset);
+      formData.append('folder', folder);
+
+      fetch(`https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.secure_url) {
+          console.log('✅ Blob uploaded to Cloudinary:', data.secure_url);
+          resolve(data.secure_url);
+        } else {
+          console.error('❌ No secure_url in Cloudinary response:', data);
+          reject(new Error('No secure_url in Cloudinary response'));
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error uploading blob to Cloudinary:', error);
+        reject(error);
+      });
+    });
+  }
 }
