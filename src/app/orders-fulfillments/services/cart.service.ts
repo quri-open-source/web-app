@@ -1,15 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, switchMap, BehaviorSubject } from 'rxjs';
+import { Observable, map, switchMap, BehaviorSubject, of } from 'rxjs';
 import { Cart, CartItem } from '../model/cart.entity';
 import { environment } from '../../../environments/environment';
 import { Product } from '../../product-catalog/model/product.entity';
+import { tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  private readonly LOCAL_CART_KEY = 'shopping_cart';
   private cartChanged$ = new BehaviorSubject<Cart | null>(null);
+  private localCart: Cart;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Al iniciar, cargar carrito de localStorage
+    const stored = localStorage.getItem(this.LOCAL_CART_KEY);
+    this.localCart = stored ? JSON.parse(stored) as Cart : { id: '', user_id: '', items: [], applied_discounts: [] };
+    this.cartChanged$.next(this.localCart);
+  }
+
+  /** Obtiene carrito en memoria (localStorage) */
+  getLocalCart(): Cart {
+    return this.localCart;
+  }
+
+  /** Guarda carrito en localStorage y emite cambio */
+  private saveLocalCart(cart: Cart): void {
+    this.localCart = cart;
+    localStorage.setItem(this.LOCAL_CART_KEY, JSON.stringify(cart));
+    this.cartChanged$.next(cart);
+  }
 
   getCartByUser(userId: string): Observable<Cart[]> {
     return this.http.get<Cart[]>(`${environment.apiBaseUrl}/carts?user_id=${userId}`);
@@ -39,31 +59,28 @@ export class CartService {
   }
 
   addToCart(product: Product, userId: string): Observable<Cart> {
-    return this.getCartByUser(userId).pipe(
-      map((carts) => carts[0]),
-      switchMap((cart) => {
-        if (!cart) {
-          const newCart: Cart = {
-            id: '',
-            user_id: userId,
-            items: [],
-            applied_discounts: []
-          };
-          return this.createCartWithProduct(newCart, product);
-        }
-        const existingItem = cart.items.find(item => item.project_id === product.projectId);
-        if (existingItem) {
-          existingItem.quantity += 1;
-        } else {
-          const newItem = new CartItem();
-          newItem.project_id = product.projectId;
-          newItem.quantity = 1;
-          newItem.unit_price = product.price;
-          newItem.projectName = product.projectDetails?.title || '';
-          newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
-          cart.items.push(newItem);
-        }
-        return this.updateCart(cart);
+    const cart = this.getLocalCart();
+    const existing = cart.items.find(item => item.project_id === product.projectId);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      const newItem = new CartItem();
+      newItem.project_id = product.projectId;
+      newItem.quantity = 1;
+      newItem.unit_price = product.price;
+      newItem.projectName = product.projectDetails?.title || '';
+      newItem.projectImage = product.projectDetails?.previewUrl || environment.defaultPreviewImageUrl;
+      cart.items.push(newItem);
+    }
+    this.saveLocalCart(cart);
+    return of(cart);
+  }
+
+  /** Confirma el carrito al backend como una nueva orden */
+  checkoutCart(userId: string): Observable<Cart> {
+    return this.http.post<Cart>(`${environment.apiBaseUrl}/carts`, this.localCart).pipe(
+      tap(createdCart => {
+        this.saveLocalCart({ id: '', user_id: userId, items: [], applied_discounts: [] });
       })
     );
   }

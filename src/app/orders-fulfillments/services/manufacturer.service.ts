@@ -47,8 +47,8 @@ export class ManufacturerService {
       id: this.generateId(),
       ...request,
       status: request.status || 'pending',
-      received_date: request.received_date || new Date().toISOString(),
-      shipped_date: request.shipped_date || null
+      receivedDate: request.receivedDate || new Date().toISOString(),
+      shippedDate: request.shippedDate || null
     };
 
     return this.http.post<CreateFulfillmentResponse>(`${this.baseUrl}/fulfillments`, fulfillmentData).pipe(
