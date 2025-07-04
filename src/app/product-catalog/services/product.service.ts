@@ -2,13 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { ProductAssembler } from './product.assembler';
 import { ProductResponse } from './product.response';
-import { ProjectResponse } from '../../design-lab/services/project.response';
 import { ProjectService } from '../../design-lab/services/project.service';
 import { Project } from '../../design-lab/model/project.entity';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../model/product.entity';
-import { ProjectAssembler } from '../../design-lab/services/project.assembler';
 import { environment } from '../../../environments/environment';
 // ...no custom request/like response imports; use inline typings
 

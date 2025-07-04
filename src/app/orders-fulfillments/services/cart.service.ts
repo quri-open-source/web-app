@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, switchMap, BehaviorSubject, of } from 'rxjs';
+import { Observable, map, BehaviorSubject, of } from 'rxjs';
 import { Cart, CartItem } from '../model/cart.entity';
 import { environment } from '../../../environments/environment';
 import { Product } from '../../product-catalog/model/product.entity';

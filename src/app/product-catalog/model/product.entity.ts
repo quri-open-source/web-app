@@ -1,4 +1,3 @@
-import { Comment } from './comment.entity';
 import { Project } from '../../design-lab/model/project.entity';
 
 export class Product {
