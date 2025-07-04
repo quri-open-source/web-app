@@ -9,15 +9,15 @@ export class ProjectAssembler {
         return new Project(
             response.id,
             response.title,
-            response.user_id,
-            response.preview_url,
+            response.userId,
+            response.previewUrl,
             response.status as PROJECT_STATUS,
-            response.garment_color as GARMENT_COLOR,
-            response.garment_size as GARMENT_SIZE,
-            response.garment_gender as PROJECT_GENDER,
+            response.garmentColor as GARMENT_COLOR,
+            response.garmentSize as GARMENT_SIZE,
+            response.garmentGender as PROJECT_GENDER,
             layers,
-            new Date(response.created_at),
-            new Date(response.updated_at)
+            new Date(response.createdAt),
+            new Date(response.updatedAt)
         );
     }
     

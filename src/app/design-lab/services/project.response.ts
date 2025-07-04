@@ -1,15 +1,15 @@
 export interface ProjectResponse {
     id: string;
     title: string;
-    user_id: string;
-    preview_url: string | null;
+    userId: string;
+    previewUrl: string | null;
     status: string;
-    garment_color: string;
-    garment_size: string;
-    garment_gender: string;
+    garmentColor: string;
+    garmentSize: string;
+    garmentGender: string;
     layers: LayerResponse[];
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface LayerResponse {

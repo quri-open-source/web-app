@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { AuthenticationService } from '../../iam/services/authentication.service';
 import { ProjectAssembler } from './project.assembler';
@@ -9,8 +9,7 @@ import { Project } from '../model/project.entity';
 import { environment } from '../../../environments/environment';
 
 // API Endpoints
-const GET_ALL_USER_PROJECTS = (userId: string) =>
-  `${environment.serverBaseUrl}/projects/users/${userId}`;
+const GET_ALL_USER_PROJECTS_URL = `${environment.serverBaseUrl}/projects`;
 
 const GET_PROJECT_BY_ID = (id: string) =>
   `${environment.serverBaseUrl}/projects/${id}`;
@@ -45,9 +44,11 @@ export class ProjectService {
       throw new Error('No authenticated user found');
     }
 
+    const params = new HttpParams().set('userId', userId);
     console.log('📡 Fetching all public projects for user:', userId);
+    
     return this.http
-      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS_URL, { params })
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ Projects fetched successfully:', projects);
@@ -62,12 +63,16 @@ export class ProjectService {
       throw new Error('No authenticated user found');
     }
 
+    const params = new HttpParams().set('userId', userId);
     console.log('📡 Fetching user blueprints for user:', userId);
+    console.log('🌐 GET URL:', GET_ALL_USER_PROJECTS_URL + '?userId=' + userId);
+    
     return this.http
-      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS_URL, { params })
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ User blueprints fetched successfully:', projects);
+          console.log('🔍 First project sample:', projects[0]);
           return ProjectAssembler.toEntitiesFromResponse(projects);
         })
       );
@@ -130,9 +135,12 @@ export class ProjectService {
       throw new Error('No authenticated user found');
     }
 
+    const params = new HttpParams().set('userId', userId);
     console.log('📡 Fetching all public projects for authenticated user:', userId);
+    console.log('🌐 GET URL:', GET_ALL_USER_PROJECTS_URL + '?userId=' + userId);
+    
     return this.http
-      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS(userId))
+      .get<ProjectResponse[]>(GET_ALL_USER_PROJECTS_URL, { params })
       .pipe(
         map((projects: ProjectResponse[]) => {
           console.log('✅ Public projects fetched successfully:', projects);

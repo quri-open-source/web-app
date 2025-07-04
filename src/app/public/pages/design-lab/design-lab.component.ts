@@ -36,17 +36,24 @@ export class DesignLabComponent implements OnInit {
     }
 
     loadProjects(): void {
-        this.projectService.getUserBlueprints().subscribe(
-            (projects) => {
+        console.log('🔍 DesignLabComponent - Loading user projects...');
+        this.loading = true;
+        this.error = null;
+        
+        this.projectService.getUserBlueprints().subscribe({
+            next: (projects) => {
+                console.log('✅ DesignLabComponent - Projects loaded:', projects.length);
                 this.projects = projects;
                 this.loading = false;
             },
-            (err) => {
-                console.error('Error fetching projects:', err);
+            error: (err) => {
+                console.error('❌ DesignLabComponent - Error fetching projects:', err);
+                console.error('❌ Error status:', err.status);
+                console.error('❌ Error URL:', err.url);
                 this.error = 'Failed to load projects. Please try again later.';
                 this.loading = false;
             }
-        );
+        });
     }
 
     onProjectDeleted(deletedProjectId: string): void {
