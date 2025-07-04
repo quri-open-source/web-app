@@ -10,6 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ImageLayer } from '../../../model/layer.entity';
 import { LayerType } from '../../../../const';
+import { CloudinaryService } from '../../../services/cloudinary.service';
 
 export interface ImageProperties {
   imageUrl: string;
@@ -67,7 +68,7 @@ export class ImageEditorComponent {
   actualHeight: number = 0;
   uploadError: string | null = null;
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar, private cloudinaryService: CloudinaryService) {}
 
   formatLabel(value: number): string {
     return `${value}x`;
@@ -167,6 +168,14 @@ export class ImageEditorComponent {
   }
 
   addImage(): void {
+    console.log('🎯 addImage() called');
+    console.log('🔍 previewImageUrl:', this.previewImageUrl);
+    console.log('📏 Current dimensions:', {
+      width: this.imageWidth,
+      height: this.imageHeight,
+      scale: this.imageScale
+    });
+
     if (this.previewImageUrl) {
       // Emit image properties for backward compatibility
       const imageProps: ImageProperties = {
@@ -176,14 +185,20 @@ export class ImageEditorComponent {
         scale: this.imageScale,
         maintainAspectRatio: true,
       };
+
+      console.log('📤 Emitting imageAdded event with props:', imageProps);
       this.imageAdded.emit(imageProps);
 
       // Create and emit a proper ImageLayer entity
       const imageLayer = this.createImageLayer(imageProps);
+      console.log('📤 Emitting imageLayerCreated event with layer:', imageLayer);
       this.imageLayerCreated.emit(imageLayer);
 
       // Clear the preview after adding to design
       this.resetForm();
+      console.log('✅ Image added to design and form reset');
+    } else {
+      console.warn('⚠️ No preview image URL available');
     }
   }
 
@@ -229,5 +244,77 @@ export class ImageEditorComponent {
   getFileInfo(): string {
     if (!this.actualWidth || !this.actualHeight) return '';
     return `Original: ${this.actualWidth}x${this.actualHeight}px`;
+  }
+
+  /**
+   * Opens Cloudinary upload widget and processes the uploaded image
+   */
+  openCloudinaryUpload(): void {
+    this.uploading = true;
+    this.uploadError = null;
+
+    this.cloudinaryService.openUploadWidget()
+      .then((imageUrl: string) => {
+        this.previewImageUrl = imageUrl;
+        this.processCloudinaryImage(imageUrl);
+      })
+      .catch((error) => {
+        console.error('❌ Error uploading to Cloudinary:', error);
+        this.showError('Failed to upload image to Cloudinary. Please try again.');
+        this.uploading = false;
+      });
+  }
+
+  /**
+   * Process image uploaded to Cloudinary
+   */
+  private processCloudinaryImage(imageUrl: string): void {
+    console.log('🖼️ Processing Cloudinary image:', imageUrl);
+    this.previewImageUrl = imageUrl;
+
+    const img = new Image();
+    img.onload = () => {
+      this.actualWidth = img.width;
+      this.actualHeight = img.height;
+
+      console.log('📏 Original image dimensions:', {
+        width: img.width,
+        height: img.height
+      });
+
+      // Calculate appropriate dimensions while maintaining aspect ratio
+      const maxWidth = this.config.maxImageSize.width;
+      const maxHeight = this.config.maxImageSize.height;
+
+      if (img.width > img.height) {
+        // Landscape image
+        this.imageWidth = Math.min(maxWidth, img.width);
+        this.imageHeight = Math.floor((img.height / img.width) * this.imageWidth);
+      } else {
+        // Portrait or square image
+        this.imageHeight = Math.min(maxHeight, img.height);
+        this.imageWidth = Math.floor((img.width / img.height) * this.imageHeight);
+      }
+
+      console.log('📐 Calculated display dimensions:', {
+        width: this.imageWidth,
+        height: this.imageHeight,
+        scale: this.imageScale
+      });
+
+      // Reset scale when new image is loaded
+      this.imageScale = 1;
+      this.uploading = false;
+
+      console.log('✅ Cloudinary image processed successfully');
+    };
+    
+    img.onerror = () => {
+      console.error('❌ Error loading Cloudinary image:', imageUrl);
+      this.showError('Failed to load the uploaded image.');
+      this.uploading = false;
+    };
+    
+    img.src = imageUrl;
   }
 }
