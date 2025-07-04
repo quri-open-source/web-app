@@ -96,7 +96,8 @@ export class ManufacturerOrdersService {
    * Helper method to convert a fulfillment to a manufacturer order
    */
   private getManufacturerOrderFromFulfillment(fulfillment: Fulfillment): Observable<ManufacturerOrder> {
-    return this.orderService.getOrderById(fulfillment.order_id).pipe(
+    // use camelCase property from Fulfillment entity
+    return this.orderService.getOrderById(fulfillment.orderId).pipe(
       switchMap(order => {
         if (!order) {
           // Skip this order if not found
@@ -109,8 +110,8 @@ export class ManufacturerOrdersService {
           id: fulfillment.id,
           orderId: order.id,
           status: fulfillment.status,
-          receivedDate: fulfillment.received_date,
-          shippedDate: fulfillment.shipped_date,
+          receivedDate: fulfillment.receivedDate,
+          shippedDate: fulfillment.shippedDate,
           customerName: 'Customer', // Simplified customer name
           customerAddress: order.shipping_address ?
             `${order.shipping_address.address}, ${order.shipping_address.city}, ${order.shipping_address.state}` : '',
@@ -150,8 +151,8 @@ export class ManufacturerOrdersService {
         fulfillment.status = newStatus;
 
         // If status is "shipped", set the shipped date
-        if (newStatus === 'shipped' && !fulfillment.shipped_date) {
-          fulfillment.shipped_date = new Date().toISOString();
+        if (newStatus === 'shipped' && !fulfillment.shippedDate) {
+          fulfillment.shippedDate = new Date().toISOString();
         }
 
         // Save the updated fulfillment

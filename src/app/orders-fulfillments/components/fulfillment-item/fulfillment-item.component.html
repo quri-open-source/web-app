@@ -4,10 +4,10 @@
       <div class="header-section">
         <div class="title-section">
           <h3 class="fulfillment-title">Fulfillment #{{ fulfillment.id }}</h3>
-          <p class="order-subtitle">Order #{{ fulfillment.order_id }}</p>
+          <p class="order-subtitle">Order #{{ fulfillment.orderId }}</p>
         </div>
       </div>
-      
+
       <div class="details-section">
         <div class="detail-item">
           <mat-icon class="detail-icon">schedule</mat-icon>
@@ -15,7 +15,7 @@
           <span class="detail-value">{{ fulfillment.formattedReceivedDate }}</span>
         </div>
 
-        <div class="detail-item" *ngIf="fulfillment.shipped_date">
+        <div class="detail-item" *ngIf="fulfillment.shippedDate">
           <mat-icon class="detail-icon">local_shipping</mat-icon>
           <span class="detail-label">Shipped:</span>
           <span class="detail-value">{{ fulfillment.formattedShippedDate }}</span>
@@ -24,7 +24,7 @@
         <div class="detail-item">
           <mat-icon class="detail-icon">business</mat-icon>
           <span class="detail-label">Manufacturer:</span>
-          <span class="detail-value">#{{ fulfillment.manufacturer_id }}</span>
+          <span class="detail-value">#{{ fulfillment.manufacturerId }}</span>
         </div>
       </div>
     </div>
