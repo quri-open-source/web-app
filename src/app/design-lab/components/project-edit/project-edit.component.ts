@@ -15,8 +15,6 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
 import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
-import { TextProperties } from '../editors/text-editor/text-editor.component';
-import { ImageProperties } from '../editors/image-editor/image-editor.component';
 import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
 import * as htmlToImage from 'html-to-image';
 
@@ -47,7 +45,7 @@ interface GarmentColorOption {
 })
 export class ProjectEditComponent implements OnInit, OnDestroy {
   @ViewChild('tshirtPreview', { static: false }) tshirtPreviewRef!: ElementRef;
-  
+
   project: Project | null = null;
   loading = true;
   error: string | null = null;
@@ -55,9 +53,9 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   textLayers: TextLayer[] = [];
   imageLayers: ImageLayer[] = [];
   isGeneratingPreview = false;
-  
+
   private snackBar = inject(MatSnackBar);
-  
+
   // For dragging functionality
   private draggedLayer: Layer | null = null;
   private startX: number = 0;
@@ -140,19 +138,19 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
     this.loading = true;
     this.error = null;
-    
+
     console.log('🔍 ProjectEditComponent - Loading project by ID:', this.projectId);
-    
+
     // Use the specific method to get project by ID
     this.projectService.getUserBlueprintById(this.projectId).subscribe({
       next: (project: Project) => {
         console.log('✅ ProjectEditComponent - Project loaded successfully:', project);
         console.log('🔍 Project layers data:', project.layers);
         this.project = project;
-        
+
         if (this.project && this.project.layers && Array.isArray(this.project.layers)) {
           console.log('🔍 Raw layers from server:', this.project.layers);
-          
+
           // Filter and properly convert text layers
           this.textLayers = this.project.layers
             .filter((layer: any) => layer.type === 'TEXT')
@@ -162,7 +160,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
                 // Convert dates properly
                 const createdAt = layer.createdAt instanceof Date ? layer.createdAt : new Date(layer.createdAt);
                 const updatedAt = layer.updatedAt instanceof Date ? layer.updatedAt : new Date(layer.updatedAt);
-                
+
                 return new TextLayer(
                   layer.id,
                   Number(layer.x) || 0,
@@ -180,7 +178,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
               }
             })
             .filter(layer => layer !== null) as TextLayer[];
-            
+
           // Filter and properly convert image layers
           this.imageLayers = this.project.layers
             .filter((layer: any) => layer.type === 'IMAGE')
@@ -189,12 +187,12 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
               try {
                 const imageUrl = layer.details?.imageUrl || layer.imageUrl || '';
                 console.log('🔗 Image URL found:', imageUrl);
-                
+
                 if (!imageUrl) {
                   console.warn('⚠️ No image URL found for layer:', layer.id);
                   return null;
                 }
-                
+
                 return new ImageLayer(
                   layer.id,
                   Number(layer.x) || 0,
@@ -210,11 +208,11 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
               }
             })
             .filter(layer => layer !== null) as ImageLayer[];
-            
+
           console.log('📝 Text layers loaded and converted:', this.textLayers.length, this.textLayers);
           console.log('🖼️ Image layers loaded and converted:', this.imageLayers.length, this.imageLayers);
           console.log('🖼️ Preview URL:', this.project.previewUrl);
-          
+
           // Debug layers for troubleshooting
           this.debugLayers();
         } else {
@@ -230,11 +228,11 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
         console.error('❌ Error URL:', err.url);
         console.error('❌ Error message:', err.message);
         console.error('❌ Full error object:', err);
-        
+
         // Check if the token is still in localStorage when error occurs
         const currentToken = localStorage.getItem('token');
         console.error('🔑 Token at error time:', currentToken ? `${currentToken.substring(0, 20)}...` : 'NO TOKEN');
-        
+
         if (err.status === 401) {
           console.error('❌ Authentication failed - but NOT redirecting yet for debugging');
           this.error = 'Session expired. Please check console for debugging info.';
@@ -251,7 +249,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
         } else {
           this.error = 'Failed to load project. Please try again.';
         }
-        
+
         this.loading = false;
       },
     });
@@ -273,7 +271,10 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
   // Enhanced event handlers using the new entity-aware approach
   handleGarmentColorChanged(color: string): void {
-    this.selectColor(color);
+    console.log('Garment color changed:', color);
+    if (this.project) {
+      this.project.garmentColor = color as GARMENT_COLOR;
+    }
   }
 
   handleTextLayerCreated(textLayer: TextLayer): void {
@@ -318,12 +319,12 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
   private createImageLayerOnServer(imageLayer: ImageLayer): void {
     console.log('🖼️ Creating image layer on server:', imageLayer);
-    
+
     if (!this.checkAuthentication()) {
       console.error('❌ Authentication failed - cannot create image layer');
       return;
     }
-    
+
     if (!this.project) {
       console.error('❌ No project available for image layer creation');
       return;
@@ -355,7 +356,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
         console.error('❌ Error creating image layer on server:', err);
         console.error('Request details:', request);
         console.error('Project ID:', this.project?.id);
-        
+
         if (err.status === 401) {
           console.error('🔒 Authentication error - token may be expired');
           // Here you could show a message to re-login
@@ -396,65 +397,6 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     // Additional logic for any layer type can be added here
   }
 
-  // Legacy handlers for backward compatibility
-  handleTextAdded(textProps: TextProperties): void {
-    console.log('Text added (legacy):', textProps);
-    
-    if (!this.project) return;
-
-    const request = {
-      projectId: this.project.id,
-      text: textProps.text,
-      fontColor: textProps.color,
-      fontFamily: textProps.fontFamily,
-      fontSize: textProps.fontSize,
-      isBold: textProps.fontWeight >= 700,
-      isItalic: textProps.italic || false,
-      isUnderlined: textProps.underline || false
-    };
-
-    this.projectService.createTextLayer(request).subscribe({
-      next: (response) => {
-        console.log('✅ Text layer created on server (legacy):', response);
-        const serverTextLayer = this.convertServerResponseToTextLayer(response);
-        this.textLayers.push(serverTextLayer);
-      },
-      error: (err) => {
-        console.error('❌ Error creating text layer (legacy):', err);
-      }
-    });
-  }
-
-  handleImageAdded(imageProps: ImageProperties): void {
-    console.log('🖼️ Image added via Cloudinary:', imageProps);
-    
-    if (!this.project) {
-      console.error('❌ No project available for image layer creation');
-      return;
-    }
-
-    const request = {
-      imageUrl: imageProps.imageUrl,
-      width: imageProps.width.toString(),
-      height: imageProps.height.toString()
-    };
-
-    console.log('📡 Sending create image layer request:', request);
-
-    this.projectService.createImageLayer(this.project.id, request).subscribe({
-      next: (response) => {
-        console.log('✅ Image layer created on server:', response);
-        const serverImageLayer = this.convertServerResponseToImageLayer(response);
-        this.imageLayers.push(serverImageLayer);
-        console.log('🎨 Image layer added to local state. Total image layers:', this.imageLayers.length);
-      },
-      error: (err) => {
-        console.error('❌ Error creating image layer on server:', err);
-        console.error('Request details:', request);
-        console.error('Project ID:', this.project?.id);
-      }
-    });
-  }
   getColorLabel(value: GARMENT_COLOR): string {
     const foundColor = this.garmentColors.find(
       (color) => color.value === value
@@ -484,7 +426,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
   async saveProject(): Promise<void> {
     console.log('💾 Starting save project process...');
-    
+
     if (!this.project) {
       console.error('❌ No project to save');
       this.error = 'No project to save';
@@ -503,15 +445,15 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     try {
       // Generar preview antes de guardar
       await this.generateProjectPreview();
-      
+
       // Usar el nuevo endpoint para actualizar solo los detalles del proyecto
       await this.updateProjectDetailsDirectly();
-      
+
       console.log('✅ Project saved successfully using details endpoint');
       this.snackBar.open('Project saved successfully with preview!', 'Close', { duration: 3000 });
       this.loading = false;
       this.goBack();
-      
+
     } catch (error) {
       console.warn('⚠️ Direct save failed, trying legacy method:', error);
       this.saveLegacyProject();
@@ -531,14 +473,14 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     };
 
     console.log('� Saving project using details endpoint:', updateRequest);
-    
+
     await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
   }
 
   // Método legacy para fallback
   private saveLegacyProject(): void {
     console.log('🔄 Using legacy save method...');
-    
+
     if (!this.project) {
       console.error('❌ No project to save');
       this.error = 'No project to save';
@@ -650,17 +592,17 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   private checkAuthentication(): boolean {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    
+
     console.log('🔐 Authentication check:');
     console.log('  - Token present:', !!token);
     console.log('  - User ID present:', !!userId);
-    
+
     if (!token || !userId) {
       console.error('❌ User not authenticated. Redirecting to sign-in...');
       // Here you could redirect to sign-in page
       return false;
     }
-    
+
     return true;
   }
 
@@ -672,13 +614,13 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
 
     this.isGeneratingPreview = true;
-    
+
     try {
       console.log('📸 Generating project preview...');
-      
+
       // Capturar el contenedor como imagen
       const previewElement = this.tshirtPreviewRef.nativeElement;
-      
+
       // Opciones para html-to-image
       const options = {
         quality: 0.95,
@@ -690,7 +632,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
       // Convertir el elemento a blob
       const blob = await htmlToImage.toBlob(previewElement, options);
-      
+
       if (!blob) {
         throw new Error('Failed to generate image blob');
       }
@@ -699,15 +641,15 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
       // Subir la imagen a Cloudinary
       const previewUrl = await this.uploadPreviewToCloudinary(blob);
-      
+
       // Actualizar la URL del preview en el proyecto localmente
       this.project.previewUrl = previewUrl;
-      
+
       // Actualizar la URL del preview en el servidor
       await this.updateProjectPreviewOnServer(previewUrl);
-      
+
       console.log('✅ Preview URL updated:', previewUrl);
-      
+
     } catch (error) {
       console.error('❌ Error generating preview:', error);
       // No mostramos error al usuario aquí, ya que es parte del proceso de guardado
@@ -719,7 +661,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
 
   private async updateProjectPreviewOnServer(previewUrl: string): Promise<void> {
     if (!this.project) return;
-    
+
     try {
       // Usar el nuevo endpoint para actualizar los detalles del proyecto
       const updateRequest = {
@@ -729,12 +671,12 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
         garmentSize: this.project.garmentSize,
         garmentGender: this.project.garmentGender
       };
-      
+
       console.log('📡 Updating project details with new preview URL:', updateRequest);
-      
+
       await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
       console.log('✅ Project details updated successfully on server');
-      
+
     } catch (error) {
       console.error('❌ Error updating project details on server:', error);
       // No lanzamos el error para no interrumpir el proceso de guardado
@@ -826,7 +768,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     console.log('🐛 DEBUG - Current layers state:');
     console.log('Text layers count:', this.textLayers.length);
     console.log('Image layers count:', this.imageLayers.length);
-    
+
     this.textLayers.forEach((layer, index) => {
       console.log(`Text Layer ${index}:`, {
         id: layer.id,
@@ -837,7 +779,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
         details: layer.details
       });
     });
-    
+
     this.imageLayers.forEach((layer, index) => {
       console.log(`Image Layer ${index}:`, {
         id: layer.id,

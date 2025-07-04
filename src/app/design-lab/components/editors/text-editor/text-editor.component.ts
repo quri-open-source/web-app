@@ -10,7 +10,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
 import { TextLayer } from '../../../model/layer.entity';
 
 export interface TextProperties {
@@ -68,7 +67,6 @@ export class TextEditorComponent {
 
   @Input() existingTextLayers: TextLayer[] = [];
 
-  @Output() textAdded = new EventEmitter<TextProperties>();
   @Output() textLayerCreated = new EventEmitter<TextLayer>();
 
   textProps: TextProperties = {
@@ -140,9 +138,6 @@ export class TextEditorComponent {
   }
   addText(): void {
     if (this.textProps.text.trim()) {
-      // Emit the text properties for backward compatibility
-      this.textAdded.emit({ ...this.textProps });
-
       // Create and emit a proper TextLayer entity
       const textLayer = this.createTextLayer(this.textProps);
       this.textLayerCreated.emit(textLayer);
