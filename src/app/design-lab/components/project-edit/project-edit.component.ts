@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,14 +8,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project.service';
+import { CloudinaryService } from '../../services/cloudinary.service';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
 import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
 import { TextProperties } from '../editors/text-editor/text-editor.component';
 import { ImageProperties } from '../editors/image-editor/image-editor.component';
 import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
+import * as htmlToImage from 'html-to-image';
 
 interface GarmentColorOption {
   label: string;
@@ -43,12 +46,18 @@ interface GarmentColorOption {
 
 })
 export class ProjectEditComponent implements OnInit, OnDestroy {
+  @ViewChild('tshirtPreview', { static: false }) tshirtPreviewRef!: ElementRef;
+  
   project: Project | null = null;
   loading = true;
   error: string | null = null;
   projectId: string = '';
   textLayers: TextLayer[] = [];
   imageLayers: ImageLayer[] = [];
+  isGeneratingPreview = false;
+  
+  private snackBar = inject(MatSnackBar);
+  
   // For dragging functionality
   private draggedLayer: Layer | null = null;
   private startX: number = 0;
@@ -99,7 +108,8 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private cloudinaryService: CloudinaryService
   ) {}
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -137,12 +147,80 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.projectService.getUserBlueprintById(this.projectId).subscribe({
       next: (project: Project) => {
         console.log('✅ ProjectEditComponent - Project loaded successfully:', project);
+        console.log('🔍 Project layers data:', project.layers);
         this.project = project;
-        if (this.project && this.project.layers) {
-          this.textLayers = this.project.layers.filter((layer: Layer) => layer.type === 'TEXT') as TextLayer[];
-          this.imageLayers = this.project.layers.filter((layer: Layer) => layer.type === 'IMAGE') as ImageLayer[];
-          console.log('📝 Text layers loaded:', this.textLayers.length);
-          console.log('🖼️ Image layers loaded:', this.imageLayers.length);
+        
+        if (this.project && this.project.layers && Array.isArray(this.project.layers)) {
+          console.log('🔍 Raw layers from server:', this.project.layers);
+          
+          // Filter and properly convert text layers
+          this.textLayers = this.project.layers
+            .filter((layer: any) => layer.type === 'TEXT')
+            .map((layer: any) => {
+              console.log('📝 Processing text layer:', layer);
+              try {
+                // Convert dates properly
+                const createdAt = layer.createdAt instanceof Date ? layer.createdAt : new Date(layer.createdAt);
+                const updatedAt = layer.updatedAt instanceof Date ? layer.updatedAt : new Date(layer.updatedAt);
+                
+                return new TextLayer(
+                  layer.id,
+                  Number(layer.x) || 0,
+                  Number(layer.y) || 0,
+                  Number(layer.z) || 1,
+                  Number(layer.opacity) || 1,
+                  Boolean(layer.isVisible !== false), // Default to true if not specified
+                  createdAt,
+                  updatedAt,
+                  layer.details || {}
+                );
+              } catch (error) {
+                console.error('❌ Error converting text layer:', layer, error);
+                return null;
+              }
+            })
+            .filter(layer => layer !== null) as TextLayer[];
+            
+          // Filter and properly convert image layers
+          this.imageLayers = this.project.layers
+            .filter((layer: any) => layer.type === 'IMAGE')
+            .map((layer: any) => {
+              console.log('🖼️ Processing image layer:', layer);
+              try {
+                const imageUrl = layer.details?.imageUrl || layer.imageUrl || '';
+                console.log('🔗 Image URL found:', imageUrl);
+                
+                if (!imageUrl) {
+                  console.warn('⚠️ No image URL found for layer:', layer.id);
+                  return null;
+                }
+                
+                return new ImageLayer(
+                  layer.id,
+                  Number(layer.x) || 0,
+                  Number(layer.y) || 0,
+                  Number(layer.z) || 1,
+                  Number(layer.opacity) || 1,
+                  Boolean(layer.isVisible !== false), // Default to true if not specified
+                  imageUrl
+                );
+              } catch (error) {
+                console.error('❌ Error converting image layer:', layer, error);
+                return null;
+              }
+            })
+            .filter(layer => layer !== null) as ImageLayer[];
+            
+          console.log('📝 Text layers loaded and converted:', this.textLayers.length, this.textLayers);
+          console.log('🖼️ Image layers loaded and converted:', this.imageLayers.length, this.imageLayers);
+          console.log('🖼️ Preview URL:', this.project.previewUrl);
+          
+          // Debug layers for troubleshooting
+          this.debugLayers();
+        } else {
+          console.log('⚠️ No layers found in project');
+          this.textLayers = [];
+          this.imageLayers = [];
         }
         this.loading = false;
       },
@@ -182,12 +260,14 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     if (this.project) {
       // Convert string to GARMENT_COLOR enum
       this.project.garmentColor = colorValue as GARMENT_COLOR;
+      // Solo actualizar localmente, se enviará al servidor al guardar
     }
   }
 
   selectSize(size: GARMENT_SIZE): void {
     if (this.project) {
       this.project.garmentSize = size;
+      // Solo actualizar localmente, se enviará al servidor al guardar
     }
   }
 
@@ -402,7 +482,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     return layer as ImageLayer;
   }
 
-  saveProject(): void {
+  async saveProject(): Promise<void> {
     console.log('💾 Starting save project process...');
     
     if (!this.project) {
@@ -420,13 +500,57 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
 
+    try {
+      // Generar preview antes de guardar
+      await this.generateProjectPreview();
+      
+      // Usar el nuevo endpoint para actualizar solo los detalles del proyecto
+      await this.updateProjectDetailsDirectly();
+      
+      console.log('✅ Project saved successfully using details endpoint');
+      this.snackBar.open('Project saved successfully with preview!', 'Close', { duration: 3000 });
+      this.loading = false;
+      this.goBack();
+      
+    } catch (error) {
+      console.warn('⚠️ Direct save failed, trying legacy method:', error);
+      this.saveLegacyProject();
+    }
+  }
+
+  // Nuevo método para actualizar usando el endpoint de detalles
+  private async updateProjectDetailsDirectly(): Promise<void> {
+    if (!this.project) return;
+
+    const updateRequest = {
+      previewUrl: this.project.previewUrl || undefined,
+      status: this.project.status,
+      garmentColor: this.project.garmentColor,
+      garmentSize: this.project.garmentSize,
+      garmentGender: this.project.garmentGender
+    };
+
+    console.log('� Saving project using details endpoint:', updateRequest);
+    
+    await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
+  }
+
+  // Método legacy para fallback
+  private saveLegacyProject(): void {
+    console.log('🔄 Using legacy save method...');
+    
+    if (!this.project) {
+      console.error('❌ No project to save');
+      this.error = 'No project to save';
+      this.loading = false;
+      return;
+    }
+
     // Update the project layers with the current text and image layers
     this.project.layers = [...this.textLayers, ...this.imageLayers];
     console.log('📊 Total layers to save:', this.project.layers.length);
-    console.log('  - Text layers:', this.textLayers.length);
-    console.log('  - Image layers:', this.imageLayers.length);
 
-    // Convert the Project entity to a ProjectResponse using the ProjectAssembler
+    // Convert the Project entity to a ProjectResponse
     const projectResponse: any = {
       id: this.project.id,
       userId: this.project.userId,
@@ -441,78 +565,19 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
       updatedAt: new Date().toISOString(),
     };
 
-    // Verify the userId matches the current authenticated user
-    const currentUserId = localStorage.getItem('userId');
-    console.log('🔍 User ID verification:');
-    console.log('  - Project userId:', this.project.userId);
-    console.log('  - Current authenticated userId:', currentUserId);
-    console.log('  - Match:', this.project.userId === currentUserId);
-
-    if (this.project.userId !== currentUserId) {
-      console.warn('⚠️ Project userId does not match current user - this might cause authorization issues');
-    }
-
-    console.log('📤 Prepared project data for save:', projectResponse);
-
     this.projectService.updateProject(this.project.id, projectResponse).subscribe({
       next: () => {
-        console.log('✅ Project saved successfully');
+        console.log('✅ Project saved successfully using legacy method');
+        this.snackBar.open('Project saved successfully!', 'Close', { duration: 3000 });
         this.loading = false;
         this.goBack();
       },
       error: (err: any) => {
         console.error('❌ Error saving project:', err);
-        console.error('  - Status:', err.status);
-        console.error('  - Status Text:', err.statusText);
-        console.error('  - URL:', err.url);
-        console.error('  - Full error:', err);
-        
-        if (err.status === 401) {
-          console.error('🔒 Authentication error during save - trying alternative method');
-          this.error = 'Main save failed due to authentication. Trying alternative method...';
-          
-          // Try alternative save method
-          this.saveProjectAlternative();
-          return;
-        } else if (err.status === 403) {
-          this.error = 'You do not have permission to save this project.';
-        } else if (err.status === 404) {
-          this.error = 'Project not found.';
-        } else {
-          this.error = 'Failed to save project. Please try again.';
-        }
-        
+        this.error = 'Failed to save project. Please try again.';
         this.loading = false;
-      },
+      }
     });
-  }
-
-  // Alternative save method that doesn't use the problematic PUT endpoint
-  saveProjectAlternative(): void {
-    console.log('🔄 Using alternative save method...');
-    
-    if (!this.project) {
-      console.error('❌ No project to save');
-      this.error = 'No project to save';
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-
-    // Since individual layer creation works, we just need to ensure
-    // all layers are already saved via their individual endpoints
-    console.log('✅ All layers are already saved individually via their respective endpoints');
-    console.log('📊 Current state:');
-    console.log('  - Text layers:', this.textLayers.length);
-    console.log('  - Image layers:', this.imageLayers.length);
-
-    // For now, just simulate a successful save
-    setTimeout(() => {
-      console.log('✅ Alternative save completed');
-      this.loading = false;
-      this.goBack();
-    }, 1000);
   }
 
   private convertLayersToResponse(): any[] {
@@ -597,5 +662,229 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     }
     
     return true;
+  }
+
+  // Generar preview del proyecto (método privado, solo se llama al guardar)
+  private async generateProjectPreview(): Promise<void> {
+    if (!this.project || !this.tshirtPreviewRef) {
+      console.error('❌ No project or preview element available');
+      return;
+    }
+
+    this.isGeneratingPreview = true;
+    
+    try {
+      console.log('📸 Generating project preview...');
+      
+      // Capturar el contenedor como imagen
+      const previewElement = this.tshirtPreviewRef.nativeElement;
+      
+      // Opciones para html-to-image
+      const options = {
+        quality: 0.95,
+        width: previewElement.offsetWidth,
+        height: previewElement.offsetHeight,
+        backgroundColor: '#ffffff',
+        useCORS: true
+      };
+
+      // Convertir el elemento a blob
+      const blob = await htmlToImage.toBlob(previewElement, options);
+      
+      if (!blob) {
+        throw new Error('Failed to generate image blob');
+      }
+
+      console.log('✅ Image generated successfully');
+
+      // Subir la imagen a Cloudinary
+      const previewUrl = await this.uploadPreviewToCloudinary(blob);
+      
+      // Actualizar la URL del preview en el proyecto localmente
+      this.project.previewUrl = previewUrl;
+      
+      // Actualizar la URL del preview en el servidor
+      await this.updateProjectPreviewOnServer(previewUrl);
+      
+      console.log('✅ Preview URL updated:', previewUrl);
+      
+    } catch (error) {
+      console.error('❌ Error generating preview:', error);
+      // No mostramos error al usuario aquí, ya que es parte del proceso de guardado
+      console.warn('⚠️ Preview generation failed, but project will still be saved');
+    } finally {
+      this.isGeneratingPreview = false;
+    }
+  }
+
+  private async updateProjectPreviewOnServer(previewUrl: string): Promise<void> {
+    if (!this.project) return;
+    
+    try {
+      // Usar el nuevo endpoint para actualizar los detalles del proyecto
+      const updateRequest = {
+        previewUrl: previewUrl,
+        status: this.project.status,
+        garmentColor: this.project.garmentColor,
+        garmentSize: this.project.garmentSize,
+        garmentGender: this.project.garmentGender
+      };
+      
+      console.log('📡 Updating project details with new preview URL:', updateRequest);
+      
+      await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
+      console.log('✅ Project details updated successfully on server');
+      
+    } catch (error) {
+      console.error('❌ Error updating project details on server:', error);
+      // No lanzamos el error para no interrumpir el proceso de guardado
+    }
+  }
+
+  private async uploadPreviewToCloudinary(blob: Blob): Promise<string> {
+    try {
+      return await this.cloudinaryService.uploadBlob(blob, 'teelab_previews');
+    } catch (error) {
+      console.error('❌ Error uploading preview to Cloudinary:', error);
+      throw error;
+    }
+  }
+
+  // Métodos para actualizar capas existentes
+  updateTextLayerDetails(layer: TextLayer): void {
+    if (!this.project) return;
+
+    const request = {
+      text: layer.details.text,
+      fontColor: layer.details.fontColor,
+      fontFamily: layer.details.fontFamily,
+      fontSize: layer.details.fontSize,
+      isBold: layer.details.isBold,
+      isItalic: layer.details.isItalic,
+      isUnderlined: layer.details.isUnderlined
+    };
+
+    this.projectService.updateTextLayer(this.project.id, layer.id, request).subscribe({
+      next: (response) => {
+        console.log('✅ Text layer updated successfully:', response);
+        // Actualizar la capa local con la respuesta del servidor
+        const updatedLayer = this.convertServerResponseToTextLayer(response);
+        const index = this.textLayers.findIndex(l => l.id === layer.id);
+        if (index !== -1) {
+          this.textLayers[index] = updatedLayer;
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error updating text layer:', err);
+        this.snackBar.open('Error updating text layer', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  updateImageLayerDetails(layer: ImageLayer, width?: string, height?: string): void {
+    if (!this.project) return;
+
+    const request = {
+      imageUrl: layer.imageUrl,
+      width: width || '300',
+      height: height || '300'
+    };
+
+    this.projectService.updateImageLayer(this.project.id, layer.id, request).subscribe({
+      next: (response) => {
+        console.log('✅ Image layer updated successfully:', response);
+        // Actualizar la capa local con la respuesta del servidor
+        const updatedLayer = this.convertServerResponseToImageLayer(response);
+        const index = this.imageLayers.findIndex(l => l.id === layer.id);
+        if (index !== -1) {
+          this.imageLayers[index] = updatedLayer;
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error updating image layer:', err);
+        this.snackBar.open('Error updating image layer', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  // Métodos para manejar cambios en tiempo real de las capas
+  onTextLayerChanged(layer: TextLayer): void {
+    console.log('📝 Text layer changed:', layer);
+    // Actualizar la capa en el servidor cuando el usuario termine de editarla
+    // Puedes implementar un debounce aquí para evitar demasiadas requests
+    this.updateTextLayerDetails(layer);
+  }
+
+  onImageLayerChanged(layer: ImageLayer): void {
+    console.log('🖼️ Image layer changed:', layer);
+    // Actualizar la capa en el servidor
+    this.updateImageLayerDetails(layer);
+  }
+
+  // Método para debugging - mostrar información de layers
+  debugLayers(): void {
+    console.log('🐛 DEBUG - Current layers state:');
+    console.log('Text layers count:', this.textLayers.length);
+    console.log('Image layers count:', this.imageLayers.length);
+    
+    this.textLayers.forEach((layer, index) => {
+      console.log(`Text Layer ${index}:`, {
+        id: layer.id,
+        text: layer.details?.text,
+        x: layer.x,
+        y: layer.y,
+        visible: layer.isVisible,
+        details: layer.details
+      });
+    });
+    
+    this.imageLayers.forEach((layer, index) => {
+      console.log(`Image Layer ${index}:`, {
+        id: layer.id,
+        imageUrl: layer.imageUrl || layer.details?.imageUrl,
+        x: layer.x,
+        y: layer.y,
+        visible: layer.isVisible,
+        details: layer.details
+      });
+    });
+  }
+
+  // Track function para optimizar rendering de layers
+  trackLayerById(index: number, layer: Layer): string {
+    return layer.id;
+  }
+
+  // Manejar errores de carga de imágenes
+  onImageLoadError(layer: ImageLayer): void {
+    console.log('❌ Image load error for layer:', layer.id);
+    console.log('🔗 Attempted URL:', layer.imageUrl || layer.details?.imageUrl);
+    console.log('📄 Layer details:', layer.details);
+  }
+
+  // Actualizar detalles del proyecto en el servidor (método público para testing manual)
+  updateProjectDetailsOnServer(): void {
+    if (!this.project) return;
+
+    const updateRequest = {
+      previewUrl: this.project.previewUrl || undefined,
+      status: this.project.status,
+      garmentColor: this.project.garmentColor,
+      garmentSize: this.project.garmentSize,
+      garmentGender: this.project.garmentGender
+    };
+
+    console.log('📡 Manually updating project details:', updateRequest);
+
+    this.projectService.updateProjectDetails(this.project.id, updateRequest).subscribe({
+      next: (response) => {
+        console.log('✅ Project details updated successfully:', response);
+        this.snackBar.open('Project details updated!', 'Close', { duration: 2000 });
+      },
+      error: (err) => {
+        console.error('❌ Error updating project details:', err);
+        this.snackBar.open('Error updating project details', 'Close', { duration: 3000 });
+      }
+    });
   }
 }
