@@ -1,25 +1,21 @@
-import {Product} from '../model/product.entity';
-import {CommentAssembler} from './comment.assembler';
-import {ProductResponse} from './product.response';
+import { Product } from '../model/product.entity';
+import { ProductResponse } from './product.response';
 
 export class ProductAssembler {
 
   static toEntityFromResponse(response: ProductResponse): Product {
-
-    const comments = CommentAssembler.toEntitiesFromResponse(response.comments);
-
     return new Product(
       response.id,
       response.project_id,
-      response.manufacturer_id,
-      response.price,
-      response.likes,
-      response.tags,
-      new Date(response.created_at),
-      response.gallery,
-      response.rating,
+      response.price_amount,
+      response.price_currency,
       response.status,
-      comments
+      response.project_title,
+      response.project_preview_url,
+      response.project_user_id,
+      response.like_count,
+      new Date(response.created_at),
+      new Date(response.updated_at)
     );
   }
 
