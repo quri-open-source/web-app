@@ -154,7 +154,8 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
   }
   selectColor(colorValue: string): void {
     if (this.project) {
-      this.project.garmentColor = colorValue;
+      // Convert string to GARMENT_COLOR enum
+      this.project.garmentColor = colorValue as GARMENT_COLOR;
     }
   }
 
@@ -232,7 +233,7 @@ export class ProjectEditComponent implements OnInit, OnDestroy {
     return foundColor ? foundColor.label : 'Custom';
   }
 
-  getBackgroundPosition(colorValue: string): string {
+  getBackgroundPosition(colorValue: GARMENT_COLOR): string {
     const colorIndex = this.garmentColors.findIndex(
       (color) => color.value === colorValue
     );
