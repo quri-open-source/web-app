@@ -8,6 +8,30 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.edit-toolbar button {
+  margin-left: 8px;
+}
+
+.edit-toolbar button[disabled] {
+  opacity: 0.6;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.preview-header h3 {
+  margin: 0;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 4px;
+}
+
 .toolbar-spacer {
   flex: 1 1 auto;
 }

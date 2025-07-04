@@ -8,16 +8,14 @@
       <div class="upload-area" *ngIf="!previewImageUrl">
         <div class="upload-prompt">
           <mat-icon>cloud_upload</mat-icon>
-          <p>Click to select an image or drag and drop</p>
-          <input type="file" 
-            #fileInput
-            accept="image/*"
-            (change)="onFileSelected($event)"
-            style="display: none;">
+          <p>Click to select an image from Cloudinary</p>
           <button mat-raised-button 
             color="primary" 
-            (click)="fileInput.click()">
-            Choose Image
+            (click)="openCloudinaryUpload()"
+            [disabled]="uploading">
+            <mat-icon *ngIf="!uploading">cloud_upload</mat-icon>
+            <mat-icon *ngIf="uploading" class="spinning">hourglass_empty</mat-icon>
+            {{ uploading ? 'Uploading...' : 'Choose Image' }}
           </button>
         </div>
       </div>
