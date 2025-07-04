@@ -1,21 +1,13 @@
 export interface ProductResponse {
   id: string;
   project_id: string;
-  manufacturer_id: string;
-  price: number;
-  likes: number;
-  tags: string[];
-  created_at: Date;
-  gallery: string[];
-  rating: number;
+  price_amount: number;
+  price_currency: string;
   status: string;
-  comments: CommentResponse[];
+  project_title: string;
+  project_preview_url: string | null;
+  project_user_id: string;
+  like_count: number;
+  created_at: string; 
+  updated_at: string;
 }
-
-export interface CommentResponse {
-  id: string;
-  user_id: string;
-  content: string;
-  created_at: Date;
-}
-
