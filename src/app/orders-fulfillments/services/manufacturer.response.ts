@@ -2,7 +2,7 @@ import { Manufacturer } from '../model/manufacturer.entity';
 
 export interface ManufacturerResponse {
   id: string;
-  user_id: string;
+  userId: string;
   name: string;
   address: string;
   city: string;
@@ -16,18 +16,18 @@ export interface ManufacturerListResponse {
 }
 
 export interface CreateFulfillmentRequest {
-  order_id: string;
-  manufacturer_id: string;
+  orderId: string;
+  manufacturerId: string;
   status?: string;
-  received_date?: string;
-  shipped_date?: string | null;
+  receivedDate?: string;
+  shippedDate?: string | null;
 }
 
 export interface CreateFulfillmentResponse {
   id: string;
-  order_id: string;
+  orderId: string;
   status: string;
-  received_date: string;
-  shipped_date: string | null;
-  manufacturer_id: string;
+  receivedDate: string;
+  shippedDate: string | null;
+  manufacturerId: string;
 }
