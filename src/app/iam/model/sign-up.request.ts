@@ -10,9 +10,9 @@ export class SignUpRequest {
    * Constructor.
    * @param username The username.
    * @param password The password.
-   * @param roles The user roles.
+   * @param roles The roles.
    */
-  constructor(username: string, password: string, roles: string[]) {
+  constructor(username: string, password: string, roles: string[] = ['ROLE_USER']) {
     this.password = password;
     this.username = username;
     this.roles = roles;

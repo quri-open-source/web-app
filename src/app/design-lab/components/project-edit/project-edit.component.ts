@@ -1,916 +1,612 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { MatCardModule } from '@angular/material/card';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../services/project.service';
-import { CloudinaryService } from '../../services/cloudinary.service';
-import { DesignLabApplicationService } from '../../services/design-lab-application.service';
-import { UpdateLayerCoordinatesCommand } from '../../services/commands/layer-commands';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DesignLabService } from '../../services/design-lab-real.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
-import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
-import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
-import * as htmlToImage from 'html-to-image';
-
-interface GarmentColorOption {
-  label: string;
-  value: GARMENT_COLOR;
-}
+import { LayerType } from '../../../const';
+import { DesignCanvasComponent, LayerEvent } from '../design-canvas/design-canvas.component';
+import { LayerToolbarComponent, LayerToolEvent } from '../layer-toolbar/layer-toolbar.component';
+import { LayerManagementPanelComponent, LayerManagementEvent } from '../layer-management-panel/layer-management-panel.component';
+import { LayerPropertiesPanelComponent, LayerPropertyEvent } from '../layer-properties-panel/layer-properties-panel.component';
+import { CanvasToolsComponent, CanvasToolEvent, CanvasTool } from '../canvas-tools/canvas-tools.component';
+import { GarmentBackgroundComponent } from '../garment-background/garment-background.component';
+import { DeleteProjectDialogComponent, DeleteProjectDialogData } from '../delete-project-dialog/delete-project-dialog.component';
 
 @Component({
   selector: 'app-project-edit',
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
+    RouterModule,
+    MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
     MatProgressSpinnerModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    EditorContainerComponent,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatMenuModule,
+    TranslateModule,
+    DesignCanvasComponent,
+    LayerToolbarComponent,
+    LayerManagementPanelComponent,
+    LayerPropertiesPanelComponent,
+    CanvasToolsComponent,
+    GarmentBackgroundComponent
   ],
   templateUrl: './project-edit.component.html',
-  styleUrls: ['./project-edit.component.css'],
-
+  styleUrl: './project-edit.component.css'
 })
-export class ProjectEditComponent implements OnInit, OnDestroy {
-  @ViewChild('tshirtPreview', { static: false }) tshirtPreviewRef!: ElementRef;
-
+export class ProjectEditComponent implements OnInit {
   project: Project | null = null;
-  loading = true;
+  isLoading = false;
+  isSaving = false;
+  isModified = false;
   error: string | null = null;
-  projectId: string = '';
-  textLayers: TextLayer[] = [];
-  imageLayers: ImageLayer[] = [];
-  isGeneratingPreview = false;
+  projectId: string | null = null;
 
+  // Canvas properties
+  canvasWidth = 800;
+  canvasHeight = 600;
+  currentTool: CanvasTool = 'select';
+
+  // Layer selection
+  selectedLayerId: string | null = null;
+  selectedLayer: Layer | null = null;
+
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private designLabService = inject(DesignLabService);
+  private authService = inject(AuthenticationService);
+  private translateService = inject(TranslateService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
-  // For dragging functionality
-  private draggedLayer: Layer | null = null;
-  private originalPosition: { x: number; y: number } | null = null;
-  private startX: number = 0;
-  private startY: number = 0;
-  private boundMouseMove: any;
-  private boundMouseUp: any;
-
-  // Editor container configuration
-  editorConfig: EditorContainerConfig = {
-    textEditor: {
-      defaultPosition: { x: 160, y: 150 },
-      centerTextCalculation: true,
-      defaultZIndex: 1
-    },
-    imageEditor: {
-      defaultPosition: { x: 100, y: 100 },
-      maxImageSize: { width: 300, height: 300 },
-      defaultZIndex: 1,
-      allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-      maxFileSize: 5 * 1024 * 1024 // 5MB
-    },
-    enableLayerManagement: true
-  };
-
-  // Garment colors configuration
-  garmentColors: GarmentColorOption[] = [
-    { label: 'black', value: GARMENT_COLOR.BLACK },
-    { label: 'gray', value: GARMENT_COLOR.GRAY },
-    { label: 'light-gray', value: GARMENT_COLOR.LIGHT_GRAY },
-    { label: 'white', value: GARMENT_COLOR.WHITE },
-    { label: 'red', value: GARMENT_COLOR.RED },
-    { label: 'pink', value: GARMENT_COLOR.PINK },
-    { label: 'light-purple', value: GARMENT_COLOR.LIGHT_PURPLE },
-    { label: 'purple', value: GARMENT_COLOR.PURPLE },
-    { label: 'light-blue', value: GARMENT_COLOR.LIGHT_BLUE },
-    { label: 'cyan', value: GARMENT_COLOR.CYAN },
-    { label: 'sky-blue', value: GARMENT_COLOR.SKY_BLUE },
-    { label: 'blue', value: GARMENT_COLOR.BLUE },
-    { label: 'green', value: GARMENT_COLOR.GREEN },
-    { label: 'light-green', value: GARMENT_COLOR.LIGHT_GREEN },
-    { label: 'yellow', value: GARMENT_COLOR.YELLOW },
-    { label: 'dark-yellow', value: GARMENT_COLOR.DARK_YELLOW },
-  ];
-
-  garmentColorImages =
-    'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private projectService: ProjectService,
-    private cloudinaryService: CloudinaryService,
-    private designLabService: DesignLabApplicationService
-  ) {}
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.projectId = params['id'];
+    console.log('🎨 ProjectEditComponent initialized');
+    this.projectId = this.route.snapshot.paramMap.get('id');
+    console.log('🆔 Project ID from route:', this.projectId);
+
+    if (this.projectId) {
       this.loadProject();
-    });
-
-    // Bind the methods once to ensure we use the same reference when adding and removing
-    this.boundMouseMove = this.onMouseMove.bind(this);
-    this.boundMouseUp = this.onMouseUp.bind(this);
-
-    // Add mouse event listeners for dragging
-    document.addEventListener('mousemove', this.boundMouseMove);
-    document.addEventListener('mouseup', this.boundMouseUp);
-  }
-
-  // Clean up event listeners when component is destroyed
-  ngOnDestroy(): void {
-    document.removeEventListener('mousemove', this.boundMouseMove);
-    document.removeEventListener('mouseup', this.boundMouseUp);
+    } else {
+      console.error('❌ No project ID found in route');
+      this.error = this.translateService.instant('designLab.errors.projectNotFound');
+    }
   }
 
   loadProject(): void {
-    if (!this.projectId) {
-      this.error = 'No project ID provided';
-      this.loading = false;
-      return;
-    }
-    this.loading = true;
+    if (!this.projectId) return;
+
+    this.isLoading = true;
     this.error = null;
 
-    console.log('🔍 ProjectEditComponent - Loading project by ID:', this.projectId);
+    console.log('🎨 Loading project with ID:', this.projectId);
 
-    // Use the specific method to get project by ID
-    this.projectService.getUserBlueprintById(this.projectId).subscribe({
+    this.designLabService.getProjectById(this.projectId).subscribe({
       next: (project: Project) => {
-        console.log('✅ ProjectEditComponent - Project loaded successfully:', project);
-        console.log('🔍 Project layers data:', project.layers);
         this.project = project;
-
-        if (this.project && this.project.layers && Array.isArray(this.project.layers)) {
-          console.log('🔍 Raw layers from server:', this.project.layers);
-
-          // Filter and properly convert text layers
-          this.textLayers = this.project.layers
-            .filter((layer: any) => layer.type === 'TEXT')
-            .map((layer: any) => {
-              console.log('📝 Processing text layer:', layer);
-              try {
-                // Convert dates properly
-                const createdAt = layer.createdAt instanceof Date ? layer.createdAt : new Date(layer.createdAt);
-                const updatedAt = layer.updatedAt instanceof Date ? layer.updatedAt : new Date(layer.updatedAt);
-
-                return new TextLayer(
-                  layer.id,
-                  Number(layer.x) || 0,
-                  Number(layer.y) || 0,
-                  Number(layer.z) || 1,
-                  Number(layer.opacity) || 1,
-                  Boolean(layer.isVisible !== false), // Default to true if not specified
-                  createdAt,
-                  updatedAt,
-                  layer.details || {}
-                );
-              } catch (error) {
-                console.error('❌ Error converting text layer:', layer, error);
-                return null;
-              }
-            })
-            .filter(layer => layer !== null) as TextLayer[];
-
-          // Filter and properly convert image layers
-          this.imageLayers = this.project.layers
-            .filter((layer: any) => layer.type === 'IMAGE')
-            .map((layer: any) => {
-              console.log('🖼️ Processing image layer:', layer);
-              try {
-                const imageUrl = layer.details?.imageUrl || layer.imageUrl || '';
-                console.log('🔗 Image URL found:', imageUrl);
-
-                if (!imageUrl) {
-                  console.warn('⚠️ No image URL found for layer:', layer.id);
-                  return null;
-                }
-
-                return new ImageLayer(
-                  layer.id,
-                  Number(layer.x) || 0,
-                  Number(layer.y) || 0,
-                  Number(layer.z) || 1,
-                  Number(layer.opacity) || 1,
-                  Boolean(layer.isVisible !== false), // Default to true if not specified
-                  imageUrl
-                );
-              } catch (error) {
-                console.error('❌ Error converting image layer:', layer, error);
-                return null;
-              }
-            })
-            .filter(layer => layer !== null) as ImageLayer[];
-
-          console.log('📝 Text layers loaded and converted:', this.textLayers.length, this.textLayers);
-          console.log('🖼️ Image layers loaded and converted:', this.imageLayers.length, this.imageLayers);
-          console.log('🖼️ Preview URL:', this.project.previewUrl);
-
-          // Debug layers for troubleshooting
-          this.debugLayers();
-        } else {
-          console.log('⚠️ No layers found in project');
-          this.textLayers = [];
-          this.imageLayers = [];
-        }
-        this.loading = false;
+        this.isLoading = false;
+        console.log('✅ Project loaded successfully:', project);
       },
-      error: (err: any) => {
-        console.error('❌ ProjectEditComponent - Error loading project:', err);
-        console.error('❌ Error status:', err.status);
-        console.error('❌ Error URL:', err.url);
-        console.error('❌ Error message:', err.message);
-        console.error('❌ Full error object:', err);
-
-        // Check if the token is still in localStorage when error occurs
-        const currentToken = localStorage.getItem('token');
-        console.error('🔑 Token at error time:', currentToken ? `${currentToken.substring(0, 20)}...` : 'NO TOKEN');
-
-        if (err.status === 401) {
-          console.error('❌ Authentication failed - but NOT redirecting yet for debugging');
-          this.error = 'Session expired. Please check console for debugging info.';
-          this.loading = false;
-          // TEMPORARILY COMMENTED OUT for debugging
-          // localStorage.removeItem('token');
-          // localStorage.removeItem('userId');
-          // this.router.navigate(['/sign-in']);
-          return;
-        } else if (err.status === 403) {
-          this.error = 'You do not have permission to access this project.';
-        } else if (err.status === 404) {
-          this.error = 'Project not found.';
-        } else {
-          this.error = 'Failed to load project. Please try again.';
-        }
-
-        this.loading = false;
-      },
-    });
-  }
-  selectColor(colorValue: string): void {
-    if (this.project) {
-      // Convert string to GARMENT_COLOR enum
-      this.project.garmentColor = colorValue as GARMENT_COLOR;
-      // Solo actualizar localmente, se enviará al servidor al guardar
-    }
-  }
-
-  selectSize(size: GARMENT_SIZE): void {
-    if (this.project) {
-      this.project.garmentSize = size;
-      // Solo actualizar localmente, se enviará al servidor al guardar
-    }
-  }
-
-  // Enhanced event handlers using the new entity-aware approach
-  handleGarmentColorChanged(color: string): void {
-    console.log('Garment color changed:', color);
-    if (this.project) {
-      this.project.garmentColor = color as GARMENT_COLOR;
-    }
-  }
-
-  handleTextLayerCreated(textLayer: TextLayer): void {
-    console.log('Text layer created:', textLayer);
-    // Don't add to local array yet, wait for server confirmation
-    this.createTextLayerOnServer(textLayer);
-  }
-
-  handleImageLayerCreated(imageLayer: ImageLayer): void {
-    console.log('Image layer created:', imageLayer);
-    // Don't add to local array yet, wait for server confirmation
-    this.createImageLayerOnServer(imageLayer);
-  }
-
-  private createTextLayerOnServer(textLayer: TextLayer): void {
-    if (!this.project) return;
-
-    const request = {
-      projectId: this.project.id,
-      text: textLayer.details.text,
-      fontColor: textLayer.details.fontColor,
-      fontFamily: textLayer.details.fontFamily,
-      fontSize: textLayer.details.fontSize,
-      isBold: textLayer.details.isBold,
-      isItalic: textLayer.details.isItalic,
-      isUnderlined: textLayer.details.isUnderlined
-    };
-
-    this.projectService.createTextLayer(request).subscribe({
-      next: (response) => {
-        console.log('✅ Text layer created on server:', response);
-        // Convert server response to TextLayer and add to local array
-        const serverTextLayer = this.convertServerResponseToTextLayer(response);
-        this.textLayers.push(serverTextLayer);
-      },
-      error: (err) => {
-        console.error('❌ Error creating text layer:', err);
-        // Handle error - maybe show a notification
+      error: (error: any) => {
+        this.error = error.message || this.translateService.instant('designLab.errors.loadingFailed');
+        this.isLoading = false;
+        console.error('❌ Error loading project:', error);
       }
     });
   }
 
-  private createImageLayerOnServer(imageLayer: ImageLayer): void {
-    console.log('🖼️ Creating image layer on server:', imageLayer);
+  saveProject(): void {
+    if (!this.project || this.isSaving) return;
 
-    if (!this.checkAuthentication()) {
-      console.error('❌ Authentication failed - cannot create image layer');
-      return;
-    }
+    this.isSaving = true;
+    console.log('💾 Saving project:', this.project.id);
 
-    if (!this.project) {
-      console.error('❌ No project available for image layer creation');
-      return;
-    }
-
-    if (!imageLayer || !imageLayer.imageUrl) {
-      console.error('❌ Invalid image layer or missing imageUrl:', imageLayer);
-      return;
-    }
-
-    const request = {
-      imageUrl: imageLayer.imageUrl,
-      width: '300', // Use appropriate dimensions
-      height: '300'
-    };
-
-    console.log('📡 Sending create image layer request:', request);
-    console.log('🎯 Project ID:', this.project.id);
-
-    this.projectService.createImageLayer(this.project.id, request).subscribe({
-      next: (response) => {
-        console.log('✅ Image layer created on server:', response);
-        // Convert server response to ImageLayer and add to local array
-        const serverImageLayer = this.convertServerResponseToImageLayer(response);
-        this.imageLayers.push(serverImageLayer);
-        console.log('🎨 Image layer added to local state. Total image layers:', this.imageLayers.length);
-      },
-      error: (err) => {
-        console.error('❌ Error creating image layer on server:', err);
-        console.error('Request details:', request);
-        console.error('Project ID:', this.project?.id);
-
-        if (err.status === 401) {
-          console.error('🔒 Authentication error - token may be expired');
-          // Here you could show a message to re-login
-        }
-        // Handle error - maybe show a notification
-      }
-    });
-  }
-
-  private convertServerResponseToTextLayer(response: any): TextLayer {
-    return new TextLayer(
-      response.id,
-      response.x,
-      response.y,
-      response.z,
-      response.opacity,
-      response.isVisible,
-      new Date(response.createdAt),
-      new Date(response.updatedAt),
-      response.details
-    );
-  }
-
-  private convertServerResponseToImageLayer(response: any): ImageLayer {
-    return new ImageLayer(
-      response.id,
-      response.x,
-      response.y,
-      response.z,
-      response.opacity,
-      response.isVisible,
-      response.details.imageUrl
-    );
-  }
-
-  handleLayerAdded(layer: Layer): void {
-    console.log('Layer added:', layer);
-    // Additional logic for any layer type can be added here
-  }
-
-  getColorLabel(value: GARMENT_COLOR): string {
-    const foundColor = this.garmentColors.find(
-      (color) => color.value === value
-    );
-    return foundColor ? foundColor.label : 'Custom';
-  }
-
-  getBackgroundPosition(colorValue: GARMENT_COLOR): string {
-    const colorIndex = this.garmentColors.findIndex(
-      (color) => color.value === colorValue
-    );
-    if (colorIndex === -1) return '0% 0%';
-    const row = Math.floor(colorIndex / 4);
-    const col = colorIndex % 4;
-    const xPos = col * (100 / 3);
-    const yPos = row * (100 / 3);
-    return `${xPos}% ${yPos}%`;
-  }
-
-  getTextContent(layer: Layer): TextLayer {
-    return layer as TextLayer;
-  }
-
-  getImageContent(layer: Layer): ImageLayer {
-    return layer as ImageLayer;
-  }
-
-  async saveProject(): Promise<void> {
-    console.log('💾 Starting save project process...');
-
-    if (!this.project) {
-      console.error('❌ No project to save');
-      this.error = 'No project to save';
-      return;
-    }
-
-    if (!this.checkAuthentication()) {
-      console.error('❌ Authentication failed - cannot save project');
-      this.error = 'You must be logged in to save the project';
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-
-    try {
-      // Generar preview antes de guardar
-      await this.generateProjectPreview();
-
-      // Usar el nuevo endpoint para actualizar solo los detalles del proyecto
-      await this.updateProjectDetailsDirectly();
-
-      console.log('✅ Project saved successfully using details endpoint');
-      this.snackBar.open('Project saved successfully with preview!', 'Close', { duration: 3000 });
-      this.loading = false;
-      this.goBack();
-
-    } catch (error) {
-      console.warn('⚠️ Direct save failed, trying legacy method:', error);
-      this.saveLegacyProject();
-    }
-  }
-
-  // Nuevo método para actualizar usando el endpoint de detalles
-  private async updateProjectDetailsDirectly(): Promise<void> {
-    if (!this.project) return;
-
-    const updateRequest = {
-      previewUrl: this.project.previewUrl || undefined,
-      status: this.project.status,
-      garmentColor: this.project.garmentColor,
-      garmentSize: this.project.garmentSize,
-      garmentGender: this.project.garmentGender
-    };
-
-    console.log('� Saving project using details endpoint:', updateRequest);
-
-    await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
-  }
-
-  // Método legacy para fallback
-  private saveLegacyProject(): void {
-    console.log('🔄 Using legacy save method...');
-
-    if (!this.project) {
-      console.error('❌ No project to save');
-      this.error = 'No project to save';
-      this.loading = false;
-      return;
-    }
-
-    // Update the project layers with the current text and image layers
-    this.project.layers = [...this.textLayers, ...this.imageLayers];
-    console.log('📊 Total layers to save:', this.project.layers.length);
-
-    // Convert the Project entity to a ProjectResponse
-    const projectResponse: any = {
-      id: this.project.id,
-      userId: this.project.userId,
-      title: this.project.title,
-      previewUrl: this.project.previewUrl || '',
-      status: this.project.status,
-      garmentColor: this.project.garmentColor,
-      garmentSize: this.project.garmentSize,
-      garmentGender: this.project.garmentGender,
-      layers: this.convertLayersToResponse(),
-      createdAt: this.project.createdAt.toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    this.projectService.updateProject(this.project.id, projectResponse).subscribe({
-      next: () => {
-        console.log('✅ Project saved successfully using legacy method');
-        this.snackBar.open('Project saved successfully!', 'Close', { duration: 3000 });
-        this.loading = false;
-        this.goBack();
-      },
-      error: (err: any) => {
-        console.error('❌ Error saving project:', err);
-        this.error = 'Failed to save project. Please try again.';
-        this.loading = false;
-      }
-    });
-  }
-
-  private convertLayersToResponse(): any[] {
-    const allLayers = [...this.textLayers, ...this.imageLayers];
-    return allLayers.map((layer) => {
-      const baseLayerResponse = {
-        id: layer.id,
-        x: layer.x,
-        y: layer.y,
-        z: layer.z,
-        opacity: layer.opacity,
-        isVisible: layer.isVisible,
-        type: layer.type,
-        createdAt: layer.createdAt.toISOString(),
-        updatedAt: layer.updatedAt.toISOString(),
-        details: layer.details || {},
-      };
-      return baseLayerResponse;
-    });
-  }
-  goBack(): void {
-    this.router.navigate(['/design-lab', this.projectId]);
-  }
-
-  // Start dragging a layer
-  startDrag(event: MouseEvent, layer: Layer): void {
-    // Prevent default to avoid text selection during drag
-    event.preventDefault();
-
-    this.draggedLayer = layer;
-    // Store original position to check if it changed
-    this.originalPosition = { x: layer.x, y: layer.y };
-    this.startX = event.clientX - layer.x;
-    this.startY = event.clientY - layer.y;
-
-    // Add dragging class for visual feedback
-    const target = event.target as HTMLElement;
-    if (target && (target.classList.contains('text-layer') || target.classList.contains('image-layer'))) {
-      target.classList.add('dragging');
-    }
-
-    console.log('🎯 Started dragging layer:', layer.id, 'from position:', this.originalPosition);
-  }
-
-  // Handle mouse move for dragging
-  onMouseMove(event: MouseEvent): void {
-    if (!this.draggedLayer) return;
-
-    // Calculate new position
-    const newX = event.clientX - this.startX;
-    const newY = event.clientY - this.startY;
-
-    // Update the layer's position
-    this.draggedLayer.x = newX;
-    this.draggedLayer.y = newY;
-  }
-  // End dragging and update coordinates
-  onMouseUp(): void {
-    // Remove dragging class from all layers
-    const draggingElements = document.querySelectorAll('.dragging');
-    draggingElements.forEach(element => {
-      element.classList.remove('dragging');
-    });
-
-    if (this.draggedLayer && this.project && this.originalPosition) {
-      // Check if position actually changed
-      const currentX = Math.round(this.draggedLayer.x);
-      const currentY = Math.round(this.draggedLayer.y);
-      const originalX = Math.round(this.originalPosition.x);
-      const originalY = Math.round(this.originalPosition.y);
-
-      if (currentX !== originalX || currentY !== originalY) {
-        console.log(`📍 Position changed from (${originalX}, ${originalY}) to (${currentX}, ${currentY})`);
-        // Update coordinates on the server
-        this.updateLayerCoordinates(this.draggedLayer);
-      } else {
-        console.log('📍 Position unchanged, skipping coordinate update');
-      }
-    }
-
-    // Reset drag state
-    this.draggedLayer = null;
-    this.originalPosition = null;
-  }
-
-  // Update layer coordinates on the server
-  private updateLayerCoordinates(layer: Layer): void {
-    if (!this.project) {
-      console.warn('⚠️ No project available for coordinate update');
-      return;
-    }
-
-    const command: UpdateLayerCoordinatesCommand = {
-      projectId: this.project.id,
-      layerId: layer.id,
-      x: Math.round(layer.x), // Round to avoid decimal precision issues
-      y: Math.round(layer.y),
-      z: layer.z
-    };
-
-    console.log('📍 Updating layer coordinates:', command);
-
-    this.designLabService.updateLayerCoordinates(command).subscribe({
-      next: (result) => {
-        if (result.success) {
-          console.log('✅ Layer coordinates updated successfully:', result.layerId);
-          // Very subtle success feedback - short duration
-          this.snackBar.open('Position saved', '', {
-            duration: 800,
-            panelClass: ['success-snackbar'],
-            horizontalPosition: 'end',
-            verticalPosition: 'bottom'
-          });
-        } else {
-          console.error('❌ Failed to update layer coordinates:', result.error);
-          this.snackBar.open('Failed to save position', 'Retry', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
-        }
-      },
-      error: (error) => {
-        console.error('❌ Error updating layer coordinates:', error);
-        this.snackBar.open('Error saving position', 'Retry', {
+    // For now, just simulate saving - in real implementation, call the service
+    setTimeout(() => {
+      this.isSaving = false;
+      this.snackBar.open(
+        this.translateService.instant('designLab.messages.projectSaved'),
+        this.translateService.instant('common.close'),
+        {
           duration: 3000,
-          panelClass: ['error-snackbar']
-        });
-      }
-    });
-  }
-
-  // Delete a layer
-  deleteLayer(
-    event: MouseEvent,
-    layer: Layer,
-    layerType: 'text' | 'image'
-  ): void {
-    // Prevent the event from propagating to the parent elements
-    event.stopPropagation();
-
-    if (layerType === 'text') {
-      // Remove the text layer from the array
-      this.textLayers = this.textLayers.filter((l) => l.id !== layer.id);
-    } else if (layerType === 'image') {
-      // Remove the image layer from the array
-      this.imageLayers = this.imageLayers.filter((l) => l.id !== layer.id);
-    }
-  }
-
-  private checkAuthentication(): boolean {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-
-    console.log('🔐 Authentication check:');
-    console.log('  - Token present:', !!token);
-    console.log('  - User ID present:', !!userId);
-
-    if (!token || !userId) {
-      console.error('❌ User not authenticated. Redirecting to sign-in...');
-      // Here you could redirect to sign-in page
-      return false;
-    }
-
-    return true;
-  }
-
-  // Generar preview del proyecto (método privado, solo se llama al guardar)
-  private async generateProjectPreview(): Promise<void> {
-    if (!this.project || !this.tshirtPreviewRef) {
-      console.error('❌ No project or preview element available');
-      return;
-    }
-
-    this.isGeneratingPreview = true;
-
-    try {
-      console.log('📸 Generating project preview...');
-
-      // Capturar el contenedor como imagen
-      const previewElement = this.tshirtPreviewRef.nativeElement;
-
-      // Opciones para html-to-image
-      const options = {
-        quality: 0.95,
-        width: previewElement.offsetWidth,
-        height: previewElement.offsetHeight,
-        backgroundColor: '#ffffff',
-        useCORS: true
-      };
-
-      // Convertir el elemento a blob
-      const blob = await htmlToImage.toBlob(previewElement, options);
-
-      if (!blob) {
-        throw new Error('Failed to generate image blob');
-      }
-
-      console.log('✅ Image generated successfully');
-
-      // Subir la imagen a Cloudinary
-      const previewUrl = await this.uploadPreviewToCloudinary(blob);
-
-      // Actualizar la URL del preview en el proyecto localmente
-      this.project.previewUrl = previewUrl;
-
-      // Actualizar la URL del preview en el servidor
-      await this.updateProjectPreviewOnServer(previewUrl);
-
-      console.log('✅ Preview URL updated:', previewUrl);
-
-    } catch (error) {
-      console.error('❌ Error generating preview:', error);
-      // No mostramos error al usuario aquí, ya que es parte del proceso de guardado
-      console.warn('⚠️ Preview generation failed, but project will still be saved');
-    } finally {
-      this.isGeneratingPreview = false;
-    }
-  }
-
-  private async updateProjectPreviewOnServer(previewUrl: string): Promise<void> {
-    if (!this.project) return;
-
-    try {
-      // Usar el nuevo endpoint para actualizar los detalles del proyecto
-      const updateRequest = {
-        previewUrl: previewUrl,
-        status: this.project.status,
-        garmentColor: this.project.garmentColor,
-        garmentSize: this.project.garmentSize,
-        garmentGender: this.project.garmentGender
-      };
-
-      console.log('📡 Updating project details with new preview URL:', updateRequest);
-
-      await this.projectService.updateProjectDetails(this.project.id, updateRequest).toPromise();
-      console.log('✅ Project details updated successfully on server');
-
-    } catch (error) {
-      console.error('❌ Error updating project details on server:', error);
-      // No lanzamos el error para no interrumpir el proceso de guardado
-    }
-  }
-
-  private async uploadPreviewToCloudinary(blob: Blob): Promise<string> {
-    try {
-      return await this.cloudinaryService.uploadBlob(blob, 'teelab_previews');
-    } catch (error) {
-      console.error('❌ Error uploading preview to Cloudinary:', error);
-      throw error;
-    }
-  }
-
-  // Métodos para actualizar capas existentes
-  updateTextLayerDetails(layer: TextLayer): void {
-    if (!this.project) return;
-
-    const request = {
-      text: layer.details.text,
-      fontColor: layer.details.fontColor,
-      fontFamily: layer.details.fontFamily,
-      fontSize: layer.details.fontSize,
-      isBold: layer.details.isBold,
-      isItalic: layer.details.isItalic,
-      isUnderlined: layer.details.isUnderlined
-    };
-
-    this.projectService.updateTextLayer(this.project.id, layer.id, request).subscribe({
-      next: (response) => {
-        console.log('✅ Text layer updated successfully:', response);
-        // Actualizar la capa local con la respuesta del servidor
-        const updatedLayer = this.convertServerResponseToTextLayer(response);
-        const index = this.textLayers.findIndex(l => l.id === layer.id);
-        if (index !== -1) {
-          this.textLayers[index] = updatedLayer;
+          panelClass: ['success-snackbar']
         }
-      },
-      error: (err) => {
-        console.error('❌ Error updating text layer:', err);
-        this.snackBar.open('Error updating text layer', 'Close', { duration: 3000 });
+      );
+    }, 1000);
+  }
+
+  onLayerToolEvent(event: LayerToolEvent): void {
+    console.log('🔧 Layer tool event:', event);
+
+    if (!this.project) return;
+
+    switch (event.type) {
+      case 'text':
+        this.addLayerToProject(event.data);
+        break;
+      case 'image':
+        this.addLayerToProject(event.data);
+        break;
+      case 'save':
+        this.saveProject();
+        break;
+      case 'export':
+        this.exportProject(event.data?.format || 'png');
+        break;
+    }
+  }
+
+  onLayerEvent(event: LayerEvent): void {
+    console.log('🎨 Layer event:', event);
+
+    if (!this.project) return;
+
+    switch (event.type) {
+      case 'move':
+        this.updateLayerPosition(event.layerId, event.data);
+        break;
+      case 'select':
+        console.log('Layer selected:', event.layerId);
+        break;
+      case 'delete':
+        this.removeLayerFromProject(event.layerId);
+        break;
+      case 'duplicate':
+        this.addLayerToProject(event.data);
+        break;
+    }
+  }
+
+  onLayersChange(layers: Layer[]): void {
+    if (this.project) {
+      this.project.layers = layers;
+      this.project.updatedAt = new Date();
+      console.log('🔄 Layers updated:', layers.length);
+    }
+  }
+
+  /**
+   * Abrir diálogo de confirmación para eliminar proyecto
+   */
+  openDeleteDialog(): void {
+    if (!this.project) return;
+
+    const dialogData: DeleteProjectDialogData = {
+      projectTitle: this.project.title,
+      projectId: this.project.id
+    };
+
+    const dialogRef = this.dialog.open(DeleteProjectDialogComponent, {
+      width: '450px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.deleteProject();
       }
     });
   }
 
-  updateImageLayerDetails(layer: ImageLayer, width?: string, height?: string): void {
+  /**
+   * Eliminar el proyecto
+   */
+  private deleteProject(): void {
     if (!this.project) return;
 
-    const request = {
-      imageUrl: layer.imageUrl,
-      width: width || '300',
-      height: height || '300'
-    };
+    console.log('🗑️ Deleting project:', this.project.id);
 
-    this.projectService.updateImageLayer(this.project.id, layer.id, request).subscribe({
-      next: (response) => {
-        console.log('✅ Image layer updated successfully:', response);
-        // Actualizar la capa local con la respuesta del servidor
-        const updatedLayer = this.convertServerResponseToImageLayer(response);
-        const index = this.imageLayers.findIndex(l => l.id === layer.id);
-        if (index !== -1) {
-          this.imageLayers[index] = updatedLayer;
+    this.designLabService.deleteProject(this.project.id).subscribe({
+      next: (result) => {
+        console.log('✅ Project deleted successfully:', result);
+
+        this.snackBar.open(
+          this.translateService.instant('designLab.messages.projectDeleted'),
+          this.translateService.instant('common.close'),
+          {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          }
+        );
+
+        // Navegar de vuelta a la lista de proyectos
+        this.router.navigate(['/home/design-lab']);
+      },
+      error: (error: any) => {
+        console.error('❌ Error deleting project:', error);
+
+        this.snackBar.open(
+          error || this.translateService.instant('designLab.errors.deleteFailed'),
+          this.translateService.instant('common.close'),
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+    });
+  }
+
+  private addLayerToProject(layer: Layer): void {
+    if (!this.project) return;
+
+    // Find the highest z-index and add one
+    const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+    layer.z = maxZ + 1;
+
+    this.project.layers.push(layer);
+    this.project.updatedAt = new Date();
+
+    console.log('➕ Layer added to project:', layer.id);
+
+    this.snackBar.open(
+      this.translateService.instant('designLab.messages.layerAdded'),
+      this.translateService.instant('common.close'),
+      {
+        duration: 2000,
+        panelClass: ['success-snackbar']
+      }
+    );
+  }
+
+  private removeLayerFromProject(layerId: string): void {
+    if (!this.project) return;
+
+    const index = this.project.layers.findIndex(l => l.id === layerId);
+    if (index > -1) {
+      this.project.layers.splice(index, 1);
+      this.project.updatedAt = new Date();
+
+      console.log('🗑️ Layer removed from project:', layerId);
+
+      this.snackBar.open(
+        this.translateService.instant('designLab.messages.layerRemoved'),
+        this.translateService.instant('common.close'),
+        {
+          duration: 2000,
+          panelClass: ['success-snackbar']
         }
-      },
-      error: (err) => {
-        console.error('❌ Error updating image layer:', err);
-        this.snackBar.open('Error updating image layer', 'Close', { duration: 3000 });
-      }
-    });
+      );
+    }
   }
 
-  // Métodos para manejar cambios en tiempo real de las capas
-  onTextLayerChanged(layer: TextLayer): void {
-    console.log('📝 Text layer changed:', layer);
-    // Actualizar la capa en el servidor cuando el usuario termine de editarla
-    // Puedes implementar un debounce aquí para evitar demasiadas requests
-    this.updateTextLayerDetails(layer);
-  }
-
-  onImageLayerChanged(layer: ImageLayer): void {
-    console.log('🖼️ Image layer changed:', layer);
-    // Actualizar la capa en el servidor
-    this.updateImageLayerDetails(layer);
-  }
-
-  // Método para debugging - mostrar información de layers
-  debugLayers(): void {
-    console.log('🐛 DEBUG - Current layers state:');
-    console.log('Text layers count:', this.textLayers.length);
-    console.log('Image layers count:', this.imageLayers.length);
-
-    this.textLayers.forEach((layer, index) => {
-      console.log(`Text Layer ${index}:`, {
-        id: layer.id,
-        text: layer.details?.text,
-        x: layer.x,
-        y: layer.y,
-        visible: layer.isVisible,
-        details: layer.details
-      });
-    });
-
-    this.imageLayers.forEach((layer, index) => {
-      console.log(`Image Layer ${index}:`, {
-        id: layer.id,
-        imageUrl: layer.imageUrl || layer.details?.imageUrl,
-        x: layer.x,
-        y: layer.y,
-        visible: layer.isVisible,
-        details: layer.details
-      });
-    });
-  }
-
-  // Track function para optimizar rendering de layers
-  trackLayerById(index: number, layer: Layer): string {
-    return layer.id;
-  }
-
-  // Manejar errores de carga de imágenes
-  onImageLoadError(layer: ImageLayer): void {
-    console.log('❌ Image load error for layer:', layer.id);
-    console.log('🔗 Attempted URL:', layer.imageUrl || layer.details?.imageUrl);
-    console.log('📄 Layer details:', layer.details);
-  }
-
-  // Actualizar detalles del proyecto en el servidor (método público para testing manual)
-  updateProjectDetailsOnServer(): void {
+  private updateLayerPosition(layerId: string, position: { x: number; y: number }): void {
     if (!this.project) return;
 
-    const updateRequest = {
-      previewUrl: this.project.previewUrl || undefined,
-      status: this.project.status,
-      garmentColor: this.project.garmentColor,
-      garmentSize: this.project.garmentSize,
-      garmentGender: this.project.garmentGender
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.x = position.x;
+      layer.y = position.y;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+
+      console.log('� Layer position updated:', layerId, position);
+
+      // In a real implementation, you might want to call a service to persist the change
+      // For now, we'll just update the local state
+    }
+  }
+
+  private exportProject(format: string): void {
+    if (!this.project) return;
+
+    console.log('📁 Exporting project as:', format);
+
+    // Simulate export functionality
+    this.snackBar.open(
+      this.translateService.instant('designLab.messages.exportStarted') + ` (${format.toUpperCase()})`,
+      this.translateService.instant('common.close'),
+      {
+        duration: 3000,
+        panelClass: ['info-snackbar']
+      }
+    );
+  }
+
+  getGarmentColorHex(color: string): string {
+    // Map garment colors to hex values
+    const colorMap: { [key: string]: string } = {
+      'WHITE': '#FFFFFF',
+      'BLACK': '#000000',
+      'GRAY': '#6B7280',
+      'LIGHT_GRAY': '#D1D5DB',
+      'RED': '#DC2626',
+      'PINK': '#EC4899',
+      'LIGHT_PURPLE': '#A78BFA',
+      'PURPLE': '#7C3AED',
+      'LIGHT_BLUE': '#60A5FA',
+      'CYAN': '#06B6D4',
+      'SKY_BLUE': '#0EA5E9',
+      'BLUE': '#2563EB',
+      'GREEN': '#059669',
+      'LIGHT_GREEN': '#34D399',
+      'YELLOW': '#FBBF24',
+      'DARK_YELLOW': '#D97706'
     };
 
-    console.log('📡 Manually updating project details:', updateRequest);
+    return colorMap[color] || '#FFFFFF';
+  }
 
-    this.projectService.updateProjectDetails(this.project.id, updateRequest).subscribe({
-      next: (response) => {
-        console.log('✅ Project details updated successfully:', response);
-        this.snackBar.open('Project details updated!', 'Close', { duration: 2000 });
-      },
-      error: (err) => {
-        console.error('❌ Error updating project details:', err);
-        this.snackBar.open('Error updating project details', 'Close', { duration: 3000 });
-      }
-    });
+  /**
+   * Handle canvas tool events
+   */
+  onCanvasToolEvent(event: CanvasToolEvent): void {
+    console.log('🔧 Canvas tool event:', event);
+
+    switch (event.type) {
+      case 'tool-change':
+        this.currentTool = event.data.tool;
+        break;
+      case 'save':
+        this.saveProject();
+        break;
+    }
+  }
+
+  /**
+   * Handle layer management events
+   */
+  onLayerManagementEvent(event: LayerManagementEvent): void {
+    console.log('🗂️ Layer management event:', event);
+
+    if (!this.project) return;
+
+    switch (event.type) {
+      case 'select':
+        this.selectLayer(event.layerId!);
+        break;
+      case 'toggle-visibility':
+        this.toggleLayerVisibility(event.layerId!, event.data.isVisible);
+        break;
+      case 'delete':
+        this.removeLayerFromProject(event.layerId!);
+        break;
+      case 'duplicate':
+        this.duplicateLayer(event.layerId!);
+        break;
+      case 'reorder':
+        this.reorderLayers(event.data.layers);
+        break;
+      case 'bring-to-front':
+        this.bringLayerToFront(event.layerId!);
+        break;
+      case 'send-to-back':
+        this.sendLayerToBack(event.layerId!);
+        break;
+    }
+  }
+
+  /**
+   * Handle layer property events
+   */
+  onLayerPropertyEvent(event: LayerPropertyEvent): void {
+    console.log('🎨 Layer property event:', event);
+
+    if (!this.project || !this.selectedLayer) return;
+
+    switch (event.type) {
+      case 'update-text':
+        this.updateTextLayerProperties(event.layerId, event.data);
+        break;
+      case 'update-image':
+        this.updateImageLayerProperties(event.layerId, event.data);
+        break;
+      case 'update-position':
+        this.updateLayerPosition(event.layerId, event.data);
+        break;
+      case 'update-opacity':
+        this.updateLayerOpacity(event.layerId, event.data.opacity);
+        break;
+      case 'update-visibility':
+        this.toggleLayerVisibility(event.layerId, event.data.isVisible);
+        break;
+    }
+  }
+
+  /**
+   * Select a layer
+   */
+  private selectLayer(layerId: string): void {
+    this.selectedLayerId = layerId;
+    this.selectedLayer = this.project?.layers.find(l => l.id === layerId) || null;
+    console.log('📍 Layer selected:', this.selectedLayer);
+  }
+
+  /**
+   * Toggle layer visibility
+   */
+  private toggleLayerVisibility(layerId: string, isVisible: boolean): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.isVisible = isVisible;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('👁️ Layer visibility toggled:', layerId, isVisible);
+    }
+  }
+
+  /**
+   * Duplicate a layer
+   */
+  private duplicateLayer(layerId: string): void {
+    if (!this.project) return;
+
+    const originalLayer = this.project.layers.find(l => l.id === layerId);
+    if (!originalLayer) return;
+
+    // Create a new layer based on the original
+    const newLayerId = this.generateLayerId();
+    const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+
+    if (originalLayer.type === LayerType.TEXT) {
+      const textLayer = originalLayer as TextLayer;
+      const newLayer = new TextLayer(
+        newLayerId,
+        textLayer.x + 20, // Offset position
+        textLayer.y + 20,
+        maxZ + 1,
+        textLayer.opacity,
+        textLayer.isVisible,
+        new Date(),
+        new Date(),
+        { ...textLayer.details } // Copy details
+      );
+      this.addLayerToProject(newLayer);
+    } else if (originalLayer.type === LayerType.IMAGE) {
+      const imageLayer = originalLayer as ImageLayer;
+      const newLayer = new ImageLayer(
+        newLayerId,
+        imageLayer.x + 20,
+        imageLayer.y + 20,
+        maxZ + 1,
+        imageLayer.opacity,
+        imageLayer.isVisible,
+        imageLayer.imageUrl
+      );
+      this.addLayerToProject(newLayer);
+    }
+  }
+
+  /**
+   * Reorder layers
+   */
+  private reorderLayers(layers: Layer[]): void {
+    if (!this.project) return;
+
+    this.project.layers = layers;
+    this.project.updatedAt = new Date();
+    this.isModified = true;
+    console.log('🔄 Layers reordered');
+  }
+
+  /**
+   * Bring layer to front
+   */
+  private bringLayerToFront(layerId: string): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+      layer.z = maxZ + 1;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('⬆️ Layer brought to front:', layerId);
+    }
+  }
+
+  /**
+   * Send layer to back
+   */
+  private sendLayerToBack(layerId: string): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      const minZ = Math.min(1, ...this.project.layers.map(l => l.z));
+      layer.z = minZ - 1;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('⬇️ Layer sent to back:', layerId);
+    }
+  }
+
+  /**
+   * Update text layer properties
+   */
+  private updateTextLayerProperties(layerId: string, data: any): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId) as TextLayer;
+    if (layer && layer.type === LayerType.TEXT) {
+      // Update layer properties
+      layer.x = data.x;
+      layer.y = data.y;
+      layer.opacity = data.opacity;
+      layer.isVisible = data.isVisible;
+      layer.details = {
+        text: data.text,
+        fontFamily: data.fontFamily,
+        fontSize: data.fontSize,
+        fontColor: data.fontColor,
+        isBold: data.isBold,
+        isItalic: data.isItalic,
+        isUnderlined: data.isUnderlined
+      };
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('📝 Text layer updated:', layerId);
+    }
+  }
+
+  /**
+   * Update image layer properties
+   */
+  private updateImageLayerProperties(layerId: string, data: any): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId) as ImageLayer;
+    if (layer && layer.type === LayerType.IMAGE) {
+      // Update layer properties
+      layer.x = data.x;
+      layer.y = data.y;
+      layer.opacity = data.opacity;
+      layer.isVisible = data.isVisible;
+      layer.imageUrl = data.imageUrl;
+      layer.details = {
+        width: data.width,
+        height: data.height
+      };
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('🖼️ Image layer updated:', layerId);
+    }
+  }
+
+  /**
+   * Update layer opacity
+   */
+  private updateLayerOpacity(layerId: string, opacity: number): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.opacity = opacity;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+      console.log('💧 Layer opacity updated:', layerId, opacity);
+    }
+  }
+
+  /**
+   * Perform undo operation
+   */
+  /**
+   * Generate a unique layer ID
+   */
+  private generateLayerId(): string {
+    return 'layer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }
