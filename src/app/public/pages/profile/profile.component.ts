@@ -1,49 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthenticationService } from '../../../iam/services/authentication.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
-    selector: 'app-profile',
-    imports: [
-        MatCardModule,
-        MatIconModule,
-        MatFormFieldModule,
-        CommonModule,
-    ],
-    templateUrl: './profile.component.html',
-    styleUrl: './profile.component.css',
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div style="max-width: 400px; margin: 2rem auto; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff;">
+      <h2 style="text-align:center; margin-bottom: 1.5rem;">User Profile</h2>
+      <div *ngIf="user">
+        <p><strong>ID:</strong> {{ user.id }}</p>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Roles:</strong> <span *ngFor="let role of user.roles; let last = last">{{ role }}<span *ngIf="!last">, </span></span></p>
+      </div>
+      <div *ngIf="!user" style="text-align:center; color: #888;">Loading...</div>
+    </div>
+  `
 })
 export class ProfileComponent implements OnInit {
-    userEmail: string = '';
-    userId: string = '';
-    userRole: string = '';
-    isSignedIn: boolean = false;
+  user: any = null;
+  private http = inject(HttpClient);
 
-    constructor(private authService: AuthenticationService) {}
-
-    ngOnInit(): void {
-        console.log('ProfileComponent: Loading user profile from localStorage...');
-
-        // Get user data from localStorage (IAM system)
-        this.userId = localStorage.getItem('userId') || '';
-        this.userEmail = localStorage.getItem('userEmail') || '';
-        this.userRole = localStorage.getItem('userRole') || '';
-
-        // Check if user is signed in
-        this.authService.isSignedIn.subscribe(isSignedIn => {
-            this.isSignedIn = isSignedIn;
-            if (!isSignedIn) {
-                console.log('ProfileComponent: User not signed in');
-            } else {
-                console.log('ProfileComponent: User profile loaded:', {
-                    userId: this.userId,
-                    email: this.userEmail,
-                    role: this.userRole
-                });
-            }
-        });
-    }
+  ngOnInit() {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    if (!userId || !token) return;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    this.http.get<any>(`http://localhost:8080/api/v1/users/${userId}`, { headers })
+      .subscribe({
+        next: data => this.user = data,
+        error: () => this.user = null
+      });
+  }
 }
