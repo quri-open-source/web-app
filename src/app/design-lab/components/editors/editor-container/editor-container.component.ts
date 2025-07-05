@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { TshirtColorEditorComponent } from '../tshirt-color-editor/tshirt-color-editor.component';
 import { TextEditorComponent, TextProperties, TextEditorConfig } from '../text-editor/text-editor.component';
-import { ImageEditorComponent, ImageProperties, ImageEditorConfig } from '../image-editor/image-editor.component';
+import { ImageEditorComponent, ImageEditorConfig } from '../image-editor/image-editor.component';
 
 // Import entities and related types
 import { Layer, TextLayer, ImageLayer } from '../../../model/layer.entity';
@@ -63,11 +63,6 @@ export class EditorContainerComponent implements OnInit {
   };
 
 
-  @Output() colorSelected = new EventEmitter<GARMENT_COLOR>();
-  @Output() textAdded = new EventEmitter<TextProperties>();
-  @Output() imageAdded = new EventEmitter<ImageProperties>();
-
-
   @Output() garmentColorChanged = new EventEmitter<GARMENT_COLOR>();
   @Output() textLayerCreated = new EventEmitter<TextLayer>();
   @Output() imageLayerCreated = new EventEmitter<ImageLayer>();
@@ -121,8 +116,7 @@ export class EditorContainerComponent implements OnInit {
   onColorSelected(color: GARMENT_COLOR): void {
     this.currentColor = color;
 
-    // Emit both legacy and new events
-    this.colorSelected.emit(color);
+    // Emit new event
     this.garmentColorChanged.emit(color);
 
     // Update project if available
@@ -131,23 +125,9 @@ export class EditorContainerComponent implements OnInit {
     }
   }
 
-  // Enhanced text addition with entity creation
-  onTextAdded(textProps: TextProperties): void {
-    this.textAdded.emit(textProps);
-    // Limpiar formulario y volver al tab principal
-    this.selectTab('color');
-  }
-
   onTextLayerCreated(textLayer: TextLayer): void {
     this.textLayerCreated.emit(textLayer);
     this.layerAdded.emit(textLayer);
-    // Limpiar formulario y volver al tab principal
-    this.selectTab('color');
-  }
-
-  // Enhanced image addition with entity creation
-  onImageAdded(imageProps: ImageProperties): void {
-    this.imageAdded.emit(imageProps);
     // Limpiar formulario y volver al tab principal
     this.selectTab('color');
   }

@@ -15,7 +15,6 @@
           [initialText]="initialTextProps"
           [config]="config.textEditor"
           [existingTextLayers]="textLayers"
-          (textAdded)="onTextAdded($event)"
           (textLayerCreated)="onTextLayerCreated($event)"
           #textEditorRef>
         </app-text-editor>
@@ -26,7 +25,6 @@
         <app-image-editor
           [config]="config.imageEditor"
           [existingImageLayers]="imageLayers"
-          (imageAdded)="onImageAdded($event)"
           (imageLayerCreated)="onImageLayerCreated($event)"
           #imageEditorRef>
         </app-image-editor>

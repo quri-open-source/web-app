@@ -57,7 +57,6 @@ export class ImageEditorComponent {
 
   @Input() existingImageLayers: ImageLayer[] = [];
 
-  @Output() imageAdded = new EventEmitter<ImageProperties>();
   @Output() imageLayerCreated = new EventEmitter<ImageLayer>();
 
   previewImageUrl: string = '';
@@ -178,20 +177,14 @@ export class ImageEditorComponent {
     });
 
     if (this.previewImageUrl) {
-      // Emit image properties for backward compatibility
-      const imageProps: ImageProperties = {
+      // Create and emit a proper ImageLayer entity
+      const imageLayer = this.createImageLayer({
         imageUrl: this.previewImageUrl,
         width: this.imageWidth,
         height: this.imageHeight,
         scale: this.imageScale,
         maintainAspectRatio: true,
-      };
-
-      console.log('📤 Emitting imageAdded event with props:', imageProps);
-      this.imageAdded.emit(imageProps);
-
-      // Create and emit a proper ImageLayer entity
-      const imageLayer = this.createImageLayer(imageProps);
+      });
       console.log('📤 Emitting imageLayerCreated event with layer:', imageLayer);
       this.imageLayerCreated.emit(imageLayer);
 

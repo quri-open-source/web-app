@@ -74,8 +74,8 @@
                   (mousedown)="startDrag($event, layer)"
                 >
                   <div class="delete-button" (mousedown)="$event.stopPropagation()" (click)="deleteLayer($event, layer, 'image')">×</div>
-                  <img [src]="layer.imageUrl || layer.details?.imageUrl" [alt]="'Layer ' + layer.id" 
-                       style="max-width: 100%; max-height: 100%; object-fit: contain;" 
+                  <img [src]="layer.imageUrl || layer.details?.imageUrl" [alt]="'Layer ' + layer.id"
+                       style="max-width: 100%; max-height: 100%; object-fit: contain;"
                        (error)="onImageLoadError(layer)" />
                 </div>
               </div>
@@ -90,11 +90,8 @@
           [textLayers]="textLayers"
           [imageLayers]="imageLayers"
           [config]="editorConfig"
-          (colorSelected)="selectColor($event)"
           (garmentColorChanged)="handleGarmentColorChanged($event)"
-          (textAdded)="handleTextAdded($event)"
           (textLayerCreated)="handleTextLayerCreated($event)"
-          (imageAdded)="handleImageAdded($event)"
           (imageLayerCreated)="handleImageLayerCreated($event)"
           (layerAdded)="handleLayerAdded($event)"
         >
