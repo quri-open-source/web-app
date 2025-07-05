@@ -1,115 +1,108 @@
-import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../../services/authentication.service';
-import { SignInRequest } from '../../model/sign-in.request';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {SignInRequest} from "../../model/sign-in.request";
+import {AuthenticationService} from "../../services/authentication.service";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {MatError, MatFormField, MatLabel, MatPrefix, MatSuffix} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {RouterLink} from "@angular/router";
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
   imports: [
-    CommonModule,
+    MatButton,
+    MatIconButton,
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardContent,
+    MatCardHeader,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatIcon,
+    MatPrefix,
+    MatSuffix,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    TranslateModule,
+    RouterLink,
+    LanguageSwitcherComponent,
+    TranslateModule
   ],
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.css',
+  styleUrl: './sign-in.component.css'
 })
-export class SignInComponent {
-  signInForm: FormGroup;
+export class SignInComponent implements OnInit {
+  form!: FormGroup;
+  submitted = false;
+  hidePassword = true;
   isLoading = false;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthenticationService,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private translate: TranslateService
-  ) {
-    this.signInForm = this.fb.group({
+    private builder: FormBuilder,
+    private authenticationService: AuthenticationService,
+    private translateService: TranslateService
+  ) {}
+
+  ngOnInit(): void {
+    this.form = this.builder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   onSubmit() {
-    if (this.signInForm.valid) {
-      this.isLoading = true;
-      const signInRequest = new SignInRequest(
-        this.signInForm.get('username')?.value,
-        this.signInForm.get('password')?.value
-      );
+    if (this.form.invalid) return;
 
-      // Subscribe to handle success/error messages
-      this.authService.signInWithCallback(signInRequest).subscribe({
-        next: (response: any) => {
-          // Update authentication state
-          this.authService.updateAuthenticationState(response);
+    this.isLoading = true;
+    this.submitted = true;
 
-          this.translate.get('auth.sign_in_success', { username: response.username }).subscribe((message: string) => {
-            this.snackBar.open(message || `Welcome back, ${response.username}!`, this.translate.instant('common.close'), {
-              duration: 3000,
-              panelClass: ['success-snackbar'],
-            });
-          });
-          this.isLoading = false;
-          this.router.navigate(['/home']);
-        },
-        error: (_error: any) => {
-          this.translate.get('auth.invalid_credentials').subscribe((message: string) => {
-            this.snackBar.open(
-              message || 'Invalid username or password. Please try again.',
-              this.translate.instant('common.close'),
-              {
-                duration: 5000,
-                panelClass: ['error-snackbar'],
-              }
-            );
-          });
-          this.isLoading = false;
-        },
+    let username = this.form.value.username;
+    let password = this.form.value.password;
+    const signInRequest = new SignInRequest(username, password);
+
+    this.authenticationService.signIn(signInRequest);
+
+    // Reset loading state after a reasonable time
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
+  }
+
+  isInvalidControl(form: FormGroup, controlName: string): boolean {
+    const control = form.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  errorMessagesForControl(form: FormGroup, controlName: string): string {
+    const control = form.get(controlName);
+    if (!control || !control.errors) return '';
+
+    if (control.errors['required']) {
+      return this.translateService.instant('signin.validation.required', { field: this.getFieldName(controlName) });
+    }
+
+    if (control.errors['minlength']) {
+      const requiredLength = control.errors['minlength'].requiredLength;
+      return this.translateService.instant('signin.validation.minlength', {
+        field: this.getFieldName(controlName),
+        length: requiredLength
       });
-    } else {
-      this.markFormGroupTouched();
     }
-  }
 
-  private markFormGroupTouched() {
-    Object.keys(this.signInForm.controls).forEach((key) => {
-      const control = this.signInForm.get(key);
-      control?.markAsTouched();
-    });
-  }
-
-  goToSignUp() {
-    this.router.navigate(['/sign-up']);
-  }
-
-  getErrorMessage(fieldName: string): string {
-    const control = this.signInForm.get(fieldName);
-    if (control?.hasError('required')) {
-      return `${fieldName} is required`;
-    }
-    if (control?.hasError('minlength')) {
-      return `${fieldName} must be at least ${control.errors?.['minlength']?.requiredLength} characters long`;
-    }
     return '';
+  }
+
+  private getFieldName(controlName: string): string {
+    const fieldNames: { [key: string]: string } = {
+      'username': 'signin.username',
+      'password': 'signin.password'
+    };
+    return this.translateService.instant(fieldNames[controlName]) || controlName;
   }
 }

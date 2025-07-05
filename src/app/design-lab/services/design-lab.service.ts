@@ -1,378 +1,511 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../iam/services/authentication.service';
-
-// Import Request DTOs
+import { Project } from '../model/project.entity';
+import { TextLayer, ImageLayer, Layer } from '../model/layer.entity';
+import { LayerType } from '../../const';
 import {
-    CreateProjectRequest,
-    UpdateProjectDetailsRequest,
-    UpdateProjectRequest,
-    CreateTextLayerRequest,
-    CreateImageLayerRequest,
-    UpdateTextLayerDetailsRequest,
-    UpdateImageLayerDetailsRequest,
-    UpdateLayerCoordinatesRequest
-} from './project.request';
-
-// Import Response DTOs
+  CreateProjectRequest,
+  CreateTextLayerRequest,
+  CreateImageLayerRequest,
+  UpdateTextLayerRequest,
+  UpdateImageLayerRequest,
+  UpdateLayerCoordinatesRequest
+} from './design-lab.requests';
 import {
-    ProjectResponse,
-    ProjectDetailsResponse,
-    LayerResponse,
-    TextLayerResponse,
-    ImageLayerResponse,
-    DeleteLayerResponse,
-    DeleteProjectResponse
-} from './design-lab.response';
+  ProjectResponse,
+  CreateProjectResponse,
+  DeleteProjectResponse,
+  LayerOperationResponse,
+  LayerResponse,
+  ProjectResult,
+  LayerResult,
+  DeleteProjectResult
+} from './design-lab.responses';
 
-const BASE_URL = `${environment.apiBaseUrl}/projects`;
+const BASE_URL = `${environment.serverBaseUrl}/api/v1/projects`;
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class DesignLabService {
-    private http = inject(HttpClient);
-    private authService = inject(AuthenticationService);
+  private http = inject(HttpClient);
+  private authService = inject(AuthenticationService);
 
-    /**
-     * Get authentication headers with bearer token
-     */
-    private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
-        let headers = new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        });
+  constructor() {
+    console.log('🚀 DesignLabService initialized');
+  }
 
-        if (token) {
-            headers = headers.set('Authorization', `Bearer ${token}`);
+  // ==================== PROJECT METHODS ====================
+
+  /**
+   * Obtener todos los proyectos de un usuario
+   */
+  getProjectsByUser(userId: string): Observable<Project[]> {
+    console.log('📋 DesignLabService - Getting projects for user:', userId);
+
+    const params = new HttpParams().set('userId', userId);
+
+    return this.http.get<ProjectResponse[]>(BASE_URL, {
+      headers: this.getHeaders(),
+      params: params
+    }).pipe(
+      map(responses => {
+        console.log('✅ Projects fetched successfully:', responses);
+        return responses.map(response => this.mapToProject(response));
+      }),
+      catchError(error => {
+        console.error('❌ Error fetching projects:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Obtener proyecto por ID
+   */
+  getProjectById(projectId: string): Observable<Project> {
+    console.log('📋 DesignLabService - Getting project:', projectId);
+
+    return this.http.get<ProjectResponse>(`${BASE_URL}/${projectId}`, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Project fetched successfully:', response);
+        return this.mapToProject(response);
+      }),
+      catchError(error => {
+        console.error('❌ Error fetching project:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Crear un nuevo proyecto
+   */
+  createProject(request: CreateProjectRequest): Observable<ProjectResult> {
+    console.log('🆕 DesignLabService - Creating project:', request);
+
+    return this.http.post<CreateProjectResponse>(BASE_URL, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Project created successfully:', response);
+        return {
+          success: response.success,
+          projectId: response.projectId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error creating project:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Eliminar un proyecto
+   */
+  deleteProject(projectId: string): Observable<DeleteProjectResult> {
+    console.log('🗑️ DesignLabService - Deleting project:', projectId);
+
+    const url = `${BASE_URL}/${projectId}`;
+
+    return this.http.delete<DeleteProjectResponse>(url, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Project deleted successfully:', response);
+        return {
+          success: response.success,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error deleting project:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Actualizar los detalles de un proyecto (incluyendo preview URL)
+   */
+  updateProjectDetails(projectId: string, details: {
+    previewUrl?: string;
+    status?: string;
+    garmentColor?: string;
+    garmentSize?: string;
+    garmentGender?: string;
+  }): Observable<ProjectResult> {
+    console.log('🖼️ DesignLabService - Updating project details:', { projectId, details });
+
+    const url = `${BASE_URL}/${projectId}/details`;
+
+    return this.http.put<{ message: string; timestamp: string }>(url, details, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Project details updated successfully:', response);
+        return {
+          success: true,
+          projectId: projectId,
+          error: undefined
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error updating project details:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Actualizar solo el preview URL de un proyecto
+   * Este método es un wrapper que actualiza el previewUrl manteniendo los demás campos
+   */
+  updateProjectPreview(projectId: string, previewUrl: string, currentProject?: Project): Observable<ProjectResult> {
+    console.log('🖼️ DesignLabService - Updating project preview only:', { projectId, previewUrl });
+
+    // Si tenemos el proyecto actual, incluimos todos sus campos para no perder datos
+    const updateData: any = { previewUrl };
+
+    if (currentProject) {
+      updateData.status = currentProject.status;
+      updateData.garmentColor = currentProject.garmentColor;
+      updateData.garmentSize = currentProject.garmentSize;
+      updateData.garmentGender = currentProject.garmentGender;
+
+      console.log('🔄 Preserving current project fields:', {
+        status: currentProject.status,
+        garmentColor: currentProject.garmentColor,
+        garmentSize: currentProject.garmentSize,
+        garmentGender: currentProject.garmentGender
+      });
+    }
+
+    return this.updateProjectDetails(projectId, updateData);
+  }
+
+  /**
+   * Actualizar el status de un proyecto a GARMENT
+   */
+  updateProjectStatus(projectId: string, status: string, currentProject?: Project): Observable<ProjectResult> {
+    console.log('🔄 DesignLabService - Updating project status:', { projectId, status });
+
+    // Construir el body con todos los campos para no perder datos
+    const updateData: any = { status };
+
+    if (currentProject) {
+      updateData.previewUrl = currentProject.previewUrl;
+      updateData.garmentColor = currentProject.garmentColor;
+      updateData.garmentSize = currentProject.garmentSize;
+      updateData.garmentGender = currentProject.garmentGender;
+
+      console.log('🔄 Preserving current project fields:', {
+        previewUrl: currentProject.previewUrl,
+        garmentColor: currentProject.garmentColor,
+        garmentSize: currentProject.garmentSize,
+        garmentGender: currentProject.garmentGender
+      });
+    }
+
+    return this.updateProjectDetails(projectId, updateData);
+  }
+
+  // ==================== LAYER METHODS ====================
+
+  /**
+   * Crear una nueva capa de texto
+   */
+  createTextLayer(request: CreateTextLayerRequest): Observable<LayerResult> {
+    console.log('📝 DesignLabService - Creating text layer:', request);
+
+    const url = `${BASE_URL}/layers/texts`;
+
+    console.log('📝 DesignLabService - Request URL:', url);
+    console.log('📝 DesignLabService - Request body:', request);
+
+    return this.http.post<LayerOperationResponse>(url, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Text layer created successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error creating text layer:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Crear una nueva capa de imagen
+   */
+  createImageLayer(request: CreateImageLayerRequest): Observable<LayerResult> {
+    console.log('🖼️ DesignLabService - Creating image layer:', request);
+
+    const url = `${BASE_URL}/${request.projectId}/layers/image`;
+
+    return this.http.post<LayerOperationResponse>(url, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Image layer created successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error creating image layer:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Actualizar una capa de texto
+   */
+  updateTextLayer(projectId: string, layerId: string, request: UpdateTextLayerRequest): Observable<LayerResult> {
+    console.log('📝 DesignLabService - Updating text layer:', { projectId, layerId, request });
+
+    const url = `${BASE_URL}/${projectId}/layers/${layerId}/text`;
+
+    return this.http.put<LayerOperationResponse>(url, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Text layer updated successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error updating text layer:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Actualizar una capa de imagen
+   */
+  updateImageLayer(projectId: string, layerId: string, request: UpdateImageLayerRequest): Observable<LayerResult> {
+    console.log('🖼️ DesignLabService - Updating image layer:', { projectId, layerId, request });
+
+    const url = `${BASE_URL}/${projectId}/layers/${layerId}/image`;
+
+    return this.http.put<LayerOperationResponse>(url, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Image layer updated successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error updating image layer:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Actualizar coordenadas de una capa
+   */
+  updateLayerCoordinates(projectId: string, layerId: string, request: UpdateLayerCoordinatesRequest): Observable<LayerResult> {
+    console.log('📍 DesignLabService - Updating layer coordinates:', { projectId, layerId, request });
+
+    const url = `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`;
+
+    return this.http.put<LayerOperationResponse>(url, request, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Layer coordinates updated successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error updating layer coordinates:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  /**
+   * Eliminar una capa
+   */
+  deleteLayer(projectId: string, layerId: string): Observable<LayerResult> {
+    console.log('🗑️ DesignLabService - Deleting layer:', { projectId, layerId });
+
+    const url = `${BASE_URL}/${projectId}/layers/${layerId}`;
+
+    return this.http.delete<LayerOperationResponse>(url, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Layer deleted successfully:', response);
+        return {
+          success: response.success,
+          layerId: response.layerId,
+          error: response.error
+        };
+      }),
+      catchError(error => {
+        console.error('❌ Error deleting layer:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  // ==================== UTILITY METHODS ====================
+
+  /**
+   * Método de prueba para verificar la autenticación
+   */
+  testAuthentication(): Observable<any> {
+    console.log('🧪 DesignLabService - Testing authentication');
+
+    return this.http.get<any>(BASE_URL, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        console.log('✅ Authentication test successful:', response);
+        return response;
+      }),
+      catchError(error => {
+        console.error('❌ Authentication test failed:', error);
+        return throwError(() => this.getErrorMessage(error));
+      })
+    );
+  }
+
+  // ==================== PRIVATE METHODS ====================
+
+  /**
+   * Obtener headers HTTP con autenticación
+   */
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    console.log('🔧 DesignLabService - Token exists:', !!token);
+    console.log('🔧 DesignLabService - Token preview:', token?.substring(0, 20) + '...');
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    console.log('🔧 DesignLabService - Headers created:', headers.keys());
+    return headers;
+  }
+
+  /**
+   * Mapear ProjectResponse a Project entity
+   */
+  private mapToProject(response: ProjectResponse): Project {
+    return new Project(
+      response.id,
+      response.title,
+      response.userId,
+      response.previewUrl,
+      response.status,
+      response.garmentColor,
+      response.garmentSize,
+      response.garmentGender,
+      response.layers?.map(layer => this.mapToLayer(layer)) || [],
+      new Date(response.createdAt),
+      new Date(response.updatedAt)
+    );
+  }
+
+  /**
+   * Mapear LayerResponse a Layer entity
+   */
+  private mapToLayer(response: LayerResponse): Layer {
+    if (response.type === LayerType.TEXT) {
+      return new TextLayer(
+        response.id,
+        response.x,
+        response.y,
+        response.z,
+        response.opacity,
+        response.isVisible,
+        new Date(response.createdAt),
+        new Date(response.updatedAt),
+        response.details || {
+          text: '',
+          fontFamily: 'Arial',
+          fontSize: 16,
+          fontColor: '#000000',
+          isBold: false,
+          isItalic: false,
+          isUnderlined: false
         }
-
-        return headers;
+      );
     }
 
-    /**
-     * Handle HTTP errors with authentication context
-     */
-    private handleError = (error: HttpErrorResponse) => {
-        console.error('❌ DesignLabService HTTP Error:', {
-            status: error.status,
-            statusText: error.statusText,
-            message: error.message,
-            url: error.url,
-            error: error.error
-        });
-
-        // Handle authentication errors
-        if (error.status === 401) {
-            console.warn('🔓 Unauthorized access detected, clearing session');
-            this.authService.signOut();
-            return throwError(() => new Error('Authentication required. Please sign in again.'));
-        }
-
-        // Handle authorization errors
-        if (error.status === 403) {
-            console.warn('🚫 Forbidden access - insufficient permissions');
-            return throwError(() => new Error('You do not have permission to perform this action.'));
-        }
-
-        // Handle not found errors
-        if (error.status === 404) {
-            console.warn('🔍 Resource not found');
-            return throwError(() => new Error('The requested resource was not found.'));
-        }
-
-        // Handle validation errors
-        if (error.status === 400) {
-            console.warn('⚠️ Bad request - validation error');
-            return throwError(() => new Error(error.error?.message || 'Invalid request data.'));
-        }
-
-        // Handle server errors
-        if (error.status >= 500) {
-            console.error('🔥 Server error occurred');
-            return throwError(() => new Error('A server error occurred. Please try again later.'));
-        }
-
-        // Default error handling
-        return throwError(() => new Error(error.error?.message || 'An unexpected error occurred.'));
-    };
-
-    // ==================== PROJECT ENDPOINTS ====================
-
-    /**
-     * Get all projects by user ID
-     * GET /api/v1/projects?userId={userId}
-     */
-    getAllProjectsByUserId(userId: string): Observable<ProjectResponse[]> {
-        console.log('🔍 DesignLabService - Getting projects for user:', userId);
-
-        return this.http.get<ProjectResponse[]>(`${BASE_URL}?userId=${userId}`, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Projects fetched successfully:', response.length);
-                return response;
-            }),
-            catchError(this.handleError)
-        );
+    if (response.type === LayerType.IMAGE) {
+      return new ImageLayer(
+        response.id,
+        response.x,
+        response.y,
+        response.z,
+        response.opacity,
+        response.isVisible,
+        response.details?.imageUrl || ''
+      );
     }
 
-    /**
-     * Get project by ID
-     * GET /api/v1/projects/{projectId}
-     */
-    getProjectById(projectId: string): Observable<ProjectResponse> {
-        console.log('🔍 DesignLabService - Getting project by ID:', projectId);
+    // Fallback para tipos no reconocidos
+    return new TextLayer(
+      response.id,
+      response.x,
+      response.y,
+      response.z,
+      response.opacity,
+      response.isVisible,
+      new Date(response.createdAt),
+      new Date(response.updatedAt),
+      { text: '', fontFamily: 'Arial', fontSize: 16, fontColor: '#000000', isBold: false, isItalic: false, isUnderlined: false }
+    );
+  }
 
-        return this.http.get<ProjectResponse>(`${BASE_URL}/${projectId}`, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project fetched successfully:', response.id);
-                return response;
-            }),
-            catchError(this.handleError)
-        );
+  /**
+   * Obtener mensaje de error legible
+   */
+  private getErrorMessage(error: any): string {
+    if (error.status === 401) {
+      return 'Token expirado o inválido. Por favor, inicia sesión nuevamente.';
+    } else if (error.status === 403) {
+      return 'No tienes permisos para realizar esta acción.';
+    } else if (error.status === 404) {
+      return 'Recurso no encontrado.';
+    } else if (error.status === 500) {
+      return 'Error interno del servidor. Intenta nuevamente más tarde.';
+    } else if (error.error?.message) {
+      return error.error.message;
+    } else {
+      return 'Error desconocido. Intenta nuevamente.';
     }
-
-    /**
-     * Create new project
-     * POST /api/v1/projects
-     */
-    createProject(request: CreateProjectRequest): Observable<ProjectResponse> {
-        console.log('🆕 DesignLabService - Creating new project:', request);
-
-        return this.http.post<ProjectResponse>(BASE_URL, request, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project created successfully:', response.id);
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Get project details for product catalog
-     * GET /api/v1/projects/{projectId}/details
-     */
-    getProjectDetailsForProduct(projectId: string): Observable<ProjectDetailsResponse> {
-        console.log('🔍 DesignLabService - Getting project details for product:', projectId);
-
-        return this.http.get<ProjectDetailsResponse>(`${BASE_URL}/${projectId}/details`, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project details fetched successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Update project details
-     * PUT /api/v1/projects/{projectId}/details
-     */
-    updateProjectDetails(projectId: string, request: UpdateProjectDetailsRequest): Observable<ProjectResponse> {
-        console.log('📝 DesignLabService - Updating project details:', projectId, request);
-
-        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}/details`, request, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project details updated successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Update entire project (legacy support)
-     * PUT /api/v1/projects/{projectId}
-     */
-    updateProject(projectId: string, request: UpdateProjectRequest): Observable<ProjectResponse> {
-        console.log('📝 DesignLabService - Updating entire project:', projectId);
-
-        return this.http.put<ProjectResponse>(`${BASE_URL}/${projectId}`, request, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project updated successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Delete project
-     * DELETE /api/v1/projects/{projectId}
-     */
-    deleteProject(projectId: string): Observable<DeleteProjectResponse> {
-        console.log('🗑️ DesignLabService - Deleting project:', projectId);
-
-        return this.http.delete<DeleteProjectResponse>(`${BASE_URL}/${projectId}`, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Project deleted successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    // ==================== LAYER ENDPOINTS ====================
-
-    /**
-     * Create text layer
-     * POST /api/v1/projects/{projectId}/texts
-     */
-    createTextLayer(projectId: string, request: CreateTextLayerRequest): Observable<TextLayerResponse> {
-        console.log('📝 DesignLabService - Creating text layer for project:', projectId, request);
-
-        return this.http.post<TextLayerResponse>(`${BASE_URL}/${projectId}/texts`, request, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Text layer created successfully:', response.id);
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Create image layer
-     * POST /api/v1/projects/{projectId}/images
-     */
-    createImageLayer(projectId: string, request: CreateImageLayerRequest): Observable<ImageLayerResponse> {
-        console.log('🖼️ DesignLabService - Creating image layer for project:', projectId, request);
-
-        return this.http.post<ImageLayerResponse>(`${BASE_URL}/${projectId}/images`, request, {
-            headers: this.getAuthHeaders()
-        }).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Image layer created successfully:', response.id);
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Update text layer details
-     * PUT /api/v1/projects/{projectId}/layers/{layerId}/text-details
-     */
-    updateTextLayerDetails(
-        projectId: string,
-        layerId: string,
-        request: UpdateTextLayerDetailsRequest
-    ): Observable<TextLayerResponse> {
-        console.log('📝 DesignLabService - Updating text layer details:', projectId, layerId, request);
-
-        return this.http.put<TextLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/text-details`,
-            request,
-            { headers: this.getAuthHeaders() }
-        ).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Text layer details updated successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Update image layer details
-     * PUT /api/v1/projects/{projectId}/layers/{layerId}/image-details
-     */
-    updateImageLayerDetails(
-        projectId: string,
-        layerId: string,
-        request: UpdateImageLayerDetailsRequest
-    ): Observable<ImageLayerResponse> {
-        console.log('🖼️ DesignLabService - Updating image layer details:', projectId, layerId, request);
-
-        return this.http.put<ImageLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/image-details`,
-            request,
-            { headers: this.getAuthHeaders() }
-        ).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Image layer details updated successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Update layer coordinates
-     * PUT /api/v1/projects/{projectId}/layers/{layerId}/coordinates
-     */
-    updateLayerCoordinates(
-        projectId: string,
-        layerId: string,
-        request: UpdateLayerCoordinatesRequest
-    ): Observable<LayerResponse> {
-        console.log('📍 DesignLabService - Updating layer coordinates:', projectId, layerId, request);
-
-        return this.http.put<LayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`,
-            request,
-            { headers: this.getAuthHeaders() }
-        ).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Layer coordinates updated successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    /**
-     * Delete layer
-     * DELETE /api/v1/projects/{projectId}/layers/{layerId}
-     */
-    deleteLayer(projectId: string, layerId: string): Observable<DeleteLayerResponse> {
-        console.log('🗑️ DesignLabService - Deleting layer:', projectId, layerId);
-
-        return this.http.delete<DeleteLayerResponse>(
-            `${BASE_URL}/${projectId}/layers/${layerId}`,
-            { headers: this.getAuthHeaders() }
-        ).pipe(
-            map((response) => {
-                console.log('✅ DesignLabService - Layer deleted successfully');
-                return response;
-            }),
-            catchError(this.handleError)
-        );
-    }
-
-    // ==================== UTILITY METHODS ====================
-
-    /**
-     * Check if user is authenticated
-     */
-    isAuthenticated(): boolean {
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        return !!(token && userId);
-    }
-
-    /**
-     * Get current user ID
-     */
-    getCurrentUserId(): string | null {
-        return localStorage.getItem('userId');
-    }
+  }
 }

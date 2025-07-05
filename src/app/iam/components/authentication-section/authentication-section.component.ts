@@ -1,58 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AuthenticationService } from '../../services/authentication.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatDividerModule } from '@angular/material/divider';
+import {Component} from '@angular/core';
+import {Router} from "@angular/router";
+import {AuthenticationService} from "../../services/authentication.service";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-authentication-section',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatDividerModule,
+    MatButton
   ],
   templateUrl: './authentication-section.component.html',
-  styleUrl: './authentication-section.component.css',
+  styleUrl: './authentication-section.component.css'
 })
-export class AuthenticationSectionComponent implements OnInit {
-  isSignedIn$: Observable<boolean>;
-  currentUsername$: Observable<string>;
-
-  constructor(
-    private authService: AuthenticationService,
-    private router: Router
-  ) {
-    this.isSignedIn$ = this.authService.isSignedIn;
-    this.currentUsername$ = this.authService.currentUsername;
+export class AuthenticationSectionComponent {
+  currentUserName: string = '';
+  isSignedIn: boolean = false;
+  constructor(private router: Router, private authenticationService: AuthenticationService) {
+    this.authenticationService.currentUsername.subscribe((username) => this.currentUserName = username);
+    this.authenticationService.isSignedIn.subscribe((isSignedIn) => this.isSignedIn = isSignedIn);
   }
 
-  ngOnInit() {
-    // Component initialization logic if needed
+  /**
+   * Event Handler for the sign-in button.
+   */
+  onSignIn() {
+    // Navigate to the sign-in page.
+    this.router.navigate(['/sign-in']).then();
   }
 
+  /**
+   * Event Handler for the sign-up button.
+   */
+  onSignUp() {
+    // Navigate to the sign-up page.
+    this.router.navigate(['/sign-up']).then();
+  }
+
+  /**
+   * Event Handler for the sign-out button.
+   */
   onSignOut() {
-    this.authService.signOut();
-  }
-
-  goToSignIn() {
-    this.router.navigate(['/sign-in']);
-  }
-
-  goToSignUp() {
-    this.router.navigate(['/sign-up']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/profile']);
+    // Sign out the user.
+    this.authenticationService.signOut();
   }
 }

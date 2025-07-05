@@ -1,101 +1,105 @@
 <div class="project-edit-container">
-  <!-- Toolbar -->
-  <mat-toolbar color="primary" class="edit-toolbar">
-    <button mat-icon-button (click)="goBack()" matTooltip="Back to Project">
+  <mat-toolbar color="primary" class="project-edit-toolbar">
+    <button mat-icon-button routerLink="/home/design-lab">
       <mat-icon>arrow_back</mat-icon>
     </button>
+    <span class="toolbar-title" *ngIf="project">
+      {{ project.title }} - {{ project.garmentColor }} {{ project.garmentSize }}
+    </span>
     <span class="toolbar-spacer"></span>
-    <span *ngIf="project">Editing: {{ project.title }}</span>
-    <span class="toolbar-spacer"></span>
-    <button mat-raised-button color="accent" (click)="saveProject()" [disabled]="loading || isGeneratingPreview">
+    <button mat-icon-button (click)="saveProject()" [disabled]="isSaving">
       <mat-icon>save</mat-icon>
-      {{ isGeneratingPreview ? 'Generating Preview...' : 'Save' }}
     </button>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="openDeleteDialog()">
+        <mat-icon color="warn">delete</mat-icon>
+        <span>{{ 'designLab.deleteProject.menuItem' | translate }}</span>
+      </button>
+    </mat-menu>
   </mat-toolbar>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Loading project...</p>
-  </div>
+  <div class="project-edit-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>{{ 'designLab.loadingProject' | translate }}</p>
+    </div>
 
-  <!-- Error Message -->
-  <div *ngIf="error" class="error-container">
-    <p>{{ error }}</p>
-    <button mat-button color="primary" (click)="loadProject()">
-      Retry
-    </button>
-  </div>
-  <!-- Editor Content -->
-  <div *ngIf="!loading && !error && project" class="editor-content">
-    <div class="editor-layout">
-      <!-- Preview Panel -->
-      <div class="preview-panel">
-        <div class="preview-header">
-          <h3>Preview</h3>
+    <!-- Error State -->
+    <div *ngIf="error" class="error-container">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="loadProject()">
+        <mat-icon>refresh</mat-icon>
+        {{ 'common.retry' | translate }}
+      </button>
+    </div>
+
+    <!-- Project Editor -->
+    <div *ngIf="project && !isLoading && !error" class="project-editor">
+      <!-- Top Tools Bar -->
+      <div class="top-tools-bar">
+        <app-layer-toolbar
+          [canSave]="true"
+          [canExport]="true"
+          (layerToolEvent)="onLayerToolEvent($event)">
+        </app-layer-toolbar>
+      </div>
+
+      <!-- Main Editor Layout -->
+      <div class="editor-layout">
+        <!-- Left Panel - Canvas Tools -->
+        <div class="left-panel">
+          <app-canvas-tools
+            [currentTool]="currentTool"
+            [isModified]="isModified"
+            (toolEvent)="onCanvasToolEvent($event)">
+          </app-canvas-tools>
         </div>
-        <div class="tshirt-preview" #tshirtPreview>
-          <div class="tshirt-container">
-            <div class="tshirt-image">
-              <div
-                class="cropped-image"
-                [style.background-image]="'url(' + garmentColorImages + ')'"
-                [style.background-position]="getBackgroundPosition(project.garmentColor)"
-              >
-                <!-- Text Layers -->
-                <div
-                  *ngFor="let layer of textLayers; trackBy: trackLayerById"
-                  class="text-layer"
-                  [style.left.px]="layer.x"
-                  [style.top.px]="layer.y"
-                  [style.opacity]="layer.opacity"
-                  [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
-                  [style.z-index]="layer.z"
-                  [style.color]="layer.details?.fontColor || '#000000'"
-                  [style.font-family]="layer.details?.fontFamily || 'Arial'"
-                  [style.font-size.px]="layer.details?.fontSize || 16"
-                  [style.font-weight]="layer.details?.isBold ? 'bold' : 'normal'"
-                  [style.font-style]="layer.details?.isItalic ? 'italic' : 'normal'"
-                  [style.text-decoration]="layer.details?.isUnderlined ? 'underline' : 'none'"
-                  (mousedown)="startDrag($event, layer)"
-                >
-                  <div class="delete-button" (mousedown)="$event.stopPropagation()" (click)="deleteLayer($event, layer, 'text')">×</div>
-                  {{ layer.details?.text || 'No text' }}
-                </div>
-                <!-- Image Layers -->
-                <div
-                  *ngFor="let layer of imageLayers; trackBy: trackLayerById"
-                  class="image-layer"
-                  [style.left.px]="layer.x"
-                  [style.top.px]="layer.y"
-                  [style.opacity]="layer.opacity"
-                  [style.visibility]="layer.isVisible ? 'visible' : 'hidden'"
-                  [style.z-index]="layer.z"
-                  (mousedown)="startDrag($event, layer)"
-                >
-                  <div class="delete-button" (mousedown)="$event.stopPropagation()" (click)="deleteLayer($event, layer, 'image')">×</div>
-                  <img [src]="layer.imageUrl || layer.details?.imageUrl" [alt]="'Layer ' + layer.id"
-                       style="max-width: 100%; max-height: 100%; object-fit: contain;"
-                       (error)="onImageLoadError(layer)" />
-                </div>
-              </div>
-            </div>
+
+        <!-- Center Panel - Design Canvas -->
+        <div class="center-panel">
+          <div class="canvas-container">
+            <app-garment-background
+              [project]="project"
+              [width]="canvasWidth"
+              [height]="canvasHeight">
+            </app-garment-background>
+
+            <app-design-canvas
+              [layers]="project.layers"
+              [garmentColor]="getGarmentColorHex(project.garmentColor)"
+              [canvasWidth]="canvasWidth"
+              [canvasHeight]="canvasHeight"
+              [readOnly]="false"
+              (layerEvent)="onLayerEvent($event)"
+              (layersChange)="onLayersChange($event)">
+            </app-design-canvas>
           </div>
         </div>
-      </div>      <!-- Tools Panel -->
-      <div class="tools-panel">
-        <app-editor-container
-          [currentColor]="project.garmentColor"
-          [project]="project"
-          [textLayers]="textLayers"
-          [imageLayers]="imageLayers"
-          [config]="editorConfig"
-          (garmentColorChanged)="handleGarmentColorChanged($event)"
-          (textLayerCreated)="handleTextLayerCreated($event)"
-          (imageLayerCreated)="handleImageLayerCreated($event)"
-          (layerAdded)="handleLayerAdded($event)"
-        >
-        </app-editor-container>
+
+        <!-- Right Panel - Layer Management & Properties -->
+        <div class="right-panel">
+          <!-- Layer Management -->
+          <div class="panel-section">
+            <app-layer-management-panel
+              [layers]="project.layers"
+              [selectedLayerId]="selectedLayerId"
+              (layerEvent)="onLayerManagementEvent($event)">
+            </app-layer-management-panel>
+          </div>
+
+          <!-- Layer Properties -->
+          <div class="panel-section">
+            <app-layer-properties-panel
+              [selectedLayer]="selectedLayer"
+              (propertyEvent)="onLayerPropertyEvent($event)">
+            </app-layer-properties-panel>
+          </div>
+        </div>
       </div>
     </div>
   </div>

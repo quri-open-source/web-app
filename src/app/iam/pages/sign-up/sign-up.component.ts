@@ -1,143 +1,146 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../../services/authentication.service';
-import { SignUpRequest } from '../../model/sign-up.request';
-import { UserRoles, ROLE_OPTIONS, RoleOption } from '../../model/user-roles';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl} from "@angular/forms";
+import {AuthenticationService} from '../../services/authentication.service';
+import {SignUpRequest} from "../../model/sign-up.request";
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {MatError, MatFormField, MatLabel, MatPrefix, MatSuffix} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {RouterLink} from "@angular/router";
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
   imports: [
-    CommonModule,
+    MatCardHeader,
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardContent,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
+    MatFormField,
+    MatLabel,
+    MatError,
+    MatInput,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    MatPrefix,
+    MatSuffix,
+    RouterLink,
+    LanguageSwitcherComponent,
+    TranslateModule,
     MatSelectModule,
-    MatSnackBarModule,
-    TranslateModule
+    MatOptionModule,
+    CommonModule
   ],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })
-export class SignUpComponent {
-  signUpForm: FormGroup;
+export class SignUpComponent implements OnInit {
+  form!: FormGroup;
+  roles: Array<{ label: string; value: string }> = [];
+  selectedRole = 'customer';
+  submitted: boolean = false;
+  hidePassword = true;
+  hideConfirmPassword = true;
   isLoading = false;
-  roleOptions: RoleOption[] = ROLE_OPTIONS;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthenticationService,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private translate: TranslateService
-  ) {
-    this.signUpForm = this.fb.group({
+    private builder: FormBuilder,
+    private authenticationService: AuthenticationService,
+    private translateService: TranslateService
+  ) {}
+
+  ngOnInit(): void {
+    this.roles = [
+      { label: this.translateService.instant('signup.roleField.customer'), value: 'customer' },
+      { label: this.translateService.instant('signup.roleField.manufacturer'), value: 'manufacturer' }
+    ];
+    this.form = this.builder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      role: [UserRoles.ROLE_USER, [Validators.required]]
+      role: ['customer', Validators.required]
     }, { validators: this.passwordMatchValidator });
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-    } else if (confirmPassword?.hasError('passwordMismatch')) {
-      confirmPassword.setErrors(null);
-    }
-
-    return null;
-  }
-
   onSubmit() {
-    console.log('📋 Form submitted!');
-    console.log('✅ Form valid:', this.signUpForm.valid);
-    console.log('📝 Form values:', this.signUpForm.value);
+    if (this.form.invalid) return;
 
-    if (this.signUpForm.valid) {
-      this.isLoading = true;
-      const selectedRole = this.signUpForm.get('role')?.value;
+    this.isLoading = true;
+    this.submitted = true;
 
-      console.log('🎯 Selected role:', selectedRole);
+    const username = this.form.value.username;
+    const password = this.form.value.password;
+    const role = this.form.value.role;
+    let roles = ['ROLE_USER'];
+    if (role === 'manufacturer') {
+      roles.push('ROLE_MANUFACTURER');
+    }
+    const signUpRequest = new SignUpRequest(username, password, roles);
 
-      const signUpRequest = new SignUpRequest(
-        this.signUpForm.get('username')?.value,
-        this.signUpForm.get('password')?.value,
-        [selectedRole] // Array with the selected role
-      );
+    this.authenticationService.signUp(signUpRequest);
 
-      console.log('🔧 SignUpRequest created:', signUpRequest);
+    // Reset loading state after a reasonable time
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
+  }
 
-      // Subscribe to the sign-up response to show success message
-      this.authService.signUpWithCallback(signUpRequest).subscribe({
-        next: (response: any) => {
-          console.log('✅ Sign-up successful:', response);
-          this.snackBar.open(this.translate.instant('auth.account_created_success'), this.translate.instant('common.close'), {
-            duration: 5000,
-            panelClass: ['success-snackbar']
-          });
-          this.isLoading = false;
-          this.router.navigate(['/sign-in']);
-        },
-        error: (error: any) => {
-          console.error('❌ Sign-up error:', error);
-          this.snackBar.open(this.translate.instant('auth.error_creating_account'), this.translate.instant('common.close'), {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-          });
-          this.isLoading = false;
-        }
+  passwordMatchValidator(control: AbstractControl): {[key: string]: any} | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (!password || !confirmPassword) {
+      return null;
+    }
+
+    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+  }
+
+  isInvalidControl(form: FormGroup, controlName: string): boolean {
+    const control = form.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  errorMessagesForControl(form: FormGroup, controlName: string): string {
+    const control = form.get(controlName);
+    if (!control || !control.errors) return '';
+
+    if (control.errors['required']) {
+      return this.translateService.instant('signup.validation.required', { field: this.getFieldName(controlName) });
+    }
+
+    if (control.errors['minlength']) {
+      const requiredLength = control.errors['minlength'].requiredLength;
+      return this.translateService.instant('signup.validation.minlength', {
+        field: this.getFieldName(controlName),
+        length: requiredLength
       });
-    } else {
-      console.log('❌ Form is invalid');
-      this.markFormGroupTouched();
     }
-  }
 
-  private markFormGroupTouched() {
-    Object.keys(this.signUpForm.controls).forEach(key => {
-      const control = this.signUpForm.get(key);
-      control?.markAsTouched();
-    });
-  }
+    if (controlName === 'confirmPassword' && form.errors?.['passwordMismatch']) {
+      return this.translateService.instant('signup.validation.passwordMismatch');
+    }
 
-  goToSignIn() {
-    this.router.navigate(['/sign-in']);
-  }
-
-  getErrorMessage(fieldName: string): string {
-    const control = this.signUpForm.get(fieldName);
-    if (control?.hasError('required')) {
-      return `${this.translate.instant('auth.' + fieldName)} ${this.translate.instant('auth.required_field')}`;
-    }
-    if (control?.hasError('minlength')) {
-      return `${this.translate.instant('auth.' + fieldName)} ${this.translate.instant('auth.min_length')} ${control.errors?.['minlength']?.requiredLength} ${this.translate.instant('auth.characters_long')}`;
-    }
-    if (control?.hasError('passwordMismatch')) {
-      return this.translate.instant('auth.passwords_do_not_match');
-    }
     return '';
   }
 
-  getRoleLabel(role: string): string {
-    return this.translate.instant('auth.role_' + role.toLowerCase().replace('role_', ''));
+  private getFieldName(controlName: string): string {
+    const fieldNames: { [key: string]: string } = {
+      'username': 'signup.username',
+      'password': 'signup.password',
+      'confirmPassword': 'signup.confirmPassword'
+    };
+    return this.translateService.instant(fieldNames[controlName]) || controlName;
   }
 
-  getRoleDescription(role: string): string {
-    return this.translate.instant('auth.role_' + role.toLowerCase().replace('role_', '') + '_desc');
-  }
+
 }
