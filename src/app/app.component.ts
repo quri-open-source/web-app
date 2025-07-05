@@ -10,7 +10,7 @@ import { TranslationService } from './shared/services/translation.service';
   template: '<router-outlet></router-outlet>',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class App implements OnInit {
   title = 'QURI TeeLab';
 
   constructor(

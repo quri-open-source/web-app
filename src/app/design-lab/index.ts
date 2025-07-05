@@ -8,10 +8,10 @@ export { ProjectAssembler } from './services/project.assembler';
 export { LayerAssembler } from './services/layer.assembler';
 
 // Re-export enums from const.ts
-export { 
-    PROJECT_STATUS, 
-    PROJECT_GENDER, 
-    GARMENT_COLOR, 
-    GARMENT_SIZE, 
-    LayerType 
+export {
+    PROJECT_STATUS,
+    PROJECT_GENDER,
+    GARMENT_COLOR,
+    GARMENT_SIZE,
+    LayerType
 } from '../const';

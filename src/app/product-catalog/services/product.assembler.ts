@@ -89,7 +89,7 @@ export class ProductAssembler {
       request.projectId,
       request.priceAmount,
       request.priceCurrency,
-      request.status || ProductStatus.AVAILABLE,
+      ProductStatus.AVAILABLE,
       projectTitle,
       projectPreviewUrl,
       projectUserId
@@ -180,10 +180,6 @@ export class ProductAssembler {
 
     if (!request.priceCurrency || request.priceCurrency.trim() === '') {
       errors.push('priceCurrency is required and cannot be empty');
-    }
-
-    if (request.status && !Object.values(ProductStatus).includes(request.status)) {
-      errors.push('status must be one of: ' + Object.values(ProductStatus).join(', '));
     }
 
     return errors;
