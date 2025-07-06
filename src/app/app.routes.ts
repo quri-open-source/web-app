@@ -88,6 +88,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'order-processing/checkout',
+        loadComponent: () =>
+          import('./order-processing/components/checkout-form/checkout-page.component').then(
+            (c) => c.CheckoutPageComponent
+          ),
+        canActivate: [authenticationGuard],
+      },
+      {
         path: 'fulfillments',
         loadComponent: () =>
           import('./public/pages/fulfillments/fulfillments.component').then(

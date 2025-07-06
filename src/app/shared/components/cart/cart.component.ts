@@ -18,6 +18,8 @@ import { ProductCatalogService } from '../../../product-catalog/services/product
 import { ProductResponse } from '../../../product-catalog/services/product.response';
 import { ProductUtils } from '../../../product-catalog/model/product.utils';
 import { AuthenticationService } from '../../../iam/services/authentication.service';
+import { OrderProcessingService } from '../../../order-processing/services/order-processing.service';
+import { CreateOrderPaymentIntentRequest } from '../../../order-processing/services/order-processing.response';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -52,7 +54,8 @@ export class CartComponent implements OnInit {
         private snackBar: MatSnackBar,
         private translateService: TranslateService,
         private authService: AuthenticationService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private orderProcessingService: OrderProcessingService // <-- nuevo
     ) {}
 
     ngOnInit() {
@@ -153,7 +156,6 @@ export class CartComponent implements OnInit {
     }
 
     proceedToCheckout() {
-        // Check if user is authenticated
         this.authService.currentUserId.subscribe((userId) => {
             if (!userId || userId === '') {
                 const message =
@@ -170,19 +172,44 @@ export class CartComponent implements OnInit {
                 return;
             }
 
-            // For now, show a message that checkout is not implemented
-            const message = this.translateService.instant(
-                'cart.checkoutNotImplemented'
+            // Calcular el monto total y la moneda
+            const total = this.cartProducts.reduce(
+                (sum, product) => sum + product.priceAmount,
+                0
             );
-            this.snackBar.open(
-                message,
-                this.translateService.instant('common.close'),
-                {
-                    duration: 5000,
-                    horizontalPosition: 'end',
-                    verticalPosition: 'top',
-                }
-            );
+            const currency =
+                this.cartProducts.length > 0
+                    ? this.cartProducts[0].priceCurrency
+                    : 'USD';
+
+            // Crear la request para el intent de pago
+            const paymentIntentRequest: CreateOrderPaymentIntentRequest = {
+                amount: total, // Stripe espera centavos
+                currency,
+            };
+
+            this.orderProcessingService.createPaymentIntent(paymentIntentRequest).subscribe({
+                next: (response) => {
+                    // Redirigir a checkout con el secret key
+                    this.router.navigate(['/home/order-processing/checkout'], {
+                        state: { clientSecret: response.secretKey },
+                    });
+                },
+                error: (err) => {
+                    const message = this.translateService.instant(
+                        'cart.paymentIntentError'
+                    );
+                    this.snackBar.open(
+                        message,
+                        this.translateService.instant('common.close'),
+                        {
+                            duration: 5000,
+                            horizontalPosition: 'end',
+                            verticalPosition: 'top',
+                        }
+                    );
+                },
+            });
         });
     }
 

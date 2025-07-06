@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, Input, signal, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 
 import { MatInputModule } from '@angular/material/input';
@@ -13,15 +13,18 @@ import {
   StripePaymentElementOptions
 } from '@stripe/stripe-js';
 import { environment } from '../../../../environments/environment';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'ngstr-checkout-form',
   templateUrl: './payment-element.component.html',
+  styleUrls: ['./payment-element.component.css'],
   imports: [
     ReactiveFormsModule,
     MatInputModule,
     StripePaymentElementComponent,
-    NgxStripeModule
+    NgxStripeModule,
+    MatButton
   ]
 })
 export class CheckoutFormComponent {
@@ -29,7 +32,7 @@ export class CheckoutFormComponent {
   paymentElement!: StripePaymentElementComponent;
 
   // Recibe el clientSecret por parámetro
-  clientSecret!: string;
+  @Input() clientSecret!: string;
 
   private readonly fb = inject(UntypedFormBuilder);
 
