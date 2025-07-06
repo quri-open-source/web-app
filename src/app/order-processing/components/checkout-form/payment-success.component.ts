@@ -1,19 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { OrderFulfillmentService } from '../../../order-fulfillments/services/order-fulfillment.service';
+import { CreateOrderFulfillmentRequest } from '../../../order-fulfillments/services/order-fulfillments.response';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-payment-success',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, RouterModule, TranslateModule],
+  imports: [MatIconModule, MatButtonModule, RouterModule, TranslateModule, CommonModule],
   template: `
     <div class="payment-success-container">
       <mat-icon color="primary" style="font-size: 64px;">check_circle</mat-icon>
       <h2>{{ 'payment.success.title' | translate }}</h2>
       <p>{{ 'payment.success.message' | translate }}</p>
       <p class="order-info">{{ 'payment.success.orderInfo' | translate }}</p>
+      <div *ngIf="fulfillmentError" class="fulfillment-error">
+        <mat-icon color="warn">error</mat-icon>
+        {{ fulfillmentError }}
+      </div>
       <div class="action-buttons">
         <a mat-stroked-button color="primary" routerLink="/home">
           <mat-icon>home</mat-icon>
@@ -64,6 +73,14 @@ import { TranslateModule } from '@ngx-translate/core';
       align-items: center;
       gap: 0.5rem;
     }
+    .fulfillment-error {
+      color: #d32f2f;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+    }
     @media (max-width: 600px) {
       .action-buttons {
         flex-direction: column;
@@ -73,4 +90,46 @@ import { TranslateModule } from '@ngx-translate/core';
     }
   `]
 })
-export class PaymentSuccessComponent {}
+export class PaymentSuccessComponent implements OnInit {
+  private router = inject(Router);
+  private fulfillmentService = inject(OrderFulfillmentService);
+  fulfillmentError: string | null = null;
+
+  ngOnInit(): void {
+    // Obtener manufacturerId y orderId del navigation state o localStorage
+    let manufacturerId = history.state?.manufacturerId || localStorage.getItem('manufacturerId');
+    let orderId = history.state?.orderId || localStorage.getItem('orderId');
+
+    // Si no están en navigation state, intenta recuperarlos de localStorage
+    if (!manufacturerId) {
+      manufacturerId = localStorage.getItem('manufacturerId');
+    }
+    if (!orderId) {
+      orderId = localStorage.getItem('orderId');
+    }
+
+    if (manufacturerId && orderId) {
+      const req: CreateOrderFulfillmentRequest = {
+        manufacturerId,
+        orderId
+      };
+      this.fulfillmentService.create(req).subscribe({
+        next: () => {
+          // Fulfillment creado exitosamente
+          this.fulfillmentError = null;
+          // Limpiar datos temporales
+          localStorage.removeItem('manufacturerId');
+          localStorage.removeItem('orderId');
+        },
+        error: (err) => {
+          this.fulfillmentError = 'Error creando fulfillment: ' + (err?.message || err);
+          // Opcional: log
+          console.error('Error creando fulfillment:', err);
+        }
+      });
+    } else {
+      this.fulfillmentError = 'No se pudo obtener manufacturerId u orderId para crear el fulfillment.';
+      console.warn('manufacturerId u orderId faltantes en success');
+    }
+  }
+}
