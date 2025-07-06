@@ -98,7 +98,7 @@
       "action": "Ver Catálogo"
     },
     "designLab": {
-      "title": "Laboratorio de Diseño",
+      "title": "Editor",
       "subtitle": "Crea y edita tus propios diseños",
       "action": "Abrir Editor"
     }
@@ -248,7 +248,7 @@
     "viewPerformance": "Ve tus métricas de rendimiento y KPIs"
   },
   "designLab": {
-    "title": "Laboratorio de Diseño",
+    "title": "Editor",
     "myProjects": "Mis Proyectos",
     "newProject": "Nuevo Proyecto",
     "createProject": "Crear Proyecto",
@@ -460,7 +460,7 @@
     "dashboard": "Panel de Control",
     "catalog": "Catálogo",
     "productCatalog": "Catálogo de Productos",
-    "designLab": "Laboratorio de Diseño",
+    "designLab": "Editor",
     "cart": "Carrito",
     "analytics": "Análisis",
     "profile": "Perfil",

@@ -81,7 +81,7 @@ export class CheckoutFormComponent {
 
   pay() {
     if (this.paying() || this.paymentElementForm.invalid) return;
-    
+
     console.log('💳 Starting payment process...');
     this.paying.set(true);
 
@@ -109,12 +109,12 @@ export class CheckoutFormComponent {
             }
           }
         },
-        redirect: 'if_required'
+        redirect: "if_required",
       })
       .subscribe(result => {
         this.paying.set(false);
         console.log('💳 Payment result:', result);
-        
+
         if (result.error) {
           console.error('❌ Payment failed:', result.error.message);
           // Show error to your customer (e.g., insufficient funds)
@@ -123,19 +123,13 @@ export class CheckoutFormComponent {
           // The payment has been processed!
           if (result.paymentIntent.status === 'succeeded') {
             console.log('✅ Payment succeeded! Clearing cart and redirecting...');
-            
+
             // Limpiar carrito
             this.cartService.clearCart();
             console.log('🛒 Cart cleared');
-            
-            // Pequeña pausa antes de redirigir para asegurar que el estado se actualice
-            setTimeout(() => {
-              console.log('🔄 Redirecting to success page...');
-              this.router.navigate(['/home/order-processing/payment/ok'], { 
-                replaceUrl: true // Usar replaceUrl para evitar problemas con el historial
-              });
-            }, 500);
-          } else {
+
+            this.router.navigate(['/home/order-processing/payment/ok']);
+        } else {
             console.warn('⚠️ Payment intent status:', result.paymentIntent.status);
           }
         }
