@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://web-services-ydwf.onrender.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

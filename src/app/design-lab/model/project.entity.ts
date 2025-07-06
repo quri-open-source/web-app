@@ -1,5 +1,8 @@
 import {
     PROJECT_STATUS,
+    PROJECT_GENDER,
+    GARMENT_COLOR,
+    GARMENT_SIZE,
 } from '../../const';
 import { Layer } from './layer.entity';
 
@@ -9,9 +12,9 @@ export class Project {
     userId: string;
     previewUrl: string | null;
     status: PROJECT_STATUS;
-    garmentColor: string;
-    garmentSize: string;
-    garmentGender: string;
+    garmentColor: GARMENT_COLOR;
+    garmentSize: GARMENT_SIZE;
+    garmentGender: PROJECT_GENDER;
     layers: Layer[];
     createdAt: Date;
     updatedAt: Date;
@@ -22,9 +25,9 @@ export class Project {
         userId: string,
         previewUrl: string | null,
         status: PROJECT_STATUS,
-        garmentColor: string,
-        garmentSize: string,
-        garmentGender: string,
+        garmentColor: GARMENT_COLOR,
+        garmentSize: GARMENT_SIZE,
+        garmentGender: PROJECT_GENDER,
         layers: Layer[],
         createdAt: Date,
         updatedAt: Date

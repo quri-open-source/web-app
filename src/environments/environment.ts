@@ -1,13 +1,5 @@
 export const environment = {
-  production: true,
-  apiBaseUrl: 'https://opensourceback-production.up.railway.app/api/v1',
-  defaultPreviewImageUrl: 'https://picsum.photos/150/150',
-  defaultProjectStatus: 'blueprint',
-  defaultGarmentSize: 'M',
-  defaultGarmentColor: '#FFFFFF',
-  garmentColorImagesUrl: 'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp',
-  // Base URL for the projects API https://68230d7eb342dce800507517.mockapi.io
-  devUser: '8b3c1e7e-0d6a-4f6f-915a-77cfb0f9c8c1',
-  devRole: 'customer', // Default role
-  currencyCode: 'USD',
+  production: false,
+  stripePublicKey: 'pk_test_51RhgXgEI4EuyF4l3A89XvUAwutbDGNtUsFua1yfnm8LoDESZjuNtk0db8sWigC0kJW2YplK5vMd6qq35VTV4B2rn00PqiuRimi',
+  serverBaseUrl: 'https://web-services-ydwf.onrender.com'
 };

@@ -1,116 +1,121 @@
 import { Routes } from '@angular/router';
-import { roleGuard } from './access-security/model/access.entity';
+import { authenticationGuard } from './iam/services/authentication.guard';
 
 export const routes: Routes = [
-    {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full',
-    },
-    {
-        path: 'home',
+  { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
+  {
+    path: 'sign-in',
+    loadComponent: () =>
+      import('./iam/pages/sign-in/sign-in.component').then(
+        (c) => c.SignInComponent
+      ),
+  },
+  {
+    path: 'sign-up',
+    loadComponent: () =>
+      import('./iam/pages/sign-up/sign-up.component').then(
+        (c) => c.SignUpComponent
+      ),
+  },
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./public/pages/home/home.component').then((c) => c.HomeComponent),
+    canActivate: [authenticationGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
         loadComponent: () =>
-            import('./public/pages/home/home.component').then(
-                (m) => m.HomeComponent
-            ),
-    },
-    {
+          import('./public/pages/dashboard/dashboard.component').then(
+            (c) => c.DashboardComponent
+          ),
+      },
+      {
+        path: 'catalog',
+        loadComponent: () =>
+          import('./product-catalog/pages/catalog/catalog.component').then(
+            (c) => c.CatalogComponent
+          ),
+      },
+      {
+        path: 'catalog/:productId',
+        loadComponent: () =>
+          import('./product-catalog/pages/product-detail/product-detail.component').then(
+            (c) => c.ProductDetailComponent
+          ),
+      },
+      {
+        path: 'catalog/add-product/:projectId',
+        loadComponent: () =>
+          import('./product-catalog/pages/add-product/add-product.component').then(
+            (c) => c.AddProductComponent
+          ),
+      },
+      {
+        path: 'cart',
+        loadComponent: () =>
+          import('./shared/components/cart/cart.component').then(
+            (c) => c.CartComponent
+          ),
+      },
+      {
         path: 'design-lab',
         loadComponent: () =>
-            import('./public/pages/design-lab/design-lab.component').then(
-                (m) => m.DesignLabComponent
-            ),
-    },
-    {
-      path: 'explore',
-      loadComponent: () =>
-        import('./public/pages/explore/explore.component').then(
-          (m)=> m.ExploreComponent
-        )
-    },
-    {
+          import('./design-lab/pages/design-lab.component').then(
+            (c) => c.DesignLabComponent
+          ),
+      },
+      {
         path: 'design-lab/create',
         loadComponent: () =>
-            import('./design-lab/components/project-create/project-create.component').then(
-                (m) => m.ProjectCreateComponent
-            ),
-    },
-    {
-        path: 'design-lab/:id',
+          import('./design-lab/components/project-create/project-create.component').then(
+            (c) => c.ProjectCreateComponent
+          ),
+      },
+      {
+        path: 'design-lab/edit/:id',
         loadComponent: () =>
-            import('./design-lab/components/project-preview/project-preview.component').then(
-                (m) => m.ProjectPreviewComponent
-            ),
-    },
-    {
-        path: 'design-lab/:id/edit',
-        loadComponent: () =>
-            import('./design-lab/components/project-edit/project-edit.component').then(
-                (m) => m.ProjectEditComponent
-            ),
-    },    {
+          import('./design-lab/components/simple-editor/simple-editor.component').then(
+            (c) => c.SimpleEditorComponent
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
-            import('./public/pages/profile/profile.component').then(
-                (m) => m.ProfileComponent
-            ),
-    },
-    {
-        path: 'shopping-cart',
+          import('./public/pages/profile/profile.component').then(
+            (c) => c.ProfileComponent
+          ),
+      },
+      {
+        path: 'order-processing/checkout',
         loadComponent: () =>
-            import('./public/pages/shopping-cart/shopping-cart').then(
-                (m) => m.ShoppingCart
-            ),
-    },
-
-    {
-        path: 'choose-manufacturer',
+          import('./order-processing/components/checkout-form/checkout-page.component').then(
+            (c) => c.CheckoutPageComponent
+          ),
+      },
+      {
+        path: 'order-processing/payment/ok',
         loadComponent: () =>
-            import('./public/pages/choose-manufacturer/choose-manufacturer.component').then(
-                (m) => m.ChooseManufacturerComponent
-            ),
-    },
-    {
-      path: 'my-fulfillments',
-      loadComponent: () =>
-        import('./public/pages/my-fulfillments/my-fulfillments.component').then(
-          (m) => m.FulfillmentsListComponent
-        ),
-    },
-  {
-    path: 'analytics',
-    loadComponent: () =>
-      import('./public/pages/analytics/analytics.component').then(
-        (m) => m.AnalyticsComponent
-      ),
+          import('./order-processing/components/checkout-form/payment-success.component').then(
+            (c) => c.PaymentSuccessComponent
+          ),
+      },
+      {
+        path: 'fulfillments',
+        loadComponent: () =>
+          import('./public/pages/fulfillments/fulfillments.component').then(
+            (c) => c.FulfillmentsComponent
+          ),
+      },
+      {
+        path: 'fulfillments/:fulfillmentId',
+        loadComponent: () =>
+          import('./order-fulfillments/components/fulfillment-details/fulfillment-detail.component').then(
+            (c) => c.FulfillmentDetailComponent
+          ),
+      },
+    ],
   },
-  {
-    path: 'dashboard',
-    redirectTo: 'analytics',
-    pathMatch: 'full',
-  },
-  {
-    path: 'manufacturer-dashboard',
-    loadComponent: () =>
-      import('./public/pages/manufacturer-dashboard/manufacturer-dashboard.component').then(
-        (m) => m.ManufacturerDashboardComponent
-      ),
-    canActivate: [roleGuard(['manufacturer'])]
-  },
-  {
-    path: 'manufacturer-orders',
-    loadComponent: () =>
-      import('./public/pages/manufacturer-orders/manufacturer-orders-page.component').then(
-        (m) => m.ManufacturerOrdersPageComponent
-      ),
-    canActivate: [roleGuard(['manufacturer'])]
-  },
-  {
-    path: 'manufacturer-orders/:id',
-    loadComponent: () =>
-      import('./orders-fulfillments/components/manufacturer-orders/manufacturer-orders.component').then(
-        (m) => m.ManufacturerOrdersComponent
-      ),
-    canActivate: [roleGuard(['manufacturer'])]
-  }
+  { path: '**', redirectTo: '/sign-in' },
 ];

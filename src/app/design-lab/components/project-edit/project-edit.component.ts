@@ -1,359 +1,583 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { MatCardModule } from '@angular/material/card';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProjectService } from '../../services/project.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DesignLabService } from '../../services/design-lab-real.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { Project } from '../../model/project.entity';
 import { Layer, TextLayer, ImageLayer } from '../../model/layer.entity';
-import { EditorContainerComponent, EditorContainerConfig } from '../editors/editor-container/editor-container.component';
-import { TextProperties } from '../editors/text-editor/text-editor.component';
-import { ImageProperties } from '../editors/image-editor/image-editor.component';
-import { GARMENT_COLOR, GARMENT_SIZE } from '../../../const';
-
-interface GarmentColorOption {
-  label: string;
-  value: GARMENT_COLOR;
-}
+import { LayerType } from '../../../const';
+import { DesignCanvasComponent, LayerEvent } from '../design-canvas/design-canvas.component';
+import { LayerToolbarComponent, LayerToolEvent } from '../layer-toolbar/layer-toolbar.component';
+import { LayerManagementPanelComponent, LayerManagementEvent } from '../layer-management-panel/layer-management-panel.component';
+import { LayerPropertiesPanelComponent, LayerPropertyEvent } from '../layer-properties-panel/layer-properties-panel.component';
+import { CanvasToolsComponent, CanvasToolEvent, CanvasTool } from '../canvas-tools/canvas-tools.component';
+import { GarmentBackgroundComponent } from '../garment-background/garment-background.component';
+import { DeleteProjectDialogComponent, DeleteProjectDialogData } from '../delete-project-dialog/delete-project-dialog.component';
 
 @Component({
   selector: 'app-project-edit',
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatCardModule,
+    RouterModule,
+    MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
     MatProgressSpinnerModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    EditorContainerComponent,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatMenuModule,
+    TranslateModule,
+    DesignCanvasComponent,
+    LayerToolbarComponent,
+    LayerManagementPanelComponent,
+    LayerPropertiesPanelComponent,
+    CanvasToolsComponent,
+    GarmentBackgroundComponent
   ],
   templateUrl: './project-edit.component.html',
-  styleUrls: ['./project-edit.component.css'],
-  providers: [ProjectService],
+  styleUrl: './project-edit.component.css'
 })
-export class ProjectEditComponent implements OnInit, OnDestroy {
+export class ProjectEditComponent implements OnInit {
   project: Project | null = null;
-  loading = true;
+  isLoading = false;
+  isSaving = false;
+  isModified = false;
   error: string | null = null;
-  projectId: string = '';
-  textLayers: TextLayer[] = [];
-  imageLayers: ImageLayer[] = [];
-  // For dragging functionality
-  private draggedLayer: Layer | null = null;
-  private startX: number = 0;
-  private startY: number = 0;
-  private boundMouseMove: any;
-  private boundMouseUp: any;
+  projectId: string | null = null;
 
-  // Editor container configuration
-  editorConfig: EditorContainerConfig = {
-    textEditor: {
-      defaultPosition: { x: 160, y: 150 },
-      centerTextCalculation: true,
-      defaultZIndex: 1
-    },
-    imageEditor: {
-      defaultPosition: { x: 100, y: 100 },
-      maxImageSize: { width: 300, height: 300 },
-      defaultZIndex: 1,
-      allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-      maxFileSize: 5 * 1024 * 1024 // 5MB
-    },
-    enableLayerManagement: true
-  };
+  // Canvas properties
+  canvasWidth = 800;
+  canvasHeight = 600;
+  currentTool: CanvasTool = 'select';
 
-  // Garment colors configuration
-  garmentColors: GarmentColorOption[] = [
-    { label: 'black', value: GARMENT_COLOR.BLACK },
-    { label: 'gray', value: GARMENT_COLOR.GRAY },
-    { label: 'light-gray', value: GARMENT_COLOR.LIGHT_GRAY },
-    { label: 'white', value: GARMENT_COLOR.WHITE },
-    { label: 'red', value: GARMENT_COLOR.RED },
-    { label: 'pink', value: GARMENT_COLOR.PINK },
-    { label: 'light-purple', value: GARMENT_COLOR.LIGHT_PURPLE },
-    { label: 'purple', value: GARMENT_COLOR.PURPLE },
-    { label: 'light-blue', value: GARMENT_COLOR.LIGHT_BLUE },
-    { label: 'cyan', value: GARMENT_COLOR.CYAN },
-    { label: 'sky-blue', value: GARMENT_COLOR.SKY_BLUE },
-    { label: 'blue', value: GARMENT_COLOR.BLUE },
-    { label: 'green', value: GARMENT_COLOR.GREEN },
-    { label: 'light-green', value: GARMENT_COLOR.LIGHT_GREEN },
-    { label: 'yellow', value: GARMENT_COLOR.YELLOW },
-    { label: 'dark-yellow', value: GARMENT_COLOR.DARK_YELLOW },
-  ];
+  // Layer selection
+  selectedLayerId: string | null = null;
+  selectedLayer: Layer | null = null;
 
-  garmentColorImages =
-    'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private designLabService = inject(DesignLabService);
+  private authService = inject(AuthenticationService);
+  private translateService = inject(TranslateService);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private projectService: ProjectService
-  ) {}
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.projectId = params['id'];
+    this.projectId = this.route.snapshot.paramMap.get('id');
+
+    if (this.projectId) {
       this.loadProject();
-    });
-
-    // Bind the methods once to ensure we use the same reference when adding and removing
-    this.boundMouseMove = this.onMouseMove.bind(this);
-    this.boundMouseUp = this.onMouseUp.bind(this);
-
-    // Add mouse event listeners for dragging
-    document.addEventListener('mousemove', this.boundMouseMove);
-    document.addEventListener('mouseup', this.boundMouseUp);
-  }
-
-  // Clean up event listeners when component is destroyed
-  ngOnDestroy(): void {
-    document.removeEventListener('mousemove', this.boundMouseMove);
-    document.removeEventListener('mouseup', this.boundMouseUp);
+    } else {
+      this.error = this.translateService.instant('designLab.errors.projectNotFound');
+    }
   }
 
   loadProject(): void {
-    if (!this.projectId) {
-      this.error = 'No project ID provided';
-      this.loading = false;
-      return;
-    }
-    this.loading = true;
+    if (!this.projectId) return;
+
+    this.isLoading = true;
     this.error = null;
-    // Fetch all projects for the dev user and filter by id
-    this.projectService.getAllPublicProjectsForDevUser().subscribe({
-      next: (projects: Project[]) => {
-        const found = projects.find((p: Project) => p.id === this.projectId);
-        if (!found) {
-          this.error = 'Project not found';
-          this.loading = false;
-          return;
-        }
-        this.project = found;
-        if (this.project && this.project.layers) {
-          this.textLayers = this.project.layers.filter((layer: Layer) => layer.type === 'TEXT') as TextLayer[];
-          this.imageLayers = this.project.layers.filter((layer: Layer) => layer.type === 'IMAGE') as ImageLayer[];
-        }
-        this.loading = false;
+
+
+    this.designLabService.getProjectById(this.projectId).subscribe({
+      next: (project: Project) => {
+        this.project = project;
+        this.isLoading = false;
       },
-      error: (_err: any) => {
-        this.error = 'Failed to load projects. Please try again.';
-        this.loading = false;
-      },
-    });
-  }
-  selectColor(colorValue: string): void {
-    if (this.project) {
-      this.project.garmentColor = colorValue;
-    }
-  }
-
-  selectSize(size: GARMENT_SIZE): void {
-    if (this.project) {
-      this.project.garmentSize = size;
-    }
-  }
-
-  // Enhanced event handlers using the new entity-aware approach
-  handleGarmentColorChanged(color: string): void {
-    this.selectColor(color);
-  }
-
-  handleTextLayerCreated(textLayer: TextLayer): void {
-    console.log('Text layer created:', textLayer);
-    this.textLayers.push(textLayer);
-  }
-
-  handleImageLayerCreated(imageLayer: ImageLayer): void {
-    console.log('Image layer created:', imageLayer);
-    this.imageLayers.push(imageLayer);
-  }
-
-  handleLayerAdded(layer: Layer): void {
-    console.log('Layer added:', layer);
-    // Additional logic for any layer type can be added here
-  }
-
-  // Legacy handlers for backward compatibility
-  handleTextAdded(textProps: TextProperties): void {
-    console.log('Text added (legacy):', textProps);
-    const textLayer = new TextLayer(
-      'text_' + Date.now(),
-      this.editorConfig.textEditor.centerTextCalculation
-        ? this.editorConfig.textEditor.defaultPosition.x - (textProps.text.length * textProps.fontSize) / 6
-        : this.editorConfig.textEditor.defaultPosition.x, // x
-      this.editorConfig.textEditor.defaultPosition.y, // y
-      this.textLayers.length + this.editorConfig.textEditor.defaultZIndex, // z
-      1, // opacity
-      true, // isVisible
-      new Date(), // createdAt
-      new Date(), // updatedAt
-      {
-        isItalic: textProps.italic || false,
-        fontFamily: textProps.fontFamily,
-        isUnderlined: textProps.underline || false,
-        fontSize: textProps.fontSize,
-        text: textProps.text,
-        fontColor: textProps.color,
-        isBold: textProps.fontWeight >= 700,
+      error: (error: any) => {
+        this.error = error.message || this.translateService.instant('designLab.errors.loadingFailed');
+        this.isLoading = false;
       }
-    );
-    this.textLayers.push(textLayer);
-  }  handleImageAdded(imageProps: ImageProperties): void {
-    console.log('Image added (legacy):', imageProps);
-
-    // Create a new ImageLayer for backward compatibility
-    const imageLayer = new ImageLayer(
-      'img_' + Date.now(), // id
-      this.editorConfig.imageEditor.defaultPosition.x, // x
-      this.editorConfig.imageEditor.defaultPosition.y, // y
-      this.imageLayers.length + this.editorConfig.imageEditor.defaultZIndex, // zIndex
-      1, // opacity
-      true, // visible
-      imageProps.imageUrl // imageUrl
-    );
-
-    this.imageLayers.push(imageLayer);
-  }
-  getColorLabel(value: GARMENT_COLOR): string {
-    const foundColor = this.garmentColors.find(
-      (color) => color.value === value
-    );
-    return foundColor ? foundColor.label : 'Custom';
-  }
-
-  getBackgroundPosition(colorValue: string): string {
-    const colorIndex = this.garmentColors.findIndex(
-      (color) => color.value === colorValue
-    );
-    if (colorIndex === -1) return '0% 0%';
-    const row = Math.floor(colorIndex / 4);
-    const col = colorIndex % 4;
-    const xPos = col * (100 / 3);
-    const yPos = row * (100 / 3);
-    return `${xPos}% ${yPos}%`;
-  }
-
-  getTextContent(layer: Layer): TextLayer {
-    return layer as TextLayer;
-  }
-
-  getImageContent(layer: Layer): ImageLayer {
-    return layer as ImageLayer;
+    });
   }
 
   saveProject(): void {
-    if (!this.project) {
-      return;
+    if (!this.project || this.isSaving) return;
+
+    this.isSaving = true;
+
+    // For now, just simulate saving - in real implementation, call the service
+    setTimeout(() => {
+      this.isSaving = false;
+      this.snackBar.open(
+        this.translateService.instant('designLab.messages.projectSaved'),
+        this.translateService.instant('common.close'),
+        {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        }
+      );
+    }, 1000);
+  }
+
+  onLayerToolEvent(event: LayerToolEvent): void {
+
+    if (!this.project) return;
+
+    switch (event.type) {
+      case 'text':
+        this.addLayerToProject(event.data);
+        break;
+      case 'image':
+        this.addLayerToProject(event.data);
+        break;
+      case 'save':
+        this.saveProject();
+        break;
+      case 'export':
+        this.exportProject(event.data?.format || 'png');
+        break;
     }
+  }
 
-    this.loading = true;
+  onLayerEvent(event: LayerEvent): void {
 
-    // Update the project layers with the current text and image layers
-    this.project.layers = [...this.textLayers, ...this.imageLayers];
+    if (!this.project) return;
 
-    // Convert the Project entity to a ProjectResponse using the ProjectAssembler
-    const projectResponse: any = {
-      id: this.project.id,
-      userId: this.project.userId,
-      title: this.project.title,
-      previewUrl: this.project.previewUrl || '',
-      status: this.project.status,
-      garmentColor: this.project.garmentColor,
-      garmentSize: this.project.garmentSize,
-      garmentGender: this.project.garmentGender,
-      layers: this.convertLayersToResponse(),
-      createdAt: this.project.createdAt.toISOString(),
-      updatedAt: new Date().toISOString(),
+    switch (event.type) {
+      case 'move':
+        this.updateLayerPosition(event.layerId, event.data);
+        break;
+      case 'select':
+        break;
+      case 'delete':
+        this.removeLayerFromProject(event.layerId);
+        break;
+      case 'duplicate':
+        this.addLayerToProject(event.data);
+        break;
+    }
+  }
+
+  onLayersChange(layers: Layer[]): void {
+    if (this.project) {
+      this.project.layers = layers;
+      this.project.updatedAt = new Date();
+    }
+  }
+
+  /**
+   * Abrir diálogo de confirmación para eliminar proyecto
+   */
+  openDeleteDialog(): void {
+    if (!this.project) return;
+
+    const dialogData: DeleteProjectDialogData = {
+      projectTitle: this.project.title,
+      projectId: this.project.id
     };
 
-    this.projectService.update(this.project.id, projectResponse).subscribe({
-      next: () => {
-        this.loading = false;
-        this.goBack();
-      },
-      error: (err) => {
-        console.error('Error saving project:', err);
-        this.error = 'Failed to save project. Please try again.';
-        this.loading = false;
-      },
+    const dialogRef = this.dialog.open(DeleteProjectDialogComponent, {
+      width: '450px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.deleteProject();
+      }
     });
   }
 
-  private convertLayersToResponse(): any[] {
-    const allLayers = [...this.textLayers, ...this.imageLayers];
-    return allLayers.map((layer) => {
-      const baseLayerResponse = {
-        id: layer.id,
-        x: layer.x,
-        y: layer.y,
-        z: layer.z,
-        opacity: layer.opacity,
-        isVisible: layer.isVisible,
-        type: layer.type,
-        createdAt: layer.createdAt.toISOString(),
-        updatedAt: layer.updatedAt.toISOString(),
-        details: layer.details || {},
-      };
-      return baseLayerResponse;
+  /**
+   * Eliminar el proyecto
+   */
+  private deleteProject(): void {
+    if (!this.project) return;
+
+
+    this.designLabService.deleteProject(this.project.id).subscribe({
+      next: (result) => {
+
+        this.snackBar.open(
+          this.translateService.instant('designLab.messages.projectDeleted'),
+          this.translateService.instant('common.close'),
+          {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          }
+        );
+
+        // Navegar de vuelta a la lista de proyectos
+        this.router.navigate(['/home/design-lab']);
+      },
+      error: (error: any) => {
+        console.error('❌ Error deleting project:', error);
+
+        this.snackBar.open(
+          error || this.translateService.instant('designLab.errors.deleteFailed'),
+          this.translateService.instant('common.close'),
+          {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
     });
   }
-  goBack(): void {
-    this.router.navigate(['/design-lab', this.projectId]);
+
+  private addLayerToProject(layer: Layer): void {
+    if (!this.project) return;
+
+    // Find the highest z-index and add one
+    const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+    layer.z = maxZ + 1;
+
+    this.project.layers.push(layer);
+    this.project.updatedAt = new Date();
+
+
+    this.snackBar.open(
+      this.translateService.instant('designLab.messages.layerAdded'),
+      this.translateService.instant('common.close'),
+      {
+        duration: 2000,
+        panelClass: ['success-snackbar']
+      }
+    );
   }
 
-  // Start dragging a layer
-  startDrag(event: MouseEvent, layer: Layer): void {
-    // Prevent default to avoid text selection during drag
-    event.preventDefault();
+  private removeLayerFromProject(layerId: string): void {
+    if (!this.project) return;
 
-    this.draggedLayer = layer;
-    this.startX = event.clientX - layer.x;
-    this.startY = event.clientY - layer.y;
-  }
+    const index = this.project.layers.findIndex(l => l.id === layerId);
+    if (index > -1) {
+      this.project.layers.splice(index, 1);
+      this.project.updatedAt = new Date();
 
-  // Handle mouse move for dragging
-  onMouseMove(event: MouseEvent): void {
-    if (!this.draggedLayer) return;
 
-    // Calculate new position
-    const newX = event.clientX - this.startX;
-    const newY = event.clientY - this.startY;
-
-    // Update the layer's position
-    this.draggedLayer.x = newX;
-    this.draggedLayer.y = newY;
-  }
-  // End dragging
-  onMouseUp(): void {
-    this.draggedLayer = null;
-  }
-
-  // Delete a layer
-  deleteLayer(
-    event: MouseEvent,
-    layer: Layer,
-    layerType: 'text' | 'image'
-  ): void {
-    // Prevent the event from propagating to the parent elements
-    event.stopPropagation();
-
-    if (layerType === 'text') {
-      // Remove the text layer from the array
-      this.textLayers = this.textLayers.filter((l) => l.id !== layer.id);
-    } else if (layerType === 'image') {
-      // Remove the image layer from the array
-      this.imageLayers = this.imageLayers.filter((l) => l.id !== layer.id);
+      this.snackBar.open(
+        this.translateService.instant('designLab.messages.layerRemoved'),
+        this.translateService.instant('common.close'),
+        {
+          duration: 2000,
+          panelClass: ['success-snackbar']
+        }
+      );
     }
+  }
+
+  private updateLayerPosition(layerId: string, position: { x: number; y: number }): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.x = position.x;
+      layer.y = position.y;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+
+      // In a real implementation, you might want to call a service to persist the change
+      // For now, we'll just update the local state
+    }
+  }
+
+  private exportProject(format: string): void {
+    if (!this.project) return;
+
+
+    // Simulate export functionality
+    this.snackBar.open(
+      this.translateService.instant('designLab.messages.exportStarted') + ` (${format.toUpperCase()})`,
+      this.translateService.instant('common.close'),
+      {
+        duration: 3000,
+        panelClass: ['info-snackbar']
+      }
+    );
+  }
+
+  getGarmentColorHex(color: string): string {
+    // Map garment colors to hex values
+    const colorMap: { [key: string]: string } = {
+      'WHITE': '#FFFFFF',
+      'BLACK': '#000000',
+      'GRAY': '#6B7280',
+      'LIGHT_GRAY': '#D1D5DB',
+      'RED': '#DC2626',
+      'PINK': '#EC4899',
+      'LIGHT_PURPLE': '#A78BFA',
+      'PURPLE': '#7C3AED',
+      'LIGHT_BLUE': '#60A5FA',
+      'CYAN': '#06B6D4',
+      'SKY_BLUE': '#0EA5E9',
+      'BLUE': '#2563EB',
+      'GREEN': '#059669',
+      'LIGHT_GREEN': '#34D399',
+      'YELLOW': '#FBBF24',
+      'DARK_YELLOW': '#D97706'
+    };
+
+    return colorMap[color] || '#FFFFFF';
+  }
+
+  /**
+   * Handle canvas tool events
+   */
+  onCanvasToolEvent(event: CanvasToolEvent): void {
+
+    switch (event.type) {
+      case 'tool-change':
+        this.currentTool = event.data.tool;
+        break;
+      case 'save':
+        this.saveProject();
+        break;
+    }
+  }
+
+  /**
+   * Handle layer management events
+   */
+  onLayerManagementEvent(event: LayerManagementEvent): void {
+
+    if (!this.project) return;
+
+    switch (event.type) {
+      case 'select':
+        this.selectLayer(event.layerId!);
+        break;
+      case 'toggle-visibility':
+        this.toggleLayerVisibility(event.layerId!, event.data.isVisible);
+        break;
+      case 'delete':
+        this.removeLayerFromProject(event.layerId!);
+        break;
+      case 'duplicate':
+        this.duplicateLayer(event.layerId!);
+        break;
+      case 'reorder':
+        this.reorderLayers(event.data.layers);
+        break;
+      case 'bring-to-front':
+        this.bringLayerToFront(event.layerId!);
+        break;
+      case 'send-to-back':
+        this.sendLayerToBack(event.layerId!);
+        break;
+    }
+  }
+
+  /**
+   * Handle layer property events
+   */
+  onLayerPropertyEvent(event: LayerPropertyEvent): void {
+
+    if (!this.project || !this.selectedLayer) return;
+
+    switch (event.type) {
+      case 'update-text':
+        this.updateTextLayerProperties(event.layerId, event.data);
+        break;
+      case 'update-image':
+        this.updateImageLayerProperties(event.layerId, event.data);
+        break;
+      case 'update-position':
+        this.updateLayerPosition(event.layerId, event.data);
+        break;
+      case 'update-opacity':
+        this.updateLayerOpacity(event.layerId, event.data.opacity);
+        break;
+      case 'update-visibility':
+        this.toggleLayerVisibility(event.layerId, event.data.isVisible);
+        break;
+    }
+  }
+
+  /**
+   * Select a layer
+   */
+  private selectLayer(layerId: string): void {
+    this.selectedLayerId = layerId;
+    this.selectedLayer = this.project?.layers.find(l => l.id === layerId) || null;
+  }
+
+  /**
+   * Toggle layer visibility
+   */
+  private toggleLayerVisibility(layerId: string, isVisible: boolean): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.isVisible = isVisible;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Duplicate a layer
+   */
+  private duplicateLayer(layerId: string): void {
+    if (!this.project) return;
+
+    const originalLayer = this.project.layers.find(l => l.id === layerId);
+    if (!originalLayer) return;
+
+    // Create a new layer based on the original
+    const newLayerId = this.generateLayerId();
+    const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+
+    if (originalLayer.type === LayerType.TEXT) {
+      const textLayer = originalLayer as TextLayer;
+      const newLayer = new TextLayer(
+        newLayerId,
+        textLayer.x + 20, // Offset position
+        textLayer.y + 20,
+        maxZ + 1,
+        textLayer.opacity,
+        textLayer.isVisible,
+        new Date(),
+        new Date(),
+        { ...textLayer.details } // Copy details
+      );
+      this.addLayerToProject(newLayer);
+    } else if (originalLayer.type === LayerType.IMAGE) {
+      const imageLayer = originalLayer as ImageLayer;
+      const newLayer = new ImageLayer(
+        newLayerId,
+        imageLayer.x + 20,
+        imageLayer.y + 20,
+        maxZ + 1,
+        imageLayer.opacity,
+        imageLayer.isVisible,
+        imageLayer.imageUrl
+      );
+      this.addLayerToProject(newLayer);
+    }
+  }
+
+  /**
+   * Reorder layers
+   */
+  private reorderLayers(layers: Layer[]): void {
+    if (!this.project) return;
+
+    this.project.layers = layers;
+    this.project.updatedAt = new Date();
+    this.isModified = true;
+  }
+
+  /**
+   * Bring layer to front
+   */
+  private bringLayerToFront(layerId: string): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      const maxZ = Math.max(0, ...this.project.layers.map(l => l.z));
+      layer.z = maxZ + 1;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Send layer to back
+   */
+  private sendLayerToBack(layerId: string): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      const minZ = Math.min(1, ...this.project.layers.map(l => l.z));
+      layer.z = minZ - 1;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Update text layer properties
+   */
+  private updateTextLayerProperties(layerId: string, data: any): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId) as TextLayer;
+    if (layer && layer.type === LayerType.TEXT) {
+      // Update layer properties
+      layer.x = data.x;
+      layer.y = data.y;
+      layer.opacity = data.opacity;
+      layer.isVisible = data.isVisible;
+      layer.details = {
+        text: data.text,
+        fontFamily: data.fontFamily,
+        fontSize: data.fontSize,
+        fontColor: data.fontColor,
+        isBold: data.isBold,
+        isItalic: data.isItalic,
+        isUnderlined: data.isUnderlined
+      };
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Update image layer properties
+   */
+  private updateImageLayerProperties(layerId: string, data: any): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId) as ImageLayer;
+    if (layer && layer.type === LayerType.IMAGE) {
+      // Update layer properties
+      layer.x = data.x;
+      layer.y = data.y;
+      layer.opacity = data.opacity;
+      layer.isVisible = data.isVisible;
+      layer.imageUrl = data.imageUrl;
+      layer.details = {
+        width: data.width,
+        height: data.height
+      };
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Update layer opacity
+   */
+  private updateLayerOpacity(layerId: string, opacity: number): void {
+    if (!this.project) return;
+
+    const layer = this.project.layers.find(l => l.id === layerId);
+    if (layer) {
+      layer.opacity = opacity;
+      layer.updatedAt = new Date();
+      this.project.updatedAt = new Date();
+      this.isModified = true;
+    }
+  }
+
+  /**
+   * Perform undo operation
+   */
+  /**
+   * Generate a unique layer ID
+   */
+  private generateLayerId(): string {
+    return 'layer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 }

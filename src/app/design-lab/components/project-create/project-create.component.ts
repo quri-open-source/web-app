@@ -1,23 +1,30 @@
-import {Component, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {Router} from '@angular/router';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {ProjectService} from '../../services/project.service';
-import {UserService} from '../../../user-management/services/user.service';
-import {GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER} from '../../../const';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DesignLabService } from '../../services/design-lab-real.service';
+import { CreateProjectRequest } from '../../services/project.response';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
+import { GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER } from '../../../const';
 
-interface GarmentColorOption {
-  label: string;
+interface ColorOption {
+  name: string;
   value: GARMENT_COLOR;
+  hex: string;
 }
 
 @Component({
@@ -26,119 +33,194 @@ interface GarmentColorOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
+    RouterModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatGridListModule,
-    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
     MatSnackBarModule,
+    MatToolbarModule,
+    TranslateModule,
   ],
   templateUrl: './project-create.component.html',
-  styleUrls: ['./project-create.component.css'],
-  providers: [ProjectService],
+  styleUrl: './project-create.component.css',
 })
-export class ProjectCreateComponent {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private projectService = inject(ProjectService);
-  private userService = inject(UserService);
-  private snackBar = inject(MatSnackBar);
-
+export class ProjectCreateComponent implements OnInit {
   projectForm: FormGroup;
-  isSubmitting = false;
+  isCreating = false;
 
-  // Garment colors configuration using the GARMENT_COLOR enum
-  garmentColors: GarmentColorOption[] = [
-    { label: 'black', value: GARMENT_COLOR.BLACK },
-    { label: 'gray', value: GARMENT_COLOR.GRAY },
-    { label: 'light-gray', value: GARMENT_COLOR.LIGHT_GRAY },
-    { label: 'white', value: GARMENT_COLOR.WHITE },
-    { label: 'red', value: GARMENT_COLOR.RED },
-    { label: 'pink', value: GARMENT_COLOR.PINK },
-    { label: 'light-purple', value: GARMENT_COLOR.LIGHT_PURPLE },
-    { label: 'purple', value: GARMENT_COLOR.PURPLE },
-    { label: 'light-blue', value: GARMENT_COLOR.LIGHT_BLUE },
-    { label: 'cyan', value: GARMENT_COLOR.CYAN },
-    { label: 'sky-blue', value: GARMENT_COLOR.SKY_BLUE },
-    { label: 'blue', value: GARMENT_COLOR.BLUE },
-    { label: 'green', value: GARMENT_COLOR.GREEN },
-    { label: 'light-green', value: GARMENT_COLOR.LIGHT_GREEN },
-    { label: 'yellow', value: GARMENT_COLOR.YELLOW },
-    { label: 'dark-yellow', value: GARMENT_COLOR.DARK_YELLOW },
+  // Enums para el template
+  PROJECT_GENDER = PROJECT_GENDER;
+  GARMENT_SIZE = GARMENT_SIZE;
+
+  // Servicios
+  private fb = inject(FormBuilder);
+  private designLabService = inject(DesignLabService);
+  private authService = inject(AuthenticationService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private translateService = inject(TranslateService);
+
+  // Opciones de colores disponibles
+  availableColors: ColorOption[] = [
+    { name: 'Blanco', value: GARMENT_COLOR.WHITE, hex: '#FFFFFF' },
+    { name: 'Negro', value: GARMENT_COLOR.BLACK, hex: '#000000' },
+    { name: 'Gris', value: GARMENT_COLOR.GRAY, hex: '#6B7280' },
+    { name: 'Gris Claro', value: GARMENT_COLOR.LIGHT_GRAY, hex: '#D1D5DB' },
+    { name: 'Rojo', value: GARMENT_COLOR.RED, hex: '#DC2626' },
+    { name: 'Rosa', value: GARMENT_COLOR.PINK, hex: '#EC4899' },
+    {
+      name: 'Púrpura Claro',
+      value: GARMENT_COLOR.LIGHT_PURPLE,
+      hex: '#A78BFA',
+    },
+    { name: 'Púrpura', value: GARMENT_COLOR.PURPLE, hex: '#7C3AED' },
+    { name: 'Azul Claro', value: GARMENT_COLOR.LIGHT_BLUE, hex: '#60A5FA' },
+    { name: 'Cian', value: GARMENT_COLOR.CYAN, hex: '#06B6D4' },
+    { name: 'Azul Cielo', value: GARMENT_COLOR.SKY_BLUE, hex: '#0EA5E9' },
+    { name: 'Azul', value: GARMENT_COLOR.BLUE, hex: '#2563EB' },
+    { name: 'Verde', value: GARMENT_COLOR.GREEN, hex: '#059669' },
+    { name: 'Verde Claro', value: GARMENT_COLOR.LIGHT_GREEN, hex: '#34D399' },
+    { name: 'Amarillo', value: GARMENT_COLOR.YELLOW, hex: '#FBBF24' },
+    {
+      name: 'Amarillo Oscuro',
+      value: GARMENT_COLOR.DARK_YELLOW,
+      hex: '#D97706',
+    },
   ];
-
-  garmentColorImages =
-    'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
 
   constructor() {
     this.projectForm = this.fb.group({
-      name: ['', Validators.required],
-      gender: [PROJECT_GENDER.MEN, Validators.required],
-      garmentSize: [GARMENT_SIZE.M, Validators.required],
+      title: ['', [Validators.required, Validators.minLength(3)]],
       garmentColor: [GARMENT_COLOR.WHITE, Validators.required],
+      garmentGender: [PROJECT_GENDER.UNISEX, Validators.required],
+      garmentSize: [GARMENT_SIZE.M, Validators.required],
     });
   }
 
-  selectColor(colorValue: string): void {
-    this.projectForm.get('garmentColor')?.setValue(colorValue);
+  ngOnInit(): void {
   }
 
-  getGenderLabel(value: PROJECT_GENDER): string {
-    const genderMap: { [key in PROJECT_GENDER]: string } = {
-      [PROJECT_GENDER.WOMEN]: 'Women',
-      [PROJECT_GENDER.MEN]: 'Men',
-      [PROJECT_GENDER.KIDS]: 'Kids',
-      [PROJECT_GENDER.UNISEX]: 'Unisex',
-    };
-    return genderMap[value] || value;
+  /**
+   * Seleccionar color de la prenda
+   */
+  selectColor(color: GARMENT_COLOR): void {
+    this.projectForm.patchValue({ garmentColor: color });
   }
 
-  getColorLabel(value: GARMENT_COLOR): string {
-    const foundColor = this.garmentColors.find(
-      (color) => color.value === value
-    );
-    return foundColor ? foundColor.label : 'Custom';
-  }
-
-  getBackgroundPosition(colorValue: GARMENT_COLOR): string {
-    const colorIndex = this.garmentColors.findIndex(
-      (color) => color.value === colorValue
-    );
-    if (colorIndex === -1) return '0% 0%';
-    const row = Math.floor(colorIndex / 4);
-    const col = colorIndex % 4;
-    const xPos = col * (100 / 3);
-    const yPos = row * (100 / 3);
-    return `${xPos}% ${yPos}%`;
-  }
-
+  /**
+   * Enviar formulario para crear proyecto
+   */
   onSubmit(): void {
-    if (this.projectForm.invalid) return;
-    this.isSubmitting = true;
+    if (this.projectForm.valid) {
+      this.createProject();
+    } else {
+      console.warn('⚠️ Form is invalid:', this.projectForm.errors);
+      this.markFormGroupTouched();
+    }
+  }
+
+  /**
+   * Crear el proyecto
+   */
+  private createProject(): void {
+    this.isCreating = true;
     const formValue = this.projectForm.value;
-    const payload = {
-      title: formValue.name,
-      userId: '8b3c1e7e-0d6a-4f6f-915a-77cfb0f9c8c1', // userId fijo de environment
-      garmentColor: formValue.garmentColor,
-      garmentGender: formValue.gender,
-      garmentSize: formValue.garmentSize,
-    };
-    this.projectService.createProject(payload).subscribe({
-      next: (project) => {
-        this.snackBar.open('Project created successfully!', 'Close', { duration: 2000 });
-        this.router.navigate(['/design-lab', project.id, 'edit']);
+
+    // Obtener el userId del servicio de autenticación
+    this.authService.currentUserId.subscribe({
+      next: (userId) => {
+        if (!userId) {
+          this.showError(
+            this.translateService.instant('designLab.errors.userNotAuthenticated')
+          );
+          this.isCreating = false;
+          return;
+        }
+
+        const request: CreateProjectRequest = {
+          title: formValue.title,
+          garmentColor: formValue.garmentColor,
+          garmentGender: formValue.garmentGender,
+          garmentSize: formValue.garmentSize,
+          userId: userId,
+        };
+
+        this.designLabService.createProject(request).subscribe({
+          next: (result) => {
+
+            this.snackBar.open(
+              this.translateService.instant('designLab.messages.projectCreated'),
+              this.translateService.instant('common.close'),
+              {
+                duration: 3000,
+                panelClass: ['success-snackbar'],
+              }
+            );
+
+
+            // Navegar al editor del proyecto
+            if (result.success && result.projectId) {
+              this.router.navigate(['/home/design-lab/edit', result.projectId]);
+            } else {
+              this.showError(result.error || 'Error creating project');
+            }
+            this.isCreating = false;
+          },
+          error: (error: any) => {
+            console.error('❌ Error creating project:', error);
+
+            // Extraer mensaje de error más específico
+            let errorMessage = this.translateService.instant(
+              'designLab.errors.creationFailed'
+            );
+
+            if (error) {
+              if (typeof error === 'string') {
+                errorMessage = error;
+              } else if (error.message) {
+                errorMessage = error.message;
+              } else if (error.error && error.error.message) {
+                errorMessage = error.error.message;
+              } else if (error.error && typeof error.error === 'string') {
+                errorMessage = error.error;
+              }
+            }
+
+            this.showError(errorMessage);
+            this.isCreating = false;
+          },
+        });
       },
-      error: () => {
-        this.snackBar.open('Failed to create project', 'Close', { duration: 2000 });
-        this.isSubmitting = false;
-      },
+      error: (error) => {
+        console.error('❌ Error getting user ID:', error);
+        this.showError(
+          this.translateService.instant('designLab.errors.userNotAuthenticated')
+        );
+        this.isCreating = false;
+      }
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/design-lab']);
+  /**
+   * Mostrar mensaje de error
+   */
+  private showError(message: string): void {
+    this.snackBar.open(message, this.translateService.instant('common.close'), {
+      duration: 5000,
+      panelClass: ['error-snackbar'],
+    });
+  }
+
+  /**
+   * Marcar todos los campos del formulario como tocados para mostrar errores
+   */
+  private markFormGroupTouched(): void {
+    Object.keys(this.projectForm.controls).forEach((key) => {
+      const control = this.projectForm.get(key);
+      control?.markAsTouched();
+    });
   }
 }

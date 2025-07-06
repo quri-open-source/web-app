@@ -1,7 +1,22 @@
-export interface AnalyticsResponse {
-  user_id: string;
-  total_projects: number;
+/**
+ * Response DTO for Customer Analytics from the API
+ */
+export interface CustomerAnalyticsResponse {
+  id: string;
+  userId: string;
+  totalProjects: number;
   blueprints: number;
-  designed_garments: number;
+  designedGarments: number;
   completed: number;
+}
+
+/**
+ * Response DTO for Manufacturer Analytics from the API
+ */
+export interface ManufacturerAnalyticsResponse {
+  userId: string;
+  totalOrdersReceived: number;
+  pendingFulfillments: number;
+  producedProjects: number;
+  avgFulfillmentTimeDays: number;
 }
