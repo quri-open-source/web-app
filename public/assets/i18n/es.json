@@ -517,5 +517,20 @@
     "switch": "Cambiar idioma",
     "english": "Inglés",
     "spanish": "Español"
+  },
+  "fulfillments": {
+    "title": "Órdenes de cumplimiento",
+    "empty": "No hay órdenes de cumplimiento.",
+    "cardTitle": "Orden #{{id}}",
+    "id": "ID",
+    "created": "Creado",
+    "status": {
+      "pending": "Pendiente",
+      "processing": "En proceso",
+      "shipped": "Enviado",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado"
+    },
+    "details": "Ver Detalles"
   }
 }

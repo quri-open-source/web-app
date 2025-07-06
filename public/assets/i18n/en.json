@@ -512,5 +512,20 @@
     "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
     "operationSuccessful": "Operation completed successfully",
     "operationFailed": "Operation failed"
+  },
+  "fulfillments": {
+    "title": "Fulfillments",
+    "empty": "No fulfillments found.",
+    "cardTitle": "Fulfillment #{{id}}",
+    "id": "ID",
+    "created": "Created",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "details": "View Details"
   }
 }
