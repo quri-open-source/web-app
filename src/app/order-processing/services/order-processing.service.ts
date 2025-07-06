@@ -1,5 +1,5 @@
 // order-processing.service.ts
-// Servicio para consumir los endpoints de procesamiento de órdenes
+// Service to consume order processing API endpoints
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';

@@ -41,11 +41,11 @@ export class CheckoutPageComponent {
   clientSecret = '';
 
   constructor(private router: Router) {
-    // 1. Intenta obtener el clientSecret del navigation state
+    // 1. Try to get the clientSecret from navigation state
     if (history.state && history.state.clientSecret) {
       this.clientSecret = history.state.clientSecret;
     } else {
-      // 2. Intenta obtenerlo de sessionStorage (por si el usuario recarga la página)
+      // 2. Try to get it from sessionStorage (in case the user reloads the page)
       const storedSecret = sessionStorage.getItem('clientSecret');
       if (storedSecret) {
         this.clientSecret = storedSecret;
@@ -53,7 +53,7 @@ export class CheckoutPageComponent {
         this.clientSecret = '';
       }
     }
-    // 3. Si lo tenemos, lo guardamos en sessionStorage para persistencia en recarga
+    // 3. If we have it, store it in sessionStorage for persistence on reload
     if (this.clientSecret) {
       sessionStorage.setItem('clientSecret', this.clientSecret);
     } else {

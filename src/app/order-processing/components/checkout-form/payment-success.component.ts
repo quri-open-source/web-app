@@ -96,11 +96,11 @@ export class PaymentSuccessComponent implements OnInit {
   fulfillmentError: string | null = null;
 
   ngOnInit(): void {
-    // Obtener manufacturerId y orderId del navigation state o localStorage
+    // Get manufacturerId and orderId from navigation state or localStorage
     let manufacturerId = history.state?.manufacturerId || localStorage.getItem('manufacturerId');
     let orderId = history.state?.orderId || localStorage.getItem('orderId');
 
-    // Si no están en navigation state, intenta recuperarlos de localStorage
+    // If not in navigation state, try to retrieve from localStorage
     if (!manufacturerId) {
       manufacturerId = localStorage.getItem('manufacturerId');
     }
@@ -115,21 +115,21 @@ export class PaymentSuccessComponent implements OnInit {
       };
       this.fulfillmentService.create(req).subscribe({
         next: () => {
-          // Fulfillment creado exitosamente
+          // Fulfillment created successfully
           this.fulfillmentError = null;
-          // Limpiar datos temporales
+          // Clear temporary data
           localStorage.removeItem('manufacturerId');
           localStorage.removeItem('orderId');
         },
         error: (err) => {
-          this.fulfillmentError = 'Error creando fulfillment: ' + (err?.message || err);
-          // Opcional: log
-          console.error('Error creando fulfillment:', err);
+          this.fulfillmentError = 'Error creating fulfillment: ' + (err?.message || err);
+          // Optional: log
+          console.error('Error creating fulfillment:', err);
         }
       });
     } else {
-      this.fulfillmentError = 'No se pudo obtener manufacturerId u orderId para crear el fulfillment.';
-      console.warn('manufacturerId u orderId faltantes en success');
+      this.fulfillmentError = 'Could not get manufacturerId or orderId to create the fulfillment.';
+      console.warn('manufacturerId or orderId missing in success');
     }
   }
 }

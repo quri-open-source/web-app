@@ -1,12 +1,9 @@
-/* ===== MAIN CONTAINER ===== */
 .product-detail-container {
   min-height: 100vh;
   background: #f8f9fa;
 }
 
-/* ===== TOOLBAR ===== */
 .detail-toolbar {
-  ;
   color: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   position: sticky;
@@ -24,14 +21,12 @@
   flex: 1 1 auto;
 }
 
-/* ===== CONTENT AREA ===== */
 .detail-content {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* ===== STATE CONTAINERS ===== */
 .state-container {
   display: flex;
   flex-direction: column;
@@ -54,12 +49,10 @@
 }
 
 .error-message {
-  ;
   font-size: 1.1rem;
   margin-bottom: 24px;
 }
 
-/* ===== PRODUCT DETAIL LAYOUT ===== */
 .product-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -67,7 +60,6 @@
   align-items: start;
 }
 
-/* ===== PRODUCT IMAGE SECTION ===== */
 .product-image-section {
   position: sticky;
   top: 120px;
@@ -95,7 +87,6 @@
   z-index: 10;
 }
 
-/* ===== PRODUCT INFO SECTION ===== */
 .product-info-section {
   min-height: 600px;
 }
@@ -122,7 +113,6 @@
   margin-bottom: 16px;
 }
 
-/* ===== PRODUCT STATS ===== */
 .product-stats {
   display: flex;
   justify-content: space-around;
@@ -141,7 +131,6 @@
 
 .stat-icon {
   font-size: 2rem;
-  ;
   margin-bottom: 8px;
 }
 
@@ -154,11 +143,9 @@
 
 .stat-label {
   font-size: 0.875rem;
-  ;
   font-weight: 500;
 }
 
-/* ===== SECTIONS ===== */
 .section-divider {
   margin: 32px 0;
   background: #e9ecef;
@@ -171,7 +158,6 @@
   margin-bottom: 16px;
 }
 
-/* ===== PRODUCT DETAILS ===== */
 .detail-grid {
   display: flex;
   flex-direction: column;
@@ -191,7 +177,6 @@
 }
 
 .detail-icon {
-  ;
   font-size: 1.2rem;
   width: 24px;
   flex-shrink: 0;
@@ -209,7 +194,6 @@
   word-break: break-all;
 }
 
-/* ===== PURCHASE SECTION ===== */
 .purchase-section {
   padding: 20px;
   background: #f8f9fa;
@@ -261,7 +245,6 @@
   color: #dc3545;
 }
 
-/* ===== PRODUCT ACTIONS ===== */
 .product-actions {
   display: flex;
   gap: 16px;
@@ -293,12 +276,10 @@
 }
 
 .product-actions button[color="accent"]:disabled {
-  ;
   color: #adb5bd;
   cursor: not-allowed;
 }
 
-/* ===== STATUS CHIPS ===== */
 .status-available {
   background: #28a745;
   color: white;
@@ -315,11 +296,9 @@
 }
 
 .status-discontinued {
-  ;
   color: white;
 }
 
-/* ===== SUCCESS SNACKBAR ===== */
 ::ng-deep .success-snackbar {
   --mdc-snackbar-container-color: #28a745;
   --mdc-snackbar-supporting-text-color: white;
@@ -329,7 +308,6 @@
   --mdc-snackbar-action-label-text-color: white;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .product-layout {
     grid-template-columns: 1fr;

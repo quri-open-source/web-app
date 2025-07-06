@@ -1,5 +1,5 @@
 // order-processing.assembler.ts
-// Utilidades para mapear entre entidades de dominio y DTOs de respuesta/solicitud
+// Utilities for mapping between domain entities and request/response DTOs
 
 import { OrderEntity, ItemEntity } from '../model/order.entity';
 import {
@@ -10,12 +10,12 @@ import {
 } from './order-processing.response';
 
 export class OrderProcessingAssembler {
-  // De OrderResponse a OrderEntity
+  // From OrderResponse to OrderEntity
   static toEntity(response: OrderResponse): OrderEntity {
     return OrderEntity.fromResponse(response);
   }
 
-  // De OrderEntity a OrderResponse
+  // From OrderEntity to OrderResponse
   static toResponse(entity: OrderEntity): OrderResponse {
     return {
       id: entity.id,
@@ -25,12 +25,12 @@ export class OrderProcessingAssembler {
     };
   }
 
-  // De ItemResponse a ItemEntity
+  // From ItemResponse to ItemEntity
   static itemToEntity(response: ItemResponse): ItemEntity {
     return ItemEntity.fromResponse(response);
   }
 
-  // De ItemEntity a ItemResponse
+  // From ItemEntity to ItemResponse
   static itemToResponse(entity: ItemEntity): ItemResponse {
     return {
       id: entity.id,
@@ -39,7 +39,7 @@ export class OrderProcessingAssembler {
     };
   }
 
-  // De OrderEntity a CreateOrderRequest
+  // From OrderEntity to CreateOrderRequest
   static toCreateOrderRequest(entity: OrderEntity): CreateOrderRequest {
     return {
       userId: entity.userId,
@@ -50,7 +50,7 @@ export class OrderProcessingAssembler {
     };
   }
 
-  // De OrderByIdResponse a OrderEntity
+  // From OrderByIdResponse to OrderEntity
   static fromOrderByIdResponse(response: OrderByIdResponse): OrderEntity {
     return new OrderEntity(
       response.id,
