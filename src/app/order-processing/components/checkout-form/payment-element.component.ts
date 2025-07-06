@@ -41,7 +41,7 @@ export class CheckoutFormComponent {
 
   elementsOptions: StripeElementsOptions = {
     locale: 'en',
-    clientSecret: environment.stripePublicKey,
+    // clientSecret: environment.stripePublicKey,
     appearance: {
       theme: 'flat'
     }
