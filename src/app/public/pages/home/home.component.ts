@@ -20,155 +20,160 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface NavigationLink {
-  name: string;
-  nameKey: string;
-  route: string;
-  icon: string;
+    name: string;
+    nameKey: string;
+    route: string;
+    icon: string;
 }
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatGridListModule,
-    MatSidenavModule,
-    MatListModule,
-    MatToolbarModule,
-    MatDividerModule,
-    MatBadgeModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    RouterModule,
-    TranslateModule,
-    LanguageSwitcherComponent
-  ],
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+    selector: 'app-home',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatGridListModule,
+        MatSidenavModule,
+        MatListModule,
+        MatToolbarModule,
+        MatDividerModule,
+        MatBadgeModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        RouterModule,
+        TranslateModule,
+        LanguageSwitcherComponent,
+    ],
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-  currentPageTitle = 'Dashboard';
+    private destroy$ = new Subject<void>();
+    currentPageTitle = 'Dashboard';
 
-  navigationLinks: NavigationLink[] = [];
+    navigationLinks: NavigationLink[] = [];
 
-  private readonly routeTitleMap = new Map<string, string>([
-    ['', 'navigation.dashboard'],
-    ['dashboard', 'navigation.dashboard'],
-    ['catalog', 'navigation.catalog'],
-    ['design-lab', 'navigation.designLab'],
-    ['cart', 'navigation.cart']
-  ]);
+    private readonly routeTitleMap = new Map<string, string>([
+        ['', 'navigation.dashboard'],
+        ['dashboard', 'navigation.dashboard'],
+        ['catalog', 'navigation.catalog'],
+        ['design-lab', 'navigation.designLab'],
+        ['cart', 'navigation.cart'],
+    ]);
 
-  constructor(
-    private authService: AuthenticationService,
-    private router: Router,
-    private translateService: TranslateService,
-    public cartService: CartService,
-    private snackBar: MatSnackBar
-  ) {}
+    constructor(
+        private authService: AuthenticationService,
+        private router: Router,
+        private translateService: TranslateService,
+        public cartService: CartService,
+        private snackBar: MatSnackBar
+    ) {}
 
-  ngOnInit() {
-    // Always build navigationLinks fresh
-    this.navigationLinks = [
-      {
-        name: 'Dashboard',
-        nameKey: 'navigation.dashboard',
-        route: 'dashboard',
-        icon: 'dashboard'
-      },
-      {
-        name: 'Catalog',
-        nameKey: 'navigation.catalog',
-        route: 'catalog',
-        icon: 'storefront'
-      },
-      {
-        name: 'Design Lab',
-        nameKey: 'navigation.designLab',
-        route: 'design-lab',
-        icon: 'palette'
-      },
-      {
-        name: 'Cart',
-        nameKey: 'navigation.cart',
-        route: 'cart',
-        icon: 'shopping_cart'
-      },
-      {
-        name: 'Profile',
-        nameKey: 'navigation.profile',
-        route: 'profile',
-        icon: 'account_circle'
-      }
-    ];
-    const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-    if (roles.includes('ROLE_MANUFACTURER')) {
-      this.navigationLinks.push({
-        name: 'Fulfillments',
-        nameKey: 'navigation.fulfillments',
-        route: 'fulfillments',
-        icon: 'local_shipping'
-      });
+    ngOnInit() {
+        // Always build navigationLinks fresh
+        this.navigationLinks = [
+            {
+                name: 'Dashboard',
+                nameKey: 'navigation.dashboard',
+                route: 'dashboard',
+                icon: 'dashboard',
+            },
+            {
+                name: 'Catalog',
+                nameKey: 'navigation.catalog',
+                route: 'catalog',
+                icon: 'storefront',
+            },
+            {
+                name: 'Design Lab',
+                nameKey: 'navigation.designLab',
+                route: 'design-lab',
+                icon: 'palette',
+            },
+            {
+                name: 'Cart',
+                nameKey: 'navigation.cart',
+                route: 'cart',
+                icon: 'shopping_cart',
+            },
+            {
+                name: 'Profile',
+                nameKey: 'navigation.profile',
+                route: 'profile',
+                icon: 'account_circle',
+            },
+        ];
+        const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+        if (roles.includes('ROLE_MANUFACTURER')) {
+            this.navigationLinks.push({
+                name: 'Fulfillments',
+                nameKey: 'navigation.fulfillments',
+                route: 'fulfillments',
+                icon: 'local_shipping',
+            });
+        }
+
+        // Listen to router events to update page title
+        this.router.events
+            .pipe(
+                filter(
+                    (event): event is NavigationEnd =>
+                        event instanceof NavigationEnd
+                ),
+                takeUntil(this.destroy$)
+            )
+            .subscribe((event: NavigationEnd) => {
+                this.updatePageTitle(event.urlAfterRedirects);
+            });
+
+        // Set initial title
+        this.updatePageTitle(this.router.url);
     }
 
-    // Listen to router events to update page title
-    this.router.events
-      .pipe(
-        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((event: NavigationEnd) => {
-        this.updatePageTitle(event.urlAfterRedirects);
-      });
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 
-    // Set initial title
-    this.updatePageTitle(this.router.url);
-  }
+    private updatePageTitle(url: string) {
+        // Extract the route after /home/
+        const routeMatch = url.match(/\/home\/?(.*)/);
+        const route = routeMatch ? routeMatch[1] : '';
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+        const titleKey =
+            this.routeTitleMap.get(route) || 'navigation.dashboard';
 
-  private updatePageTitle(url: string) {
-    // Extract the route after /home/
-    const routeMatch = url.match(/\/home\/?(.*)/);
-    const route = routeMatch ? routeMatch[1] : '';
+        // Use synchronous translation to avoid subscription issues
+        const translatedTitle = this.translateService.instant(titleKey);
+        this.currentPageTitle = translatedTitle || titleKey;
+    }
 
-    const titleKey = this.routeTitleMap.get(route) || 'navigation.dashboard';
+    getCurrentPageTitle(): string {
+        return this.currentPageTitle;
+    }
 
-    // Use synchronous translation to avoid subscription issues
-    const translatedTitle = this.translateService.instant(titleKey);
-    this.currentPageTitle = translatedTitle || titleKey;
-  }
+    onNavigate(link: NavigationLink) {
+        this.router.navigate(['/home', link.route]);
+    }
 
-  getCurrentPageTitle(): string {
-    return this.currentPageTitle;
-  }
+    navigateToSection(section: string) {
+        // Always navigate to /home/${section} to stay within the authenticated area
+        this.router.navigate(['/home', section]);
+    }
 
-  onNavigate(link: NavigationLink) {
-    this.router.navigate(['/home', link.route]);
-  }
+    signOut() {
+        this.authService.signOut();
+        this.router.navigate(['/sign-in']);
+    }
+    viewCart() {
+        // Navigate to cart page
+        this.router.navigate(['/home/cart']);
+    }
 
-  navigateToSection(section: string) {
-    // Always navigate to /home/${section} to stay within the authenticated area
-    this.router.navigate(['/home', section]);
-  }
-
-  signOut() {
-    this.authService.signOut();
-    this.router.navigate(['/sign-in']);
-  }  viewCart() {
-    // Navigate to cart page
-    this.router.navigate(['/home/cart']);
-  }
-
-  isManufacturer(): boolean {
-    const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-    return roles.includes('ROLE_MANUFACTURER');
-  }
+    isManufacturer(): boolean {
+        const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+        return roles.includes('ROLE_MANUFACTURER');
+    }
 }
