@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import { AuthenticationService } from '../../iam/services/authentication.service';
 import { Project } from '../model/project.entity';
 import { TextLayer, ImageLayer, Layer } from '../model/layer.entity';

@@ -88,6 +88,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'order-processing/checkout',
+        loadComponent: () =>
+          import('./order-processing/components/checkout-form/checkout-page.component').then(
+            (c) => c.CheckoutPageComponent
+          ),
+      },
+      {
+        path: 'order-processing/payment/ok',
+        loadComponent: () =>
+          import('./order-processing/components/checkout-form/payment-success.component').then(
+            (c) => c.PaymentSuccessComponent
+          ),
+      },
+      {
         path: 'fulfillments',
         loadComponent: () =>
           import('./public/pages/fulfillments/fulfillments.component').then(

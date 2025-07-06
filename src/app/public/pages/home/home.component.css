@@ -17,6 +17,8 @@
   max-width: 280px;
   padding: 0;
   overflow-x: hidden;
+  box-shadow: 2px 0 16px 0 rgba(35,41,70,0.10);
+  border-right: 1.5px solid #232323;
 }
 
 .sidebar-header {
@@ -25,6 +27,7 @@
   padding: 24px 20px;
   width: 100%;
   box-sizing: border-box;
+  border-bottom: 1px solid #444;
 }
 
 .brand-icon {
@@ -69,6 +72,7 @@
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
+  border-top: 1px solid #444;
 }
 
 .sign-out-btn {

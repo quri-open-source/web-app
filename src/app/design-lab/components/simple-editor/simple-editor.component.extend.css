@@ -67,7 +67,7 @@
 .layers-list h5 {
   margin: 0 0 0.5rem 0;
   font-size: 0.9em;
-  color: #6c757d;
+  ;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -88,7 +88,7 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: #6c757d;
+  ;
   margin-right: 8px;
 }
 
@@ -109,13 +109,13 @@
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: #6c757d;
+  ;
   margin-bottom: 1rem;
 }
 
 .image-upload-area p {
   margin: 0 0 1rem 0;
-  color: #6c757d;
+  ;
 }
 
 /* Text Editor Form */
@@ -161,9 +161,6 @@
   justify-content: flex-end;
 }
 
-.cancel-btn {
-  color: #6c757d;
-}
 
 .save-btn {
   min-width: 120px;

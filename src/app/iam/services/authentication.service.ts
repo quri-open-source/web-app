@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {environment} from "../../../environments/environment";
+import {environment} from "../../../environments/environment.prod";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {BehaviorSubject} from "rxjs";
 import {Router} from "@angular/router";
+import { CartService } from '../../shared/services/cart.service';
 import {SignUpRequest} from "../model/sign-up.request";
 import {SignUpResponse} from "../model/sign-up.response";
 import {SignInRequest} from "../model/sign-in.request";
@@ -27,7 +28,7 @@ export class AuthenticationService {
     * @param router The router service.
    * @param http The HttpClient service.
    */
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient, private cartService: CartService) {
     this.checkStoredAuthentication();
   }
 
@@ -182,10 +183,8 @@ export class AuthenticationService {
     this.signedIn.next(false);
     this.signedInUserId.next('');
     this.signedInUsername.next('');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('username');
-    localStorage.removeItem('roles');
+    this.cartService.clearCart();
+    localStorage.clear();
     this.router.navigate(['/sign-in']).then();
   }
 

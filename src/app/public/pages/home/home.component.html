@@ -54,7 +54,7 @@
               matTooltip="{{ 'navigation.fulfillments' | translate }}">
               <mat-icon>local_shipping</mat-icon>
             </button>
-            <button mat-icon-button>
+            <button mat-icon-button [routerLink]="['/home/profile']" matTooltip="{{ 'navigation.profile' | translate }}">
               <mat-icon>account_circle</mat-icon>
             </button>
           </mat-toolbar>

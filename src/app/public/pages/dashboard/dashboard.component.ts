@@ -82,13 +82,6 @@ import { AuthenticationService } from '../../../iam/services/authentication.serv
         </mat-card>
       </div>
     </section>
-
-    <!-- Debug Section (only for testing) -->
-    <section class="debug-section">
-      <button mat-raised-button color="warn" (click)="checkAuthState()">
-        🔍 Check Authentication State
-      </button>
-    </section>
   `,
   styles: [`
     .hero-section {

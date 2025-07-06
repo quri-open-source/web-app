@@ -77,10 +77,22 @@ export interface DeleteProjectDialogData {
 
     .project-info {
       background-color: #f5f5f5;
-      padding: 12px;
+      padding: 20px 24px;
       border-radius: 4px;
       margin: 16px 0;
       border-left: 4px solid #ff9800;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .project-info strong {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      padding-left: 2px;
+      padding-right: 2px;
+      padding-top: 4px;
+      padding-bottom: 4px;
     }
 
     .warning-text {
