@@ -468,6 +468,39 @@
     "notifications": "Notificaciones",
     "fulfillments": "Fulfillments"
   },
+  "payment": {
+    "checkout": {
+      "title": "Finalizar Compra"
+    },
+    "form": {
+      "title": "Detalles de Pago",
+      "name": "Nombre Completo",
+      "namePlaceholder": "Ingresa tu nombre completo",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "address": "Dirección",
+      "addressPlaceholder": "Ingresa tu dirección",
+      "zipCode": "Código Postal",
+      "zipCodePlaceholder": "Ingresa tu código postal",
+      "city": "Ciudad",
+      "cityPlaceholder": "Ingresa tu ciudad",
+      "payNow": "Pagar Ahora",
+      "processing": "Procesando Pago..."
+    },
+    "success": {
+      "title": "¡Pago Exitoso!",
+      "message": "Gracias por tu compra. Tu pago fue procesado exitosamente.",
+      "orderInfo": "Tu pedido ha sido confirmado y será procesado en breve.",
+      "goHome": "Ir al Inicio",
+      "continueShopping": "Continuar Comprando"
+    },
+    "error": {
+      "title": "Pago Fallido",
+      "message": "Hubo un error al procesar tu pago. Por favor intenta de nuevo.",
+      "retry": "Intentar Nuevamente",
+      "goBack": "Volver"
+    }
+  },
   "language": {
     "switch": "Cambiar idioma",
     "english": "Inglés",

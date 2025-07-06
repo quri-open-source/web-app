@@ -448,6 +448,39 @@
       "error": "Failed to upload image. Please try again."
     }
   },
+  "payment": {
+    "checkout": {
+      "title": "Checkout"
+    },
+    "form": {
+      "title": "Payment Details",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email address",
+      "address": "Address",
+      "addressPlaceholder": "Enter your address",
+      "zipCode": "ZIP Code",
+      "zipCodePlaceholder": "Enter your ZIP code",
+      "city": "City",
+      "cityPlaceholder": "Enter your city",
+      "payNow": "Pay Now",
+      "processing": "Processing Payment..."
+    },
+    "success": {
+      "title": "Payment Successful!",
+      "message": "Thank you for your purchase. Your payment was processed successfully.",
+      "orderInfo": "Your order has been confirmed and will be processed shortly.",
+      "goHome": "Go Home",
+      "continueShopping": "Continue Shopping"
+    },
+    "error": {
+      "title": "Payment Failed",
+      "message": "There was an error processing your payment. Please try again.",
+      "retry": "Try Again",
+      "goBack": "Go Back"
+    }
+  },
   "errors": {
     "genericError": "An error occurred",
     "networkError": "Network error",
