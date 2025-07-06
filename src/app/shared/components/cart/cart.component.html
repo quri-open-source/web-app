@@ -33,6 +33,22 @@
 
         <!-- Cart Products -->
         <div *ngIf="!loading && cartProducts.length > 0" class="cart-products-section">
+          <!-- Manufacturer Selector -->
+          <div class="manufacturer-selector">
+            <mat-form-field appearance="outline" style="width: 100%; max-width: 350px; margin-bottom: 24px;">
+              <mat-label>{{ 'cart.selectManufacturer' | translate }}</mat-label>
+              <mat-select [(ngModel)]="selectedManufacturerId" required>
+                <mat-option *ngFor="let m of manufacturers" [value]="m.id">
+                  {{ m.name }}
+                  <span i18n="@@cart.manufacturerLocation"> ({{ m.city }}, {{ m.country }})</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div *ngIf="manufacturers.length === 0" class="manufacturer-warning" style="color: #d32f2f; margin-bottom: 12px;">
+              <mat-icon color="warn">warning</mat-icon>
+              <span i18n="@@cart.noManufacturers">{{ 'cart.noManufacturers' | translate }}</span>
+            </div>
+          </div>
           <!-- Cart Items -->
           <div class="cart-items">
             <mat-card *ngFor="let product of cartProducts" class="cart-item-card">
@@ -110,9 +126,9 @@
                   mat-raised-button
                   color="accent"
                   (click)="proceedToCheckout()"
-                  [disabled]="cartProducts.length === 0">
+                  [disabled]="cartProducts.length === 0 || !selectedManufacturerId">
                   <mat-icon>payment</mat-icon>
-                  {{ 'cart.proceedToCheckout' | translate }}
+                  <span i18n="@@cart.proceedToCheckout">{{ 'cart.proceedToCheckout' | translate }}</span>
                 </button>
               </mat-card-actions>
             </mat-card>
