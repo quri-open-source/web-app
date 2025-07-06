@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {SignInRequest} from "../../model/sign-in.request";
 import {AuthenticationService} from "../../services/authentication.service";
@@ -32,7 +34,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     ReactiveFormsModule,
     RouterLink,
     LanguageSwitcherComponent,
-    TranslateModule
+    TranslateModule,
+    MatProgressSpinnerModule,
+    CommonModule
   ],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.css'

@@ -1,71 +1,114 @@
 <div class="signin-container">
-  <div class="language-switcher-container">
-    <app-language-switcher></app-language-switcher>
-  </div>
+    <div *ngIf="isLoading" class="loading-overlay">
+        <mat-spinner diameter="60"></mat-spinner>
+    </div>
 
-  <div class="signin-content">
-    <mat-card class="signin-card">
-      <mat-card-header class="signin-header">
-        <mat-card-title class="signin-title">{{ 'signin.title' | translate }}</mat-card-title>
-        <mat-card-subtitle class="signin-subtitle">{{ 'signin.subtitle' | translate }}</mat-card-subtitle>
-      </mat-card-header>
+    <div class="language-switcher-container">
+        <app-language-switcher></app-language-switcher>
+    </div>
 
-      <mat-card-content class="signin-form-content">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="signin-form">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>{{ 'signin.usernameField.label' | translate }}</mat-label>
-            <input matInput
-                   formControlName="username"
-                   [placeholder]="'signin.usernameField.placeholder' | translate"
-                   autocomplete="username">
-            <mat-icon matPrefix>person</mat-icon>
-            @if (isInvalidControl(form,'username')) {
-              <mat-error>{{ errorMessagesForControl(form,'username')}}</mat-error>
-            }
-          </mat-form-field>
+    <div class="signin-content">
+        <mat-card class="signin-card">
+            <mat-card-header class="signin-header">
+                <mat-card-title class="signin-title">{{
+                    "signin.title" | translate
+                }}</mat-card-title>
+                <mat-card-subtitle class="signin-subtitle">{{
+                    "signin.subtitle" | translate
+                }}</mat-card-subtitle>
+            </mat-card-header>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>{{ 'signin.passwordField.label' | translate }}</mat-label>
-            <input matInput
-                   [type]="hidePassword ? 'password' : 'text'"
-                   formControlName="password"
-                   [placeholder]="'signin.passwordField.placeholder' | translate"
-                   autocomplete="current-password">
-            <mat-icon matPrefix>lock</mat-icon>
-            <button mat-icon-button
-                    matSuffix
-                    (click)="hidePassword = !hidePassword"
-                    [attr.aria-label]="('common.hide.password' | translate)"
-                    [attr.aria-pressed]="hidePassword"
-                    type="button">
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            @if (isInvalidControl(form,'password')) {
-              <mat-error>{{ errorMessagesForControl(form,'password')}}</mat-error>
-            }
-          </mat-form-field>
+            <mat-card-content class="signin-form-content">
+                <form
+                    [formGroup]="form"
+                    (ngSubmit)="onSubmit()"
+                    class="signin-form"
+                >
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{
+                            "signin.usernameField.label" | translate
+                        }}</mat-label>
+                        <input
+                            matInput
+                            formControlName="username"
+                            [placeholder]="
+                                'signin.usernameField.placeholder' | translate
+                            "
+                            autocomplete="username"
+                        />
+                        <mat-icon matPrefix>person</mat-icon>
+                        @if (isInvalidControl(form,'username')) {
+                        <mat-error>{{
+                            errorMessagesForControl(form, "username")
+                        }}</mat-error>
+                        }
+                    </mat-form-field>
 
-          <button mat-raised-button
-                  color="primary"
-                  type="submit"
-                  class="signin-button"
-                  [disabled]="form.invalid || submitted">
-            @if (submitted) {
-              <mat-icon>hourglass_empty</mat-icon>
-            } @else {
-              <mat-icon>login</mat-icon>
-            }
-            {{ 'signin.button.signingIn' | translate }}
-          </button>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{
+                            "signin.passwordField.label" | translate
+                        }}</mat-label>
+                        <input
+                            matInput
+                            [type]="hidePassword ? 'password' : 'text'"
+                            formControlName="password"
+                            [placeholder]="
+                                'signin.passwordField.placeholder' | translate
+                            "
+                            autocomplete="current-password"
+                        />
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <button
+                            mat-icon-button
+                            matSuffix
+                            (click)="hidePassword = !hidePassword"
+                            [attr.aria-label]="
+                                'common.hide.password' | translate
+                            "
+                            [attr.aria-pressed]="hidePassword"
+                            type="button"
+                        >
+                            <mat-icon>{{
+                                hidePassword ? "visibility_off" : "visibility"
+                            }}</mat-icon>
+                        </button>
+                        @if (isInvalidControl(form,'password')) {
+                        <mat-error>{{
+                            errorMessagesForControl(form, "password")
+                        }}</mat-error>
+                        }
+                    </mat-form-field>
 
-          <div class="signin-footer">
-            <span class="signin-footer-text">{{ 'signin.noAccount' | translate }}</span>
-            <a routerLink="/sign-up" mat-button color="accent" class="signin-footer-link">
-              {{ 'common.signUp' | translate }}
-            </a>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        class="signin-button"
+                        [disabled]="form.invalid || submitted"
+                    >
+                        @if (submitted) {
+                        <mat-icon>hourglass_empty</mat-icon>
+                        } @else {
+                        <mat-icon>login</mat-icon>
+                        }
+                        {{ "signin.button.signingIn" | translate }}
+                    </button>
+
+                    <div class="signin-footer">
+                        <span class="signin-footer-text">{{
+                            "signin.noAccount" | translate
+                        }}</span>
+                        <a
+                            routerLink="/sign-up"
+                            mat-button
+                            color="accent"
+                            class="signin-footer-link"
+                        >
+                            {{ "common.signUp" | translate }}
+                        </a>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
 </div>
