@@ -253,7 +253,6 @@ export class ProductDetailComponent implements OnInit {
       next: (project) => {
         this.project = project;
         this.loading = false;
-        console.log('✅ Project details loaded:', project);
       },
       error: (error) => {
         console.error('Error loading project details:', error);

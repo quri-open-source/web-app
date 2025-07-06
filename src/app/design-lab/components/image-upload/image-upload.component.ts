@@ -165,7 +165,6 @@ export class ImageUploadComponent {
 
     this.designLabService.uploadImageAndCreateLayer(file, this.projectId).subscribe({
       next: (result: DirectImageUploadResult) => {
-        console.log('✅ Direct image upload and layer creation successful:', result);
 
         this.directImageUpload.emit(result);
         this.isUploading = false;
@@ -224,7 +223,6 @@ export class ImageUploadComponent {
 
     this.cloudinaryService.uploadImageWithDimensions(file).subscribe({
       next: (result: ImageUploadWithDimensions) => {
-        console.log('✅ Image uploaded successfully with dimensions:', result);
 
         const uploadResult: ImageUploadResult = {
           imageUrl: result.cloudinaryResult.secure_url,

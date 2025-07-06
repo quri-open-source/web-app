@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, inject, HostListener, ElementRef } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    inject,
+    HostListener,
+    ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -24,993 +31,1077 @@ import { CloudinaryService } from '../../services/cloudinary.service';
 import { Project } from '../../model/project.entity';
 import { TextLayer, ImageLayer, Layer } from '../../model/layer.entity';
 import { GARMENT_COLOR } from '../../../const';
-import { ImageUploadComponent, ImageUploadResult, DirectImageUploadResult } from '../image-upload/image-upload.component';
-import { TextLayerComponent, TextLayerEvent } from '../text-layer/text-layer.component';
-import { ImageLayerComponent, ImageLayerEvent } from '../image-layer/image-layer.component';
+import {
+    ImageUploadComponent,
+    ImageUploadResult,
+    DirectImageUploadResult,
+} from '../image-upload/image-upload.component';
+import {
+    TextLayerComponent,
+    TextLayerEvent,
+} from '../text-layer/text-layer.component';
+import {
+    ImageLayerComponent,
+    ImageLayerEvent,
+} from '../image-layer/image-layer.component';
 
 @Component({
-  selector: 'app-simple-editor',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatTooltipModule,
-    TranslateModule,
-    ImageUploadComponent,
-    TextLayerComponent,
-    ImageLayerComponent
-  ],
-  templateUrl: './simple-editor.component.html',
-  styleUrls: [ './simple-editor.component.css',  './simple-editor.component.extend.css']
+    selector: 'app-simple-editor',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCheckboxModule,
+        MatSelectModule,
+        MatSliderModule,
+        MatTooltipModule,
+        TranslateModule,
+        ImageUploadComponent,
+        TextLayerComponent,
+        ImageLayerComponent,
+    ],
+    templateUrl: './simple-editor.component.html',
+    styleUrls: [
+        './simple-editor.component.css',
+        './simple-editor.component.extend.css',
+    ],
 })
 export class SimpleEditorComponent implements OnInit, OnDestroy {
-  project: Project | null = null;
-  isLoading = false;
-  isSaving = false;
-  error: string | null = null;
-  projectId: string | null = null;
+    project: Project | null = null;
+    isLoading = false;
+    isSaving = false;
+    error: string | null = null;
+    projectId: string | null = null;
 
-  // Text editing state
-  selectedTextLayer: TextLayer | null = null;
-  selectedLayerId: string | null = null;
-  isEditingText = false;
-  textContent = '';
-  fontSize = 24;
-  fontColor = '#000000';
-  fontFamily = 'Arial';
-  isBold = false;
-  isItalic = false;
-  isUnderlined = false;
+    // Text editing state
+    selectedTextLayer: TextLayer | null = null;
+    selectedLayerId: string | null = null;
+    isEditingText = false;
+    textContent = '';
+    fontSize = 24;
+    fontColor = '#000000';
+    fontFamily = 'Arial';
+    isBold = false;
+    isItalic = false;
+    isUnderlined = false;
 
-  // Drag and drop state
-  isDragging = false;
-  dragOffset = { x: 0, y: 0 };
-  dragLayer: TextLayer | null = null;
+    // Drag and drop state
+    isDragging = false;
+    dragOffset = { x: 0, y: 0 };
+    dragLayer: TextLayer | null = null;
 
-  // Available font families
-  fontFamilies = [
-    { value: 'Arial', display: 'Arial' },
-    { value: 'Times New Roman', display: 'Times New Roman' },
-    { value: 'Helvetica', display: 'Helvetica' },
-    { value: 'Georgia', display: 'Georgia' },
-    { value: 'Verdana', display: 'Verdana' },
-    { value: 'Courier New', display: 'Courier New' }
-  ];
+    // Available font families
+    fontFamilies = [
+        { value: 'Arial', display: 'Arial' },
+        { value: 'Times New Roman', display: 'Times New Roman' },
+        { value: 'Helvetica', display: 'Helvetica' },
+        { value: 'Georgia', display: 'Georgia' },
+        { value: 'Verdana', display: 'Verdana' },
+        { value: 'Courier New', display: 'Courier New' },
+    ];
 
-  // Color mapping for t-shirt preview with Cloudinary positioning
-  private colorMap: { [key in GARMENT_COLOR]: { hex: string; position: { x: number; y: number } } } = {
-    [GARMENT_COLOR.BLACK]: { hex: '#000000', position: { x: 0, y: 0 } },
-    [GARMENT_COLOR.GRAY]: { hex: '#808080', position: { x: 600, y: 0 } },
-    [GARMENT_COLOR.LIGHT_GRAY]: { hex: '#D3D3D3', position: { x: 1200, y: 0 } },
-    [GARMENT_COLOR.WHITE]: { hex: '#FFFFFF', position: { x: 1800, y: 0 } },
-    [GARMENT_COLOR.RED]: { hex: '#DC143C', position: { x: 0, y: 600 } },
-    [GARMENT_COLOR.PINK]: { hex: '#FF69B4', position: { x: 600, y: 600 } },
-    [GARMENT_COLOR.LIGHT_PURPLE]: { hex: '#DDA0DD', position: { x: 1200, y: 600 } },
-    [GARMENT_COLOR.PURPLE]: { hex: '#800080', position: { x: 1800, y: 600 } },
-    [GARMENT_COLOR.CYAN]: { hex: '#00FFFF', position: { x: 0, y: 1200 } },
-    [GARMENT_COLOR.SKY_BLUE]: { hex: '#87CEEB', position: { x: 600, y: 1200 } },
-    [GARMENT_COLOR.LIGHT_BLUE]: { hex: '#87CEEB', position: { x: 1200, y: 1200 } },
-    [GARMENT_COLOR.BLUE]: { hex: '#0000FF', position: { x: 1800, y: 1200 } },
-    [GARMENT_COLOR.GREEN]: { hex: '#008000', position: { x: 0, y: 1800 } },
-    [GARMENT_COLOR.LIGHT_GREEN]: { hex: '#90EE90', position: { x: 600, y: 1800 } },
-    [GARMENT_COLOR.YELLOW]: { hex: '#FFFF00', position: { x: 1200, y: 1800 } },
-    [GARMENT_COLOR.DARK_YELLOW]: { hex: '#FFD700', position: { x: 1800, y: 1800 } }
-  };
-
-  // Base Cloudinary URL
-  private baseImageUrl = 'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
-
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private designLabService = inject(DesignLabService);
-  private cloudinaryService = inject(CloudinaryService);
-  private translateService = inject(TranslateService);
-  private snackBar = inject(MatSnackBar);
-  private elementRef = inject(ElementRef);
-
-  // Bound listener for beforeunload event
-  private boundBeforeUnloadHandler = this.handleBeforeUnload.bind(this);
-
-  ngOnInit(): void {
-    this.projectId = this.route.snapshot.paramMap.get('id');
-    if (this.projectId) {
-      this.loadProject();
-    }
-
-    // Add beforeunload listener to capture screenshot when user closes the window
-    window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
-  }
-
-  ngOnDestroy(): void {
-    // Remove the beforeunload listener
-    window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
-
-    // Also generate preview when component is destroyed (navigation away)
-    this.generateAndUpdatePreview();
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  handleBeforeUnload(_event: BeforeUnloadEvent): void {
-    // Generate preview before unloading
-    this.generateAndUpdatePreview();
-  }
-
-  loadProject(): void {
-    if (!this.projectId) return;
-
-    this.isLoading = true;
-    this.error = null;
-
-    this.designLabService.getProjectById(this.projectId).subscribe({
-      next: (project: Project) => {
-        this.project = project;
-        this.isLoading = false;
-        console.log('✅ Project loaded:', project);
-        console.log('📋 Project layers:', project.layers);
-
-        // Debug específico para image layers
-        const imageLayers = project.layers.filter(layer => layer.type === 'IMAGE');
-        if (imageLayers.length > 0) {
-          console.log('🖼️ Image layers found:', imageLayers);
-          imageLayers.forEach((layer, index) => {
-            console.log(`🖼️ Image layer ${index}:`, {
-              id: layer.id,
-              type: layer.type,
-              details: layer.details,
-              x: layer.x,
-              y: layer.y,
-              z: layer.z,
-              opacity: layer.opacity,
-              isVisible: layer.isVisible
-            });
-          });
-        }
-      },
-      error: (error: any) => {
-        console.error('❌ Error loading project:', error);
-        this.error = this.translateService.instant('designLab.errorLoadingProject');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  async saveProject(): Promise<void> {
-    if (!this.project || this.isSaving) return;
-
-    this.isSaving = true;
-
-    try {
-      console.log('💾 Starting project save with preview generation...');
-
-      // Generate and update preview image
-      await this.generateAndUpdatePreview();
-
-      // Show success message
-      this.snackBar.open(
-        this.translateService.instant('designLab.messages.projectSaved'),
-        this.translateService.instant('common.close'),
-        {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        }
-      );
-
-      console.log('✅ Project saved successfully with new preview');
-
-    } catch (error) {
-      console.error('❌ Error saving project:', error);
-
-      // Show error message
-      this.snackBar.open(
-        this.translateService.instant('designLab.messages.saveError'),
-        this.translateService.instant('common.close'),
-        {
-          duration: 5000,
-          panelClass: ['error-snackbar']
-        }
-      );
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  getTshirtColor(): string {
-    if (!this.project) return '#FFFFFF';
-    return this.colorMap[this.project.garmentColor]?.hex || '#FFFFFF';
-  }
-
-  getTshirtImageUrl(): string {
-    if (!this.project) return '';
-    const colorData = this.colorMap[this.project.garmentColor];
-    if (!colorData) return '';
-
-    // Cloudinary crop transformation: crop 600x600 from the specified position
-    const { x, y } = colorData.position;
-    return `https://res.cloudinary.com/dkkfv72vo/image/upload/c_crop,w_600,h_600,x_${x},y_${y}/v1747000549/Frame_530_hfhrko.webp`;
-  }
-
-  getColorOptions(): { color: GARMENT_COLOR; hex: string; name: string }[] {
-    return Object.values(GARMENT_COLOR).map(color => ({
-      color,
-      hex: this.colorMap[color]?.hex || '#FFFFFF',
-      name: color.toLowerCase().replace(/_/g, ' ')
-    }));
-  }
-
-  selectColor(color: GARMENT_COLOR): void {
-    if (this.project) {
-      this.project.garmentColor = color;
-      this.project.updatedAt = new Date();
-    }
-  }
-
-  // Text layer management
-  addTextLayer(): void {
-    if (!this.project) return;
-
-    // Reset editing state
-    this.textContent = 'New Text';
-    this.fontSize = 24;
-    this.fontColor = '#000000';
-    this.fontFamily = 'Arial';
-    this.isBold = false;
-    this.isItalic = false;
-    this.isUnderlined = false;
-    this.selectedTextLayer = null;
-    this.isEditingText = true;
-  }
-
-  saveTextLayer(): void {
-    if (!this.project || !this.projectId) return;
-
-    this.isSaving = true;
-
-    if (this.selectedTextLayer) {
-      // Update existing layer using text-details endpoint
-      const updateRequest = {
-        text: this.textContent,
-        fontColor: this.fontColor,
-        fontFamily: this.fontFamily,
-        fontSize: this.fontSize,
-        isBold: this.isBold,
-        isItalic: this.isItalic,
-        isUnderlined: this.isUnderlined
-      };
-
-      this.designLabService.updateTextLayerDetails(this.projectId, this.selectedTextLayer.id, updateRequest).subscribe({
-        next: (result: LayerResult) => {
-          if (result.success) {
-            // Update local layer
-            this.selectedTextLayer!.details = {
-              text: this.textContent,
-              fontSize: this.fontSize,
-              fontColor: this.fontColor,
-              fontFamily: this.fontFamily,
-              isBold: this.isBold,
-              isItalic: this.isItalic,
-              isUnderlined: this.isUnderlined
-            };
-            this.selectedTextLayer!.updatedAt = new Date();
-            this.project!.updatedAt = new Date();
-
-            this.snackBar.open(
-              this.translateService.instant('designLab.messages.layerUpdated'),
-              this.translateService.instant('common.close'),
-              { duration: 3000, panelClass: ['success-snackbar'] }
-            );
-            this.cancelTextEditing();
-          } else {
-            this.snackBar.open(
-              result.error || 'Error updating text layer',
-              this.translateService.instant('common.close'),
-              { duration: 3000, panelClass: ['error-snackbar'] }
-            );
-          }
-          this.isSaving = false;
+    // Color mapping for t-shirt preview with Cloudinary positioning
+    private colorMap: {
+        [key in GARMENT_COLOR]: {
+            hex: string;
+            position: { x: number; y: number };
+        };
+    } = {
+        [GARMENT_COLOR.BLACK]: { hex: '#000000', position: { x: 0, y: 0 } },
+        [GARMENT_COLOR.GRAY]: { hex: '#808080', position: { x: 600, y: 0 } },
+        [GARMENT_COLOR.LIGHT_GRAY]: {
+            hex: '#D3D3D3',
+            position: { x: 1200, y: 0 },
         },
-        error: (error: any) => {
-          console.error('❌ Error updating text layer:', error);
-          this.snackBar.open(
-            this.translateService.instant('designLab.errors.layerUpdateFailed'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
-          this.isSaving = false;
-        }
-      });
-    } else {
-      // Create new layer using layers/texts endpoint
-      const createRequest = {
-        text: this.textContent,
-        fontColor: this.fontColor,
-        fontFamily: this.fontFamily,
-        fontSize: this.fontSize,
-        isBold: this.isBold,
-        isItalic: this.isItalic,
-        isUnderlined: this.isUnderlined
-      };
+        [GARMENT_COLOR.WHITE]: { hex: '#FFFFFF', position: { x: 1800, y: 0 } },
+        [GARMENT_COLOR.RED]: { hex: '#DC143C', position: { x: 0, y: 600 } },
+        [GARMENT_COLOR.PINK]: { hex: '#FF69B4', position: { x: 600, y: 600 } },
+        [GARMENT_COLOR.LIGHT_PURPLE]: {
+            hex: '#DDA0DD',
+            position: { x: 1200, y: 600 },
+        },
+        [GARMENT_COLOR.PURPLE]: {
+            hex: '#800080',
+            position: { x: 1800, y: 600 },
+        },
+        [GARMENT_COLOR.CYAN]: { hex: '#00FFFF', position: { x: 0, y: 1200 } },
+        [GARMENT_COLOR.SKY_BLUE]: {
+            hex: '#87CEEB',
+            position: { x: 600, y: 1200 },
+        },
+        [GARMENT_COLOR.LIGHT_BLUE]: {
+            hex: '#87CEEB',
+            position: { x: 1200, y: 1200 },
+        },
+        [GARMENT_COLOR.BLUE]: {
+            hex: '#0000FF',
+            position: { x: 1800, y: 1200 },
+        },
+        [GARMENT_COLOR.GREEN]: { hex: '#008000', position: { x: 0, y: 1800 } },
+        [GARMENT_COLOR.LIGHT_GREEN]: {
+            hex: '#90EE90',
+            position: { x: 600, y: 1800 },
+        },
+        [GARMENT_COLOR.YELLOW]: {
+            hex: '#FFFF00',
+            position: { x: 1200, y: 1800 },
+        },
+        [GARMENT_COLOR.DARK_YELLOW]: {
+            hex: '#FFD700',
+            position: { x: 1800, y: 1800 },
+        },
+    };
 
-      this.designLabService.createTextLayer(this.projectId, createRequest).subscribe({
-        next: (result: LayerResult) => {
-          if (result.success && result.layerId) {
-            // Create local layer representation
-            const newLayer = new TextLayer(
-              result.layerId,
-              100,
-              100,
-              this.project!.layers.length + 1,
-              1,
-              true,
-              new Date(),
-              new Date(),
-              {
+    // Base Cloudinary URL
+    private baseImageUrl =
+        'https://res.cloudinary.com/dkkfv72vo/image/upload/v1747000549/Frame_530_hfhrko.webp';
+
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private designLabService = inject(DesignLabService);
+    private cloudinaryService = inject(CloudinaryService);
+    private translateService = inject(TranslateService);
+    private snackBar = inject(MatSnackBar);
+    private elementRef = inject(ElementRef);
+
+    // Bound listener for beforeunload event
+    private boundBeforeUnloadHandler = this.handleBeforeUnload.bind(this);
+
+    ngOnInit(): void {
+        this.projectId = this.route.snapshot.paramMap.get('id');
+        if (this.projectId) {
+            this.loadProject();
+        }
+
+        // Add beforeunload listener to capture screenshot when user closes the window
+        window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
+    }
+
+    ngOnDestroy(): void {
+        // Remove the beforeunload listener
+        window.removeEventListener(
+            'beforeunload',
+            this.boundBeforeUnloadHandler
+        );
+
+        // Also generate preview when component is destroyed (navigation away)
+        this.generateAndUpdatePreview();
+    }
+
+    @HostListener('window:beforeunload', ['$event'])
+    handleBeforeUnload(_event: BeforeUnloadEvent): void {
+        // Generate preview before unloading
+        this.generateAndUpdatePreview();
+    }
+
+    loadProject(): void {
+        if (!this.projectId) return;
+
+        this.isLoading = true;
+        this.error = null;
+
+        this.designLabService.getProjectById(this.projectId).subscribe({
+            next: (project: Project) => {
+                this.project = project;
+                this.isLoading = false;
+            },
+            error: (error: any) => {
+                this.error = this.translateService.instant(
+                    'designLab.errorLoadingProject'
+                );
+                this.isLoading = false;
+            },
+        });
+    }
+
+    async saveProject(): Promise<void> {
+        if (!this.project || this.isSaving) return;
+
+        this.isSaving = true;
+
+        try {
+            // Generate and update preview image
+            await this.generateAndUpdatePreview();
+
+            // Show success message
+            this.snackBar.open(
+                this.translateService.instant(
+                    'designLab.messages.projectSaved'
+                ),
+                this.translateService.instant('common.close'),
+                {
+                    duration: 3000,
+                    panelClass: ['success-snackbar'],
+                }
+            );
+        } catch (error) {
+            // Show error message
+            this.snackBar.open(
+                this.translateService.instant('designLab.messages.saveError'),
+                this.translateService.instant('common.close'),
+                {
+                    duration: 5000,
+                    panelClass: ['error-snackbar'],
+                }
+            );
+        } finally {
+            this.isSaving = false;
+        }
+    }
+
+    getTshirtColor(): string {
+        if (!this.project) return '#FFFFFF';
+        return this.colorMap[this.project.garmentColor]?.hex || '#FFFFFF';
+    }
+
+    getTshirtImageUrl(): string {
+        if (!this.project) return '';
+        const colorData = this.colorMap[this.project.garmentColor];
+        if (!colorData) return '';
+
+        // Cloudinary crop transformation: crop 600x600 from the specified position
+        const { x, y } = colorData.position;
+        return `https://res.cloudinary.com/dkkfv72vo/image/upload/c_crop,w_600,h_600,x_${x},y_${y}/v1747000549/Frame_530_hfhrko.webp`;
+    }
+
+    getColorOptions(): { color: GARMENT_COLOR; hex: string; name: string }[] {
+        return Object.values(GARMENT_COLOR).map((color) => ({
+            color,
+            hex: this.colorMap[color]?.hex || '#FFFFFF',
+            name: color.toLowerCase().replace(/_/g, ' '),
+        }));
+    }
+
+    selectColor(color: GARMENT_COLOR): void {
+        if (this.project) {
+            this.project.garmentColor = color;
+            this.project.updatedAt = new Date();
+        }
+    }
+
+    // Text layer management
+    addTextLayer(): void {
+        if (!this.project) return;
+
+        // Reset editing state
+        this.textContent = 'New Text';
+        this.fontSize = 24;
+        this.fontColor = '#000000';
+        this.fontFamily = 'Arial';
+        this.isBold = false;
+        this.isItalic = false;
+        this.isUnderlined = false;
+        this.selectedTextLayer = null;
+        this.isEditingText = true;
+    }
+
+    saveTextLayer(): void {
+        if (!this.project || !this.projectId) return;
+
+        this.isSaving = true;
+
+        if (this.selectedTextLayer) {
+            // Update existing layer using text-details endpoint
+            const updateRequest = {
                 text: this.textContent,
-                fontSize: this.fontSize,
                 fontColor: this.fontColor,
                 fontFamily: this.fontFamily,
+                fontSize: this.fontSize,
                 isBold: this.isBold,
                 isItalic: this.isItalic,
-                isUnderlined: this.isUnderlined
-              }
+                isUnderlined: this.isUnderlined,
+            };
+
+            this.designLabService
+                .updateTextLayerDetails(
+                    this.projectId,
+                    this.selectedTextLayer.id,
+                    updateRequest
+                )
+                .subscribe({
+                    next: (result: LayerResult) => {
+                        if (result.success) {
+                            // Update local layer
+                            this.selectedTextLayer!.details = {
+                                text: this.textContent,
+                                fontSize: this.fontSize,
+                                fontColor: this.fontColor,
+                                fontFamily: this.fontFamily,
+                                isBold: this.isBold,
+                                isItalic: this.isItalic,
+                                isUnderlined: this.isUnderlined,
+                            };
+                            this.selectedTextLayer!.updatedAt = new Date();
+                            this.project!.updatedAt = new Date();
+
+                            this.snackBar.open(
+                                this.translateService.instant(
+                                    'designLab.messages.layerUpdated'
+                                ),
+                                this.translateService.instant('common.close'),
+                                {
+                                    duration: 3000,
+                                    panelClass: ['success-snackbar'],
+                                }
+                            );
+                            this.cancelTextEditing();
+                        } else {
+                            this.snackBar.open(
+                                result.error || 'Error updating text layer',
+                                this.translateService.instant('common.close'),
+                                {
+                                    duration: 3000,
+                                    panelClass: ['error-snackbar'],
+                                }
+                            );
+                        }
+                        this.isSaving = false;
+                    },
+                    error: (error: any) => {
+                        console.error('❌ Error updating text layer:', error);
+                        this.snackBar.open(
+                            this.translateService.instant(
+                                'designLab.errors.layerUpdateFailed'
+                            ),
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['error-snackbar'] }
+                        );
+                        this.isSaving = false;
+                    },
+                });
+        } else {
+            // Create new layer using layers/texts endpoint
+            const createRequest = {
+                text: this.textContent,
+                fontColor: this.fontColor,
+                fontFamily: this.fontFamily,
+                fontSize: this.fontSize,
+                isBold: this.isBold,
+                isItalic: this.isItalic,
+                isUnderlined: this.isUnderlined,
+            };
+
+            this.designLabService
+                .createTextLayer(this.projectId, createRequest)
+                .subscribe({
+                    next: (result: LayerResult) => {
+                        if (result.success && result.layerId) {
+                            // Create local layer representation
+                            const newLayer = new TextLayer(
+                                result.layerId,
+                                100,
+                                100,
+                                this.project!.layers.length + 1,
+                                1,
+                                true,
+                                new Date(),
+                                new Date(),
+                                {
+                                    text: this.textContent,
+                                    fontSize: this.fontSize,
+                                    fontColor: this.fontColor,
+                                    fontFamily: this.fontFamily,
+                                    isBold: this.isBold,
+                                    isItalic: this.isItalic,
+                                    isUnderlined: this.isUnderlined,
+                                }
+                            );
+                            this.project!.layers.push(newLayer);
+                            this.project!.updatedAt = new Date();
+
+                            // Select the newly created layer
+                            this.selectedLayerId = newLayer.id;
+                            this.selectedTextLayer = newLayer;
+
+                            this.snackBar.open(
+                                this.translateService.instant(
+                                    'designLab.messages.layerAdded'
+                                ),
+                                this.translateService.instant('common.close'),
+                                {
+                                    duration: 3000,
+                                    panelClass: ['success-snackbar'],
+                                }
+                            );
+                            this.cancelTextEditing();
+                        } else {
+                            this.snackBar.open(
+                                result.error || 'Error creating text layer',
+                                this.translateService.instant('common.close'),
+                                {
+                                    duration: 3000,
+                                    panelClass: ['error-snackbar'],
+                                }
+                            );
+                        }
+                        this.isSaving = false;
+                    },
+                    error: (error: any) => {
+                        console.error('❌ Error creating text layer:', error);
+                        this.snackBar.open(
+                            this.translateService.instant(
+                                'designLab.errors.layerCreationFailed'
+                            ),
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['error-snackbar'] }
+                        );
+                        this.isSaving = false;
+                    },
+                });
+        }
+    }
+
+    editTextLayer(layer: TextLayer): void {
+        if (layer.type !== 'TEXT') return;
+
+        this.selectedTextLayer = layer;
+        this.textContent = layer.details?.text || 'Text';
+        this.fontSize = layer.details?.fontSize || 24;
+        this.fontColor = layer.details?.fontColor || '#000000';
+        this.fontFamily = layer.details?.fontFamily || 'Arial';
+        this.isBold = layer.details?.isBold || false;
+        this.isItalic = layer.details?.isItalic || false;
+        this.isUnderlined = layer.details?.isUnderlined || false;
+        this.isEditingText = true;
+    }
+    deleteTextLayer(layer: TextLayer): void {
+        if (!this.project || !this.projectId) return;
+
+        this.isSaving = true;
+
+        this.designLabService.deleteLayer(this.projectId, layer.id).subscribe({
+            next: (result: LayerResult) => {
+                if (result.success) {
+                    // Remove from local project
+                    const index = this.project!.layers.indexOf(layer);
+                    if (index > -1) {
+                        this.project!.layers.splice(index, 1);
+                        this.project!.updatedAt = new Date();
+                    }
+
+                    this.snackBar.open(
+                        this.translateService.instant(
+                            'designLab.messages.layerRemoved'
+                        ),
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['success-snackbar'] }
+                    );
+                } else {
+                    this.snackBar.open(
+                        result.error || 'Error deleting text layer',
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['error-snackbar'] }
+                    );
+                }
+                this.isSaving = false;
+            },
+            error: (error: any) => {
+                console.error('❌ Error deleting text layer:', error);
+                this.snackBar.open(
+                    this.translateService.instant(
+                        'designLab.errors.layerDeleteFailed'
+                    ),
+                    this.translateService.instant('common.close'),
+                    { duration: 3000, panelClass: ['error-snackbar'] }
+                );
+                this.isSaving = false;
+            },
+        });
+    }
+
+    deleteImageLayer(layer: ImageLayer): void {
+        if (!this.project || !this.projectId) return;
+
+        this.isSaving = true;
+
+        this.designLabService.deleteLayer(this.projectId, layer.id).subscribe({
+            next: (result: LayerResult) => {
+                if (result.success) {
+                    // Remove from local project
+                    const index = this.project!.layers.indexOf(layer);
+                    if (index > -1) {
+                        this.project!.layers.splice(index, 1);
+                        this.project!.updatedAt = new Date();
+                    }
+
+                    // Clear selection if this layer was selected
+                    if (this.selectedLayerId === layer.id) {
+                        this.selectedLayerId = null;
+                    }
+
+                    this.snackBar.open(
+                        this.translateService.instant(
+                            'designLab.messages.layerRemoved'
+                        ),
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['success-snackbar'] }
+                    );
+                } else {
+                    this.snackBar.open(
+                        result.error || 'Error deleting image layer',
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['error-snackbar'] }
+                    );
+                }
+                this.isSaving = false;
+            },
+            error: (error: any) => {
+                console.error('❌ Error deleting image layer:', error);
+                this.snackBar.open(
+                    this.translateService.instant(
+                        'designLab.errors.layerDeleteFailed'
+                    ),
+                    this.translateService.instant('common.close'),
+                    { duration: 3000, panelClass: ['error-snackbar'] }
+                );
+                this.isSaving = false;
+            },
+        });
+    }
+
+    deleteLayer(layer: Layer): void {
+        if (layer.type === 'TEXT') {
+            this.deleteTextLayer(layer as TextLayer);
+        } else if (layer.type === 'IMAGE') {
+            this.deleteImageLayer(layer as ImageLayer);
+        }
+    }
+
+    cancelTextEditing(): void {
+        this.isEditingText = false;
+        this.selectedTextLayer = null;
+        this.selectedLayerId = null;
+    }
+
+    // Layer selection and drag methods
+    selectLayer(layer: TextLayer): void {
+        this.selectedLayerId = layer.id;
+        this.selectedTextLayer = layer;
+    }
+
+    startDrag(event: MouseEvent, layer: TextLayer): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.isDragging = true;
+        this.dragLayer = layer;
+        this.selectedLayerId = layer.id;
+        this.selectedTextLayer = layer;
+
+        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        this.dragOffset = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+        };
+
+        // Add global mouse event listeners
+        document.addEventListener('mousemove', this.onMouseMove);
+        document.addEventListener('mouseup', this.onMouseUp);
+
+        // Change cursor
+        document.body.style.cursor = 'grabbing';
+    }
+
+    onMouseMove = (event: MouseEvent): void => {
+        if (!this.isDragging || !this.dragLayer) return;
+
+        const container = document.querySelector(
+            '.tshirt-preview'
+        ) as HTMLElement;
+        if (!container) return;
+
+        const containerRect = container.getBoundingClientRect();
+
+        // Calculate new position relative to container
+        const newX = event.clientX - containerRect.left - this.dragOffset.x;
+        const newY = event.clientY - containerRect.top - this.dragOffset.y;
+
+        // Ensure layer stays within bounds
+        const maxX = container.offsetWidth - 100; // Approximate text width
+        const maxY = container.offsetHeight - 30; // Approximate text height
+
+        this.dragLayer.x = Math.max(0, Math.min(newX, maxX));
+        this.dragLayer.y = Math.max(0, Math.min(newY, maxY));
+    };
+
+    onMouseUp = (_event: MouseEvent): void => {
+        if (!this.isDragging || !this.dragLayer) return;
+
+        this.isDragging = false;
+        document.body.style.cursor = 'default';
+
+        // Remove global event listeners
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
+
+        // Update layer coordinates on server
+        if (this.projectId && this.dragLayer) {
+            this.updateLayerCoordinates(this.dragLayer);
+        }
+
+        this.dragLayer = null;
+    };
+
+    updateLayerCoordinates(layer: TextLayer): void {
+        if (!this.projectId) return;
+
+        const updateRequest = {
+            x: layer.x,
+            y: layer.y,
+            z: layer.z,
+        };
+
+        this.designLabService
+            .updateLayerCoordinates(this.projectId, layer.id, updateRequest)
+            .subscribe({
+                next: (result: LayerResult) => {
+                    if (result.success) {
+                    }
+                },
+                error: (error: any) => {
+                    console.error(
+                        '❌ Error updating layer coordinates:',
+                        error
+                    );
+                },
+            });
+    }
+
+    private generateLayerId(): string {
+        return (
+            'layer_' +
+            Date.now() +
+            '_' +
+            Math.random().toString(36).substr(2, 9)
+        );
+    }
+
+    /**
+     * Preload fonts to avoid CORS issues during image generation
+     */
+    private async preloadFonts(): Promise<void> {
+        try {
+            // Load Roboto font if available
+            if (document.fonts && document.fonts.load) {
+                await document.fonts.load('400 16px Roboto');
+                await document.fonts.load('500 16px Roboto');
+            }
+        } catch (error) {}
+    }
+
+    /**
+     * Generate a preview image of the current design and update the project's preview URL
+     */
+    private async generateAndUpdatePreview(): Promise<void> {
+        if (!this.project || !this.projectId) {
+            return;
+        }
+
+        try {
+            // Preload fonts first
+            await this.preloadFonts();
+
+            // Wait a bit for fonts to be ready
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
+            // Find the design preview container (the t-shirt with layers)
+            const previewElement =
+                this.elementRef.nativeElement.querySelector('.tshirt-preview');
+
+            if (!previewElement) {
+                return;
+            }
+
+            // Try multiple strategies for image generation
+            let dataUrl: string;
+
+            try {
+                // First attempt with comprehensive CORS handling
+                dataUrl = await this.generatePreviewWithCORSHandling(
+                    previewElement
+                );
+            } catch (error) {
+                // Fallback with minimal options
+                dataUrl = await this.generatePreviewFallback(previewElement);
+            }
+
+            // Convert data URL to Blob
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+
+            // Create a File object for upload
+            const file = new File(
+                [blob],
+                `project-${this.projectId}-preview.png`,
+                {
+                    type: 'image/png',
+                }
             );
-            this.project!.layers.push(newLayer);
+
+            // Upload to Cloudinary
+            const cloudinaryResult = await lastValueFrom(
+                this.cloudinaryService.uploadImage(file)
+            );
+
+            if (cloudinaryResult?.secure_url) {
+                // Update project with new preview URL
+                await this.updateProjectPreview(cloudinaryResult.secure_url);
+            }
+        } catch (error) {
+            console.error('❌ Error generating preview:', error);
+            // Show user-friendly error message
+            this.snackBar.open('Failed to generate preview image', 'Close', {
+                duration: 3000,
+                panelClass: 'error-snackbar',
+            });
+        }
+    }
+
+    /**
+     * Generate preview with comprehensive CORS handling
+     */
+    private async generatePreviewWithCORSHandling(
+        previewElement: HTMLElement
+    ): Promise<string> {
+        return toPng(previewElement, {
+            quality: 0.95,
+            pixelRatio: 1,
+            backgroundColor: '#ffffff',
+            skipFonts: true,
+            style: {
+                fontFamily: 'Roboto, Arial, sans-serif',
+            },
+            filter: (node: any) => {
+                // Filter out any external resources that might cause CORS issues
+                if (node.tagName) {
+                    const tagName = node.tagName.toLowerCase();
+                    // Skip any link tags (stylesheets, external resources)
+                    if (tagName === 'link') return false;
+                    // Skip any style tags with external content
+                    if (
+                        tagName === 'style' &&
+                        node.innerHTML &&
+                        (node.innerHTML.includes('fonts.googleapis.com') ||
+                            node.innerHTML.includes('fonts.gstatic.com') ||
+                            node.innerHTML.includes('http'))
+                    )
+                        return false;
+                }
+                return true;
+            },
+        });
+    }
+
+    /**
+     * Fallback preview generation with minimal options
+     */
+    private async generatePreviewFallback(
+        previewElement: HTMLElement
+    ): Promise<string> {
+        return toPng(previewElement, {
+            quality: 0.8,
+            pixelRatio: 1,
+            backgroundColor: '#ffffff',
+            skipFonts: true,
+            style: {
+                fontFamily: 'Arial, sans-serif',
+            },
+            filter: (node: any) => {
+                // Very aggressive filtering
+                if (node.tagName) {
+                    const tagName = node.tagName.toLowerCase();
+                    // Skip any external resources
+                    if (tagName === 'link') return false;
+                    if (tagName === 'style') return false;
+                    // Only allow images from cloudinary or data URLs
+                    if (
+                        tagName === 'img' &&
+                        node.src &&
+                        !node.src.startsWith('data:') &&
+                        !node.src.includes('cloudinary.com')
+                    )
+                        return false;
+                }
+                return true;
+            },
+        });
+    }
+
+    /**
+     * Update the project's preview URL in the backend
+     */
+    private async updateProjectPreview(previewUrl: string): Promise<void> {
+        try {
+            // Update the local project object first
+            this.project!.previewUrl = previewUrl;
             this.project!.updatedAt = new Date();
 
-            // Select the newly created layer
-            this.selectedLayerId = newLayer.id;
-            this.selectedTextLayer = newLayer;
+            // Call backend API to update project preview URL, passing the current project
+            // to preserve all existing fields
+            await lastValueFrom(
+                this.designLabService.updateProjectPreview(
+                    this.projectId!,
+                    previewUrl,
+                    this.project!
+                )
+            );
+        } catch (error) {
+            console.error(
+                '❌ Error updating project preview in backend:',
+                error
+            );
+            // Don't throw error to avoid blocking the save process
+            // The local preview URL is still updated
+        }
+    }
+
+    // Test method to verify authentication
+    testAuthentication(): void {
+        this.designLabService.testAuthentication().subscribe({
+            next: (result: any) => {
+                this.snackBar.open('Authentication test successful', 'Close', {
+                    duration: 3000,
+                    panelClass: ['success-snackbar'],
+                });
+            },
+            error: (error: any) => {
+                console.error('❌ Authentication test failed:', error);
+                this.snackBar.open(
+                    'Authentication test failed: ' + error,
+                    'Close',
+                    { duration: 3000, panelClass: ['error-snackbar'] }
+                );
+            },
+        });
+    }
+
+    // Enhanced logging for debugging
+    logRequestDetails(): void {
+    }
+
+    // Image upload handling
+    onImageUploaded(result: ImageUploadResult): void {
+        if (!this.project || !this.projectId) return;
+
+        this.isSaving = true;
+
+        // Usar las dimensiones calculadas que son más precisas
+        const imageLayerRequest = {
+            imageUrl: result.imageUrl,
+            width: result.calculatedWidth.toString(),
+            height: result.calculatedHeight.toString(),
+        };
+
+        this.designLabService
+            .createImageLayer(this.projectId, imageLayerRequest)
+            .subscribe({
+                next: (layerResult: LayerResult) => {
+                    if (layerResult.success) {
+                        // Reload the project to get the updated layers
+                        this.loadProject();
+
+                        this.snackBar.open(
+                            this.translateService.instant(
+                                'designLab.messages.imageLayerCreated'
+                            ),
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['success-snackbar'] }
+                        );
+                    } else {
+                        this.snackBar.open(
+                            layerResult.error || 'Error creating image layer',
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['error-snackbar'] }
+                        );
+                    }
+                    this.isSaving = false;
+                },
+                error: (error: any) => {
+                    console.error('❌ Error creating image layer:', error);
+                    this.snackBar.open(
+                        this.translateService.instant(
+                            'designLab.errors.imageLayerCreationFailed'
+                        ),
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['error-snackbar'] }
+                    );
+                    this.isSaving = false;
+                },
+            });
+    }
+
+    // Direct image upload handling
+    onDirectImageUpload(result: DirectImageUploadResult): void {
+
+        if (result.success) {
+            // Reload the project to get the updated layers
+            this.loadProject();
 
             this.snackBar.open(
-              this.translateService.instant('designLab.messages.layerAdded'),
-              this.translateService.instant('common.close'),
-              { duration: 3000, panelClass: ['success-snackbar'] }
+                this.translateService.instant(
+                    'designLab.messages.imageLayerCreated'
+                ),
+                this.translateService.instant('common.close'),
+                { duration: 3000, panelClass: ['success-snackbar'] }
             );
-            this.cancelTextEditing();
-          } else {
+        } else {
             this.snackBar.open(
-              result.error || 'Error creating text layer',
-              this.translateService.instant('common.close'),
-              { duration: 3000, panelClass: ['error-snackbar'] }
+                result.error || 'Error creating image layer',
+                this.translateService.instant('common.close'),
+                { duration: 3000, panelClass: ['error-snackbar'] }
             );
-          }
-          this.isSaving = false;
-        },
-        error: (error: any) => {
-          console.error('❌ Error creating text layer:', error);
-          this.snackBar.open(
-            this.translateService.instant('designLab.errors.layerCreationFailed'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
-          this.isSaving = false;
         }
-      });
     }
-  }
 
-  editTextLayer(layer: TextLayer): void {
-    if (layer.type !== 'TEXT') return;
+    // File selection handling
+    onFileSelected(file: File): void {
+        // Here you could add additional validation or processing if needed
+    }
 
-    this.selectedTextLayer = layer;
-    this.textContent = layer.details?.text || 'Text';
-    this.fontSize = layer.details?.fontSize || 24;
-    this.fontColor = layer.details?.fontColor || '#000000';
-    this.fontFamily = layer.details?.fontFamily || 'Arial';
-    this.isBold = layer.details?.isBold || false;
-    this.isItalic = layer.details?.isItalic || false;
-    this.isUnderlined = layer.details?.isUnderlined || false;
-    this.isEditingText = true;
-  }  deleteTextLayer(layer: TextLayer): void {
-    if (!this.project || !this.projectId) return;
+    // Alternative method using integrated upload and layer creation
+    onImageUploadedIntegrated(file: File): void {
+        if (!this.project || !this.projectId) return;
 
-    this.isSaving = true;
+        this.isSaving = true;
 
-    this.designLabService.deleteLayer(this.projectId, layer.id).subscribe({
-      next: (result: LayerResult) => {
-        if (result.success) {
-          // Remove from local project
-          const index = this.project!.layers.indexOf(layer);
-          if (index > -1) {
-            this.project!.layers.splice(index, 1);
-            this.project!.updatedAt = new Date();
-          }
+        this.designLabService
+            .uploadImageAndCreateLayer(file, this.projectId)
+            .subscribe({
+                next: (layerResult: LayerResult) => {
+                    if (layerResult.success) {
+                        // Reload the project to get the updated layers
+                        this.loadProject();
 
-          this.snackBar.open(
-            this.translateService.instant('designLab.messages.layerRemoved'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['success-snackbar'] }
-          );
-        } else {
-          this.snackBar.open(
-            result.error || 'Error deleting text layer',
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
-        }
-        this.isSaving = false;
-      },
-      error: (error: any) => {
-        console.error('❌ Error deleting text layer:', error);
+                        this.snackBar.open(
+                            this.translateService.instant(
+                                'designLab.messages.imageLayerCreated'
+                            ),
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['success-snackbar'] }
+                        );
+                    } else {
+                        this.snackBar.open(
+                            layerResult.error || 'Error creating image layer',
+                            this.translateService.instant('common.close'),
+                            { duration: 3000, panelClass: ['error-snackbar'] }
+                        );
+                    }
+                    this.isSaving = false;
+                },
+                error: (error: any) => {
+                    console.error(
+                        '❌ Error with integrated image upload and layer creation:',
+                        error
+                    );
+                    this.snackBar.open(
+                        this.translateService.instant(
+                            'designLab.errors.imageLayerCreationFailed'
+                        ),
+                        this.translateService.instant('common.close'),
+                        { duration: 3000, panelClass: ['error-snackbar'] }
+                    );
+                    this.isSaving = false;
+                },
+            });
+    }
+
+    // Image error handling
+    onImageError(event: Event, layer: any): void {
+        console.error('❌ Image failed to load for layer:', layer);
+        console.error('❌ Image src was:', layer.details?.imageUrl);
+        console.error('❌ Image error event:', event);
+
+        // Opcional: Mostrar un placeholder o notificación
         this.snackBar.open(
-          this.translateService.instant('designLab.errors.layerDeleteFailed'),
-          this.translateService.instant('common.close'),
-          { duration: 3000, panelClass: ['error-snackbar'] }
+            'Image failed to load. Please try uploading again.',
+            'Close',
+            { duration: 5000, panelClass: ['error-snackbar'] }
         );
-        this.isSaving = false;
-      }
-    });
-  }
+    }
 
-  deleteImageLayer(layer: ImageLayer): void {
-    if (!this.project || !this.projectId) return;
-
-    this.isSaving = true;
-
-    this.designLabService.deleteLayer(this.projectId, layer.id).subscribe({
-      next: (result: LayerResult) => {
-        if (result.success) {
-          // Remove from local project
-          const index = this.project!.layers.indexOf(layer);
-          if (index > -1) {
-            this.project!.layers.splice(index, 1);
-            this.project!.updatedAt = new Date();
-          }
-
-          // Clear selection if this layer was selected
-          if (this.selectedLayerId === layer.id) {
-            this.selectedLayerId = null;
-          }
-
-          this.snackBar.open(
-            this.translateService.instant('designLab.messages.layerRemoved'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['success-snackbar'] }
-          );
-        } else {
-          this.snackBar.open(
-            result.error || 'Error deleting image layer',
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
-        }
-        this.isSaving = false;
-      },
-      error: (error: any) => {
-        console.error('❌ Error deleting image layer:', error);
-        this.snackBar.open(
-          this.translateService.instant('designLab.errors.layerDeleteFailed'),
-          this.translateService.instant('common.close'),
-          { duration: 3000, panelClass: ['error-snackbar'] }
+    // New methods for layer components
+    getTextLayers(): TextLayer[] {
+        return (
+            (this.project?.layers?.filter(
+                (layer) => layer.type === 'TEXT'
+            ) as TextLayer[]) || []
         );
-        this.isSaving = false;
-      }
-    });
-  }
-
-  deleteLayer(layer: Layer): void {
-    if (layer.type === 'TEXT') {
-      this.deleteTextLayer(layer as TextLayer);
-    } else if (layer.type === 'IMAGE') {
-      this.deleteImageLayer(layer as ImageLayer);
-    }
-  }
-
-  cancelTextEditing(): void {
-    this.isEditingText = false;
-    this.selectedTextLayer = null;
-    this.selectedLayerId = null;
-  }
-
-  // Layer selection and drag methods
-  selectLayer(layer: TextLayer): void {
-    this.selectedLayerId = layer.id;
-    this.selectedTextLayer = layer;
-  }
-
-  startDrag(event: MouseEvent, layer: TextLayer): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.isDragging = true;
-    this.dragLayer = layer;
-    this.selectedLayerId = layer.id;
-    this.selectedTextLayer = layer;
-
-    const rect = (event.target as HTMLElement).getBoundingClientRect();
-    this.dragOffset = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-
-    // Add global mouse event listeners
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
-
-    // Change cursor
-    document.body.style.cursor = 'grabbing';
-  }
-
-  onMouseMove = (event: MouseEvent): void => {
-    if (!this.isDragging || !this.dragLayer) return;
-
-    const container = document.querySelector('.tshirt-preview') as HTMLElement;
-    if (!container) return;
-
-    const containerRect = container.getBoundingClientRect();
-
-    // Calculate new position relative to container
-    const newX = event.clientX - containerRect.left - this.dragOffset.x;
-    const newY = event.clientY - containerRect.top - this.dragOffset.y;
-
-    // Ensure layer stays within bounds
-    const maxX = container.offsetWidth - 100; // Approximate text width
-    const maxY = container.offsetHeight - 30; // Approximate text height
-
-    this.dragLayer.x = Math.max(0, Math.min(newX, maxX));
-    this.dragLayer.y = Math.max(0, Math.min(newY, maxY));
-  }
-
-  onMouseUp = (_event: MouseEvent): void => {
-    if (!this.isDragging || !this.dragLayer) return;
-
-    this.isDragging = false;
-    document.body.style.cursor = 'default';
-
-    // Remove global event listeners
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-
-    // Update layer coordinates on server
-    if (this.projectId && this.dragLayer) {
-      this.updateLayerCoordinates(this.dragLayer);
     }
 
-    this.dragLayer = null;
-  }
-
-  updateLayerCoordinates(layer: TextLayer): void {
-    if (!this.projectId) return;
-
-    const updateRequest = {
-      x: layer.x,
-      y: layer.y,
-      z: layer.z
-    };
-
-    console.log('🚀 Update layer coordinates request:', updateRequest);
-
-    this.designLabService.updateLayerCoordinates(this.projectId, layer.id, updateRequest).subscribe({
-      next: (result: LayerResult) => {
-        if (result.success) {
-          console.log('✅ Layer coordinates updated');
-        } else {
-          console.error('❌ Failed to update layer coordinates:', result.error);
-        }
-      },
-      error: (error: any) => {
-        console.error('❌ Error updating layer coordinates:', error);
-      }
-    });
-  }
-
-  private generateLayerId(): string {
-    return 'layer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  }
-
-  /**
-   * Preload fonts to avoid CORS issues during image generation
-   */
-  private async preloadFonts(): Promise<void> {
-    try {
-      // Load Roboto font if available
-      if (document.fonts && document.fonts.load) {
-        await document.fonts.load('400 16px Roboto');
-        await document.fonts.load('500 16px Roboto');
-        console.log('✅ Fonts preloaded successfully');
-      }
-    } catch (error) {
-      console.log('⚠️ Could not preload fonts:', error);
-    }
-  }
-
-  /**
-   * Generate a preview image of the current design and update the project's preview URL
-   */
-  private async generateAndUpdatePreview(): Promise<void> {
-    if (!this.project || !this.projectId) {
-      console.log('⚠️ Cannot generate preview: no project or projectId');
-      return;
-    }
-
-    try {
-      console.log('📸 Starting preview generation...');
-
-      // Preload fonts first
-      await this.preloadFonts();
-
-      // Wait a bit for fonts to be ready
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Find the design preview container (the t-shirt with layers)
-      const previewElement = this.elementRef.nativeElement.querySelector('.tshirt-preview');
-
-      if (!previewElement) {
-        console.warn('⚠️ Preview container not found');
-        return;
-      }
-
-      // Try multiple strategies for image generation
-      let dataUrl: string;
-
-      try {
-        // First attempt with comprehensive CORS handling
-        dataUrl = await this.generatePreviewWithCORSHandling(previewElement);
-      } catch (error) {
-        console.log('🔄 First attempt failed, trying fallback method...');
-        // Fallback with minimal options
-        dataUrl = await this.generatePreviewFallback(previewElement);
-      }
-
-      console.log('📸 Preview image generated successfully');
-
-      // Convert data URL to Blob
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-
-      // Create a File object for upload
-      const file = new File([blob], `project-${this.projectId}-preview.png`, {
-        type: 'image/png'
-      });
-
-      console.log('☁️ Uploading preview to Cloudinary...');
-
-      // Upload to Cloudinary
-      const cloudinaryResult = await lastValueFrom(this.cloudinaryService.uploadImage(file));
-
-      if (cloudinaryResult?.secure_url) {
-        console.log('☁️ Preview uploaded to Cloudinary:', cloudinaryResult.secure_url);
-
-        // Update project with new preview URL
-        await this.updateProjectPreview(cloudinaryResult.secure_url);
-      }
-
-    } catch (error) {
-      console.error('❌ Error generating preview:', error);
-      // Show user-friendly error message
-      this.snackBar.open('Failed to generate preview image', 'Close', {
-        duration: 3000,
-        panelClass: 'error-snackbar'
-      });
-    }
-  }
-
-  /**
-   * Generate preview with comprehensive CORS handling
-   */
-  private async generatePreviewWithCORSHandling(previewElement: HTMLElement): Promise<string> {
-    return toPng(previewElement, {
-      quality: 0.95,
-      pixelRatio: 1,
-      backgroundColor: '#ffffff',
-      skipFonts: true,
-      style: {
-        fontFamily: 'Roboto, Arial, sans-serif'
-      },
-      filter: (node: any) => {
-        // Filter out any external resources that might cause CORS issues
-        if (node.tagName) {
-          const tagName = node.tagName.toLowerCase();
-          // Skip any link tags (stylesheets, external resources)
-          if (tagName === 'link') return false;
-          // Skip any style tags with external content
-          if (tagName === 'style' && node.innerHTML && (
-            node.innerHTML.includes('fonts.googleapis.com') ||
-            node.innerHTML.includes('fonts.gstatic.com') ||
-            node.innerHTML.includes('http')
-          )) return false;
-        }
-        return true;
-      }
-    });
-  }
-
-  /**
-   * Fallback preview generation with minimal options
-   */
-  private async generatePreviewFallback(previewElement: HTMLElement): Promise<string> {
-    return toPng(previewElement, {
-      quality: 0.8,
-      pixelRatio: 1,
-      backgroundColor: '#ffffff',
-      skipFonts: true,
-      style: {
-        fontFamily: 'Arial, sans-serif'
-      },
-      filter: (node: any) => {
-        // Very aggressive filtering
-        if (node.tagName) {
-          const tagName = node.tagName.toLowerCase();
-          // Skip any external resources
-          if (tagName === 'link') return false;
-          if (tagName === 'style') return false;
-          // Only allow images from cloudinary or data URLs
-          if (tagName === 'img' && node.src && !node.src.startsWith('data:') &&
-              !node.src.includes('cloudinary.com')) return false;
-        }
-        return true;
-      }
-    });
-  }
-
-  /**
-   * Update the project's preview URL in the backend
-   */
-  private async updateProjectPreview(previewUrl: string): Promise<void> {
-    try {
-      console.log('🔄 Updating project preview URL in backend...');
-
-      // Update the local project object first
-      this.project!.previewUrl = previewUrl;
-      this.project!.updatedAt = new Date();
-
-      // Call backend API to update project preview URL, passing the current project
-      // to preserve all existing fields
-      const updateResult = await lastValueFrom(
-        this.designLabService.updateProjectPreview(this.projectId!, previewUrl, this.project!)
-      );
-
-      if (updateResult?.success) {
-        console.log('✅ Project preview updated in backend successfully');
-      } else {
-        console.warn('⚠️ Backend update completed but returned non-success result:', updateResult);
-      }
-
-    } catch (error) {
-      console.error('❌ Error updating project preview in backend:', error);
-      // Don't throw error to avoid blocking the save process
-      // The local preview URL is still updated
-    }
-  }
-
-  // Test method to verify authentication
-  testAuthentication(): void {
-    console.log('🧪 Testing authentication...');
-    this.designLabService.testAuthentication().subscribe({
-      next: (result: any) => {
-        console.log('✅ Authentication test successful:', result);
-        this.snackBar.open(
-          'Authentication test successful',
-          'Close',
-          { duration: 3000, panelClass: ['success-snackbar'] }
+    getImageLayers(): ImageLayer[] {
+        return (
+            (this.project?.layers?.filter(
+                (layer) => layer.type === 'IMAGE'
+            ) as ImageLayer[]) || []
         );
-      },
-      error: (error: any) => {
-        console.error('❌ Authentication test failed:', error);
-        this.snackBar.open(
-          'Authentication test failed: ' + error,
-          'Close',
-          { duration: 3000, panelClass: ['error-snackbar'] }
-        );
-      }
-    });
-  }
-
-  // Enhanced logging for debugging
-  logRequestDetails(): void {
-    console.log('🔍 DEBUG - Current state:');
-    console.log('  - Project ID:', this.projectId);
-    console.log('  - Project exists:', !!this.project);
-    console.log('  - Token exists:', !!localStorage.getItem('token'));
-    console.log('  - Token preview:', localStorage.getItem('token')?.substring(0, 20) + '...');
-    console.log('  - User authenticated:', this.designLabService.constructor.name);
-    console.log('  - Base URL:', 'http://localhost:8080/api/v1/projects');
-  }
-
-  // Image upload handling
-  onImageUploaded(result: ImageUploadResult): void {
-    if (!this.project || !this.projectId) return;
-
-    console.log('🖼️ Image uploaded with calculated dimensions:', result);
-    console.log('📐 Cloudinary dimensions:', { width: result.width, height: result.height });
-    console.log('📐 Calculated dimensions:', { width: result.calculatedWidth, height: result.calculatedHeight });
-
-    this.isSaving = true;
-
-    // Usar las dimensiones calculadas que son más precisas
-    const imageLayerRequest = {
-      imageUrl: result.imageUrl,
-      width: result.calculatedWidth.toString(),
-      height: result.calculatedHeight.toString()
-    };
-
-    this.designLabService.createImageLayer(this.projectId, imageLayerRequest).subscribe({
-      next: (layerResult: LayerResult) => {
-        if (layerResult.success) {
-          // Reload the project to get the updated layers
-          this.loadProject();
-
-          this.snackBar.open(
-            this.translateService.instant('designLab.messages.imageLayerCreated'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['success-snackbar'] }
-          );
-        } else {
-          this.snackBar.open(
-            layerResult.error || 'Error creating image layer',
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
-        }
-        this.isSaving = false;
-      },
-      error: (error: any) => {
-        console.error('❌ Error creating image layer:', error);
-        this.snackBar.open(
-          this.translateService.instant('designLab.errors.imageLayerCreationFailed'),
-          this.translateService.instant('common.close'),
-          { duration: 3000, panelClass: ['error-snackbar'] }
-        );
-        this.isSaving = false;
-      }
-    });
-  }
-
-  // Direct image upload handling
-  onDirectImageUpload(result: DirectImageUploadResult): void {
-    console.log('🖼️ Direct image upload completed:', result);
-
-    if (result.success) {
-      // Reload the project to get the updated layers
-      this.loadProject();
-
-      this.snackBar.open(
-        this.translateService.instant('designLab.messages.imageLayerCreated'),
-        this.translateService.instant('common.close'),
-        { duration: 3000, panelClass: ['success-snackbar'] }
-      );
-    } else {
-      this.snackBar.open(
-        result.error || 'Error creating image layer',
-        this.translateService.instant('common.close'),
-        { duration: 3000, panelClass: ['error-snackbar'] }
-      );
     }
-  }
 
-  // File selection handling
-  onFileSelected(file: File): void {
-    console.log('📁 File selected:', file.name, file.size, 'bytes');
-    // Here you could add additional validation or processing if needed
-  }
+    onTextLayerEvent(event: TextLayerEvent): void {
 
-  // Alternative method using integrated upload and layer creation
-  onImageUploadedIntegrated(file: File): void {
-    if (!this.project || !this.projectId) return;
-
-    console.log('🖼️ Using integrated image upload and layer creation for:', file.name);
-
-    this.isSaving = true;
-
-    this.designLabService.uploadImageAndCreateLayer(file, this.projectId).subscribe({
-      next: (layerResult: LayerResult) => {
-        if (layerResult.success) {
-          // Reload the project to get the updated layers
-          this.loadProject();
-
-          this.snackBar.open(
-            this.translateService.instant('designLab.messages.imageLayerCreated'),
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['success-snackbar'] }
-          );
-        } else {
-          this.snackBar.open(
-            layerResult.error || 'Error creating image layer',
-            this.translateService.instant('common.close'),
-            { duration: 3000, panelClass: ['error-snackbar'] }
-          );
+        switch (event.type) {
+            case 'select':
+                this.selectedLayerId = event.layerId;
+                break;
+            case 'move':
+                // Position update is handled automatically by the component
+                break;
+            case 'update':
+                if (event.data?.action === 'edit') {
+                    // Find the layer and start editing
+                    const layer = this.project?.layers?.find(
+                        (l) => l.id === event.layerId
+                    );
+                    if (layer) {
+                        this.editTextLayer(layer as TextLayer);
+                    }
+                }
+                break;
+            case 'delete':
+                // Handle text layer deletion
+                const textLayer = this.project?.layers?.find(
+                    (l) => l.id === event.layerId
+                ) as TextLayer;
+                if (textLayer) {
+                    this.deleteTextLayer(textLayer);
+                }
+                break;
         }
-        this.isSaving = false;
-      },
-      error: (error: any) => {
-        console.error('❌ Error with integrated image upload and layer creation:', error);
-        this.snackBar.open(
-          this.translateService.instant('designLab.errors.imageLayerCreationFailed'),
-          this.translateService.instant('common.close'),
-          { duration: 3000, panelClass: ['error-snackbar'] }
-        );
-        this.isSaving = false;
-      }
-    });
-  }
-
-  // Image error handling
-  onImageError(event: Event, layer: any): void {
-    console.error('❌ Image failed to load for layer:', layer);
-    console.error('❌ Image src was:', layer.details?.imageUrl);
-    console.error('❌ Image error event:', event);
-
-    // Opcional: Mostrar un placeholder o notificación
-    this.snackBar.open(
-      'Image failed to load. Please try uploading again.',
-      'Close',
-      { duration: 5000, panelClass: ['error-snackbar'] }
-    );
-  }
-
-  // New methods for layer components
-  getTextLayers(): TextLayer[] {
-    return this.project?.layers?.filter(layer => layer.type === 'TEXT') as TextLayer[] || [];
-  }
-
-  getImageLayers(): ImageLayer[] {
-    return this.project?.layers?.filter(layer => layer.type === 'IMAGE') as ImageLayer[] || [];
-  }
-
-  onTextLayerEvent(event: TextLayerEvent): void {
-    console.log('🎯 Text layer event:', event);
-
-    switch (event.type) {
-      case 'select':
-        this.selectedLayerId = event.layerId;
-        break;
-      case 'move':
-        // Position update is handled automatically by the component
-        break;
-      case 'update':
-        if (event.data?.action === 'edit') {
-          // Find the layer and start editing
-          const layer = this.project?.layers?.find(l => l.id === event.layerId);
-          if (layer) {
-            this.editTextLayer(layer as TextLayer);
-          }
-        }
-        break;
-      case 'delete':
-        // Handle text layer deletion
-        const textLayer = this.project?.layers?.find(l => l.id === event.layerId) as TextLayer;
-        if (textLayer) {
-          this.deleteTextLayer(textLayer);
-        }
-        break;
     }
-  }
 
-  onImageLayerEvent(event: ImageLayerEvent): void {
-    console.log('🎯 Image layer event:', event);
+    onImageLayerEvent(event: ImageLayerEvent): void {
 
-    switch (event.type) {
-      case 'select':
-        this.selectedLayerId = event.layerId;
-        break;
-      case 'move':
-        // Position update is handled automatically by the component
-        break;
-      case 'resize':
-        // Size update is handled automatically by the component
-        break;
-      case 'update':
-        // Handle any other updates
-        break;
-      case 'delete':
-        // Handle image layer deletion
-        const imageLayer = this.project?.layers?.find(l => l.id === event.layerId) as ImageLayer;
-        if (imageLayer) {
-          this.deleteImageLayer(imageLayer);
+        switch (event.type) {
+            case 'select':
+                this.selectedLayerId = event.layerId;
+                break;
+            case 'move':
+                // Position update is handled automatically by the component
+                break;
+            case 'resize':
+                // Size update is handled automatically by the component
+                break;
+            case 'update':
+                // Handle any other updates
+                break;
+            case 'delete':
+                // Handle image layer deletion
+                const imageLayer = this.project?.layers?.find(
+                    (l) => l.id === event.layerId
+                ) as ImageLayer;
+                if (imageLayer) {
+                    this.deleteImageLayer(imageLayer);
+                }
+                break;
         }
-        break;
     }
-  }
 }

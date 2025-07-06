@@ -232,12 +232,6 @@ export class TextLayerComponent implements OnDestroy {
     // Only handle primary mouse button
     if (event.button !== 0) return;
 
-    console.log('🎯 Text layer mousedown started', {
-      layerId: this.layer.id,
-      startPos: { x: event.clientX, y: event.clientY },
-      layerPos: { x: this.layer.x, y: this.layer.y }
-    });
-
     this.isDragging = true;
     this.dragStartX = event.clientX;
     this.dragStartY = event.clientY;
@@ -264,12 +258,6 @@ export class TextLayerComponent implements OnDestroy {
     this.layer.x = this.layerStartX + deltaX;
     this.layer.y = this.layerStartY + deltaY;
 
-    console.log('🎯 Text layer moving', {
-      layerId: this.layer.id,
-      delta: { x: deltaX, y: deltaY },
-      newPos: { x: this.layer.x, y: this.layer.y }
-    });
-
     // Emit move event for real-time updates
     this.layerEvent.emit({
       layerId: this.layer.id,
@@ -285,11 +273,6 @@ export class TextLayerComponent implements OnDestroy {
 
     event.preventDefault();
     event.stopPropagation();
-
-    console.log('🎯 Text layer drag ended', {
-      layerId: this.layer.id,
-      finalPos: { x: this.layer.x, y: this.layer.y }
-    });
 
     this.isDragging = false;
 
@@ -311,11 +294,6 @@ export class TextLayerComponent implements OnDestroy {
     event.preventDefault();
     event.stopPropagation();
 
-    console.log('🎯 Text layer selected', {
-      layerId: this.layer.id,
-      text: this.layer.details?.text
-    });
-
     this.layerEvent.emit({
       layerId: this.layer.id,
       type: 'select',
@@ -336,11 +314,6 @@ export class TextLayerComponent implements OnDestroy {
   }
 
   private updateLayerPosition() {
-    console.log('🔄 TextLayerComponent - Updating layer position:', {
-      layerId: this.layer.id,
-      x: this.layer.x,
-      y: this.layer.y
-    });
 
     const updateRequest = {
       x: this.layer.x,
@@ -356,7 +329,6 @@ export class TextLayerComponent implements OnDestroy {
       updateRequest
     ).subscribe({
       next: (result: any) => {
-        console.log('✅ TextLayerComponent - Layer position updated successfully:', result);
         this.layer.updatedAt = new Date();
       },
       error: (error: any) => {
@@ -381,7 +353,6 @@ export class TextLayerComponent implements OnDestroy {
     isItalic?: boolean;
     isUnderlined?: boolean;
   }) {
-    console.log('� TextLayerComponent - Updating text properties:', properties);
 
     // Update local layer details
     if (this.layer.details) {
@@ -405,7 +376,6 @@ export class TextLayerComponent implements OnDestroy {
       updateRequest
     ).subscribe({
       next: (result: any) => {
-        console.log('✅ TextLayerComponent - Text properties updated successfully:', result);
         this.layer.updatedAt = new Date();
         this.cdr.detectChanges();
       },
@@ -420,8 +390,6 @@ export class TextLayerComponent implements OnDestroy {
   onDelete(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-
-    console.log('🗑️ TextLayerComponent - Deleting text layer:', this.layer.id);
 
     this.layerEvent.emit({
       layerId: this.layer.id,

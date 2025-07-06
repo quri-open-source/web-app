@@ -47,7 +47,6 @@ export class CartService {
 
       // Check if product is already in cart
       if (this.isInCart(productId)) {
-        console.log('Product already in cart:', productId);
         return false;
       }
 
@@ -60,7 +59,6 @@ export class CartService {
       const updatedItems = [...currentItems, newItem];
       this.updateCart(updatedItems);
 
-      console.log('✅ Product added to cart:', productId);
       return true;
     } catch (error) {
       console.error('Error adding product to cart:', error);
@@ -77,7 +75,6 @@ export class CartService {
       const updatedItems = currentItems.filter(item => item.productId !== productId);
 
       this.updateCart(updatedItems);
-      console.log('✅ Product removed from cart:', productId);
       return true;
     } catch (error) {
       console.error('Error removing product from cart:', error);
@@ -97,12 +94,7 @@ export class CartService {
    */
   clearCart(): void {
     try {
-      console.log('🛒 Clearing cart - Current items:', this.cartItems.length);
       this.updateCart([]);
-      console.log('✅ Cart cleared successfully');
-      
-      // Emit a clear event for any listeners
-      console.log('📢 Cart cleared - count is now:', this.cartCount);
     } catch (error) {
       console.error('❌ Error clearing cart:', error);
     }
@@ -141,7 +133,6 @@ export class CartService {
           addedAt: new Date(item.addedAt)
         }));
         this.cartItemsSubject.next(cartWithDates);
-        console.log('📦 Cart loaded from storage:', cartWithDates.length, 'items');
       }
     } catch (error) {
       console.error('Error loading cart from storage:', error);
@@ -155,7 +146,6 @@ export class CartService {
   private saveCartToStorage(items: CartItem[]): void {
     try {
       localStorage.setItem(this.CART_STORAGE_KEY, JSON.stringify(items));
-      console.log('💾 Cart saved to storage:', items.length, 'items');
     } catch (error) {
       console.error('Error saving cart to storage:', error);
     }

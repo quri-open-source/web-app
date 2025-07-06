@@ -87,7 +87,6 @@ export class CheckoutFormComponent {
   pay() {
     if (this.paying() || this.paymentElementForm.invalid) return;
 
-    console.log('💳 Starting payment process...');
     this.paying.set(true);
 
     const {
@@ -118,12 +117,9 @@ export class CheckoutFormComponent {
       })
       .subscribe(result => {
         this.paying.set(false);
-        console.log('💳 Payment result:', result);
-
         if (result.error) {
           console.error('❌ Payment failed:', result.error.message);
           // Show error to your customer (e.g., insufficient funds)
-          console.log({ success: false, error: result.error.message });
         } else {
           // The payment has been processed!
           if (result.paymentIntent.status === 'succeeded') {

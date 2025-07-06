@@ -74,14 +74,11 @@ export class ProjectEditComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    console.log('🎨 ProjectEditComponent initialized');
     this.projectId = this.route.snapshot.paramMap.get('id');
-    console.log('🆔 Project ID from route:', this.projectId);
 
     if (this.projectId) {
       this.loadProject();
     } else {
-      console.error('❌ No project ID found in route');
       this.error = this.translateService.instant('designLab.errors.projectNotFound');
     }
   }
@@ -92,18 +89,15 @@ export class ProjectEditComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    console.log('🎨 Loading project with ID:', this.projectId);
 
     this.designLabService.getProjectById(this.projectId).subscribe({
       next: (project: Project) => {
         this.project = project;
         this.isLoading = false;
-        console.log('✅ Project loaded successfully:', project);
       },
       error: (error: any) => {
         this.error = error.message || this.translateService.instant('designLab.errors.loadingFailed');
         this.isLoading = false;
-        console.error('❌ Error loading project:', error);
       }
     });
   }
@@ -112,7 +106,6 @@ export class ProjectEditComponent implements OnInit {
     if (!this.project || this.isSaving) return;
 
     this.isSaving = true;
-    console.log('💾 Saving project:', this.project.id);
 
     // For now, just simulate saving - in real implementation, call the service
     setTimeout(() => {
@@ -129,7 +122,6 @@ export class ProjectEditComponent implements OnInit {
   }
 
   onLayerToolEvent(event: LayerToolEvent): void {
-    console.log('🔧 Layer tool event:', event);
 
     if (!this.project) return;
 
@@ -150,7 +142,6 @@ export class ProjectEditComponent implements OnInit {
   }
 
   onLayerEvent(event: LayerEvent): void {
-    console.log('🎨 Layer event:', event);
 
     if (!this.project) return;
 
@@ -159,7 +150,6 @@ export class ProjectEditComponent implements OnInit {
         this.updateLayerPosition(event.layerId, event.data);
         break;
       case 'select':
-        console.log('Layer selected:', event.layerId);
         break;
       case 'delete':
         this.removeLayerFromProject(event.layerId);
@@ -174,7 +164,6 @@ export class ProjectEditComponent implements OnInit {
     if (this.project) {
       this.project.layers = layers;
       this.project.updatedAt = new Date();
-      console.log('🔄 Layers updated:', layers.length);
     }
   }
 
@@ -208,11 +197,9 @@ export class ProjectEditComponent implements OnInit {
   private deleteProject(): void {
     if (!this.project) return;
 
-    console.log('🗑️ Deleting project:', this.project.id);
 
     this.designLabService.deleteProject(this.project.id).subscribe({
       next: (result) => {
-        console.log('✅ Project deleted successfully:', result);
 
         this.snackBar.open(
           this.translateService.instant('designLab.messages.projectDeleted'),
@@ -251,7 +238,6 @@ export class ProjectEditComponent implements OnInit {
     this.project.layers.push(layer);
     this.project.updatedAt = new Date();
 
-    console.log('➕ Layer added to project:', layer.id);
 
     this.snackBar.open(
       this.translateService.instant('designLab.messages.layerAdded'),
@@ -271,7 +257,6 @@ export class ProjectEditComponent implements OnInit {
       this.project.layers.splice(index, 1);
       this.project.updatedAt = new Date();
 
-      console.log('🗑️ Layer removed from project:', layerId);
 
       this.snackBar.open(
         this.translateService.instant('designLab.messages.layerRemoved'),
@@ -294,8 +279,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
 
-      console.log('� Layer position updated:', layerId, position);
-
       // In a real implementation, you might want to call a service to persist the change
       // For now, we'll just update the local state
     }
@@ -304,7 +287,6 @@ export class ProjectEditComponent implements OnInit {
   private exportProject(format: string): void {
     if (!this.project) return;
 
-    console.log('📁 Exporting project as:', format);
 
     // Simulate export functionality
     this.snackBar.open(
@@ -345,7 +327,6 @@ export class ProjectEditComponent implements OnInit {
    * Handle canvas tool events
    */
   onCanvasToolEvent(event: CanvasToolEvent): void {
-    console.log('🔧 Canvas tool event:', event);
 
     switch (event.type) {
       case 'tool-change':
@@ -361,7 +342,6 @@ export class ProjectEditComponent implements OnInit {
    * Handle layer management events
    */
   onLayerManagementEvent(event: LayerManagementEvent): void {
-    console.log('🗂️ Layer management event:', event);
 
     if (!this.project) return;
 
@@ -394,7 +374,6 @@ export class ProjectEditComponent implements OnInit {
    * Handle layer property events
    */
   onLayerPropertyEvent(event: LayerPropertyEvent): void {
-    console.log('🎨 Layer property event:', event);
 
     if (!this.project || !this.selectedLayer) return;
 
@@ -423,7 +402,6 @@ export class ProjectEditComponent implements OnInit {
   private selectLayer(layerId: string): void {
     this.selectedLayerId = layerId;
     this.selectedLayer = this.project?.layers.find(l => l.id === layerId) || null;
-    console.log('📍 Layer selected:', this.selectedLayer);
   }
 
   /**
@@ -438,7 +416,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('👁️ Layer visibility toggled:', layerId, isVisible);
     }
   }
 
@@ -493,7 +470,6 @@ export class ProjectEditComponent implements OnInit {
     this.project.layers = layers;
     this.project.updatedAt = new Date();
     this.isModified = true;
-    console.log('🔄 Layers reordered');
   }
 
   /**
@@ -509,7 +485,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('⬆️ Layer brought to front:', layerId);
     }
   }
 
@@ -526,7 +501,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('⬇️ Layer sent to back:', layerId);
     }
   }
 
@@ -555,7 +529,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('📝 Text layer updated:', layerId);
     }
   }
 
@@ -580,7 +553,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('🖼️ Image layer updated:', layerId);
     }
   }
 
@@ -596,7 +568,6 @@ export class ProjectEditComponent implements OnInit {
       layer.updatedAt = new Date();
       this.project.updatedAt = new Date();
       this.isModified = true;
-      console.log('💧 Layer opacity updated:', layerId, opacity);
     }
   }
 

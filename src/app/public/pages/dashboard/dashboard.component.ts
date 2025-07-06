@@ -293,17 +293,6 @@ export class DashboardComponent {
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
 
-    console.log('🔍 Dashboard Auth Debug:', {
-      isAuthenticated,
-      hasValidToken,
-      localStorage: {
-        hasToken: !!token,
-        hasUserId: !!userId,
-        hasUsername: !!username,
-        token: token ? token.substring(0, 20) + '...' : null
-      }
-    });
-
     alert(`Authentication State:
     - Is Authenticated: ${isAuthenticated}
     - Has Valid Token: ${hasValidToken}

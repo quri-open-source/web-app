@@ -449,7 +449,6 @@ export class DesignLabService {
     width: number;
     height: number;
   }): Observable<LayerResult> {
-    console.log('🖼️ DesignLabService - Updating image layer details:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/image-details`;
     const requestBody = this.assembler.toUpdateImageLayerDetailsRequest(request);
@@ -458,7 +457,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Image layer details updated successfully:', response);
         return this.assembler.toUpdateImageLayerResult(response);
       }),
       catchError(error => {
@@ -479,7 +477,6 @@ export class DesignLabService {
     y: number;
     z: number;
   }): Observable<LayerResult> {
-    console.log('📍 DesignLabService - Updating layer coordinates:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`;
     const requestBody = this.assembler.toUpdateLayerCoordinatesRequest(request);
@@ -488,7 +485,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Layer coordinates updated successfully:', response);
         return this.assembler.toUpdateLayerCoordinatesResult(response);
       }),
       catchError(error => {
@@ -503,7 +499,6 @@ export class DesignLabService {
    * DELETE http://localhost:8080/api/v1/projects/{projectId}/layers/{layerId}
    */
   deleteLayer(projectId: string, layerId: string): Observable<DeleteResult> {
-    console.log('🗑️ DesignLabService - Deleting layer:', { projectId, layerId });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}`;
 
@@ -511,7 +506,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Layer deleted successfully:', response);
         return this.assembler.toDeleteLayerResult(response);
       }),
       catchError(error => {
@@ -527,13 +521,11 @@ export class DesignLabService {
    * Método de prueba para verificar la autenticación
    */
   testAuthentication(): Observable<any> {
-    console.log('🧪 DesignLabService - Testing authentication');
 
     return this.http.get<any>(BASE_URL, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Authentication test successful:', response);
         return response;
       }),
       catchError(error => {

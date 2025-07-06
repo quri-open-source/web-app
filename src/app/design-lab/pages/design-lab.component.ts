@@ -65,7 +65,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    console.log('🚀 Starting to load projects...');
 
     // Get userId directly from localStorage to avoid subscription issues
     const userId = localStorage.getItem('userId');
@@ -76,7 +75,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('👤 Using user ID from localStorage:', userId);
 
     this.designLabService.getProjectsByUser(userId)
       .pipe(takeUntil(this.destroy$))
@@ -84,7 +82,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
         next: (projects: Project[]) => {
           this.projects = projects;
           this.isLoading = false;
-          console.log('✅ Projects loaded successfully:', projects);
         },
         error: (error: any) => {
           this.error = error.message || this.translateService.instant('designLab.errorLoadingProjects');
@@ -109,7 +106,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
   }
 
   createNewProject(): void {
-    console.log('Creating new project...');
     this.router.navigate(['/home/design-lab/create']);
   }
 
@@ -117,19 +113,9 @@ export class DesignLabComponent implements OnInit, OnDestroy {
    * Método de debugging temporal para verificar los datos del proyecto
    */
   debugProjectData(project: any): void {
-    console.log('🔍 DEBUG - Project data:', {
-      project: project,
-      id: project?.id,
-      hasId: !!project?.id,
-      type: typeof project?.id,
-      keys: project ? Object.keys(project) : 'no project'
-    });
   }
 
   editProject(projectId: string): void {
-    console.log('🔧 Editing project:', projectId);
-    console.log('🧭 Navigating to:', ['/home/design-lab/edit', projectId]);
-
     if (!projectId) {
       console.error('❌ Project ID is empty or null');
       this.snackBar.open(
@@ -145,7 +131,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
 
     this.router.navigate(['/home/design-lab/edit', projectId]).then(
       (success) => {
-        console.log('🎯 Navigation result:', success);
       },
       (error) => {
         console.error('❌ Navigation error:', error);
@@ -155,7 +140,6 @@ export class DesignLabComponent implements OnInit, OnDestroy {
 
   duplicateProject(projectId: string): void {
     // TODO: Implementar duplicación de proyecto
-    console.log('Duplicating project:', projectId);
     alert(`${this.translateService.instant('designLab.duplicate')}: ${projectId}`);
   }
 
@@ -184,11 +168,9 @@ export class DesignLabComponent implements OnInit, OnDestroy {
       }
     });
   }  private performDeleteProject(projectId: string): void {
-    console.log('🗑️ Deleting project:', projectId);
 
     this.designLabService.deleteProject(projectId).subscribe({
       next: (result) => {
-        console.log('✅ Project deleted successfully:', result);
 
         // Remover el proyecto de la lista local
         this.projects = this.projects.filter(p => p.id !== projectId);

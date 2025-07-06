@@ -11,7 +11,6 @@ export class OrderFulfillment {
     public readonly createdAt: Date,
     public readonly updatedAt: Date
   ) {
-    console.log("CREANDO ORDEN DE CUMPLIMIENTO", this);
   }
 
   markShipped(date: Date) {
