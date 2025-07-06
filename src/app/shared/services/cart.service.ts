@@ -97,10 +97,14 @@ export class CartService {
    */
   clearCart(): void {
     try {
+      console.log('🛒 Clearing cart - Current items:', this.cartItems.length);
       this.updateCart([]);
-      console.log('✅ Cart cleared');
+      console.log('✅ Cart cleared successfully');
+      
+      // Emit a clear event for any listeners
+      console.log('📢 Cart cleared - count is now:', this.cartCount);
     } catch (error) {
-      console.error('Error clearing cart:', error);
+      console.error('❌ Error clearing cart:', error);
     }
   }
 
