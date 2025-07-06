@@ -1,3 +1,14 @@
+/* Collapse sidebar button only on mobile */
+.collapse-sidebar-btn {
+  margin-right: 12px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .collapse-sidebar-btn {
+    display: inline-flex;
+  }
+}
 /* Home Layout */
 .home-layout {
   height: 100vh;

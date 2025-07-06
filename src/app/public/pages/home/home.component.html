@@ -35,6 +35,16 @@
         <!-- Main Content -->
         <mat-sidenav-content class="main-content">
           <mat-toolbar class="toolbar">
+            <!-- Collapse button: only visible on mobile -->
+            <button
+              mat-icon-button
+              class="collapse-sidebar-btn"
+              (click)="drawer.toggle()"
+              aria-label="Toggle sidebar"
+              *ngIf="isMobileScreen()"
+            >
+              <mat-icon>menu</mat-icon>
+            </button>
             <span>{{ getCurrentPageTitle() }}</span>
             <span class="toolbar-spacer"></span>
             <app-language-switcher></app-language-switcher>

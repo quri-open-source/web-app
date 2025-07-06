@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,12 +49,10 @@ interface NavigationLink {
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private destroy$ = new Subject<void>();
     currentPageTitle = 'Dashboard';
-
     navigationLinks: NavigationLink[] = [];
-
     private readonly routeTitleMap = new Map<string, string>([
         ['', 'navigation.dashboard'],
         ['dashboard', 'navigation.dashboard'],
@@ -62,6 +60,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         ['design-lab', 'navigation.designLab'],
         ['cart', 'navigation.cart'],
     ]);
+    isMobile = false;
+    private resizeListener = this.checkScreenSize.bind(this);
 
     constructor(
         private authService: AuthenticationService,
@@ -70,6 +70,25 @@ export class HomeComponent implements OnInit, OnDestroy {
         public cartService: CartService,
         private snackBar: MatSnackBar
     ) {}
+
+    ngAfterViewInit() {
+        this.checkScreenSize();
+        window.addEventListener('resize', this.resizeListener);
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('resize', this.resizeListener);
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    checkScreenSize() {
+        this.isMobile = window.innerWidth <= 768;
+    }
+
+    isMobileScreen(): boolean {
+        return this.isMobile;
+    }
 
     ngOnInit() {
         // Always build navigationLinks fresh
@@ -130,11 +149,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         // Set initial title
         this.updatePageTitle(this.router.url);
-    }
-
-    ngOnDestroy() {
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 
     private updatePageTitle(url: string) {
