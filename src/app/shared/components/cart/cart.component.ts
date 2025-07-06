@@ -184,7 +184,7 @@ export class CartComponent implements OnInit {
 
             // Crear la request para el intent de pago
             const paymentIntentRequest: CreateOrderPaymentIntentRequest = {
-                amount: total, // Stripe espera centavos
+                amount: Math.round(total * 100), // Stripe espera centavos
                 currency,
             };
 
@@ -195,7 +195,7 @@ export class CartComponent implements OnInit {
                         state: { clientSecret: response.secretKey },
                     });
                 },
-                error: (err) => {
+                error: (_err) => {
                     const message = this.translateService.instant(
                         'cart.paymentIntentError'
                     );
