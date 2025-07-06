@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { OrderFulfillmentService } from '../../../order-fulfillments/services/order-fulfillment.service';
-import { OrderFulfillment } from '../../../order-fulfillments/model/order-fulfillment.entity';
+import { OrderFulfillmentService } from '../../services/order-fulfillment.service';
+import { OrderFulfillment } from '../../model/order-fulfillment.entity';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';

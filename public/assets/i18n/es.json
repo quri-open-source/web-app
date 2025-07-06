@@ -524,12 +524,14 @@
     "cardTitle": "Orden #{{id}}",
     "id": "ID",
     "created": "Creado",
-    "status": {
+    "status": "Estado",
+    "statusValues": {
       "pending": "Pendiente",
       "processing": "En proceso",
       "shipped": "Enviado",
       "delivered": "Entregado",
-      "cancelled": "Cancelado"
+      "cancelled": "Cancelado",
+      "unknown": "Desconocido"
     },
     "details": "Ver Detalles"
   }

@@ -42,13 +42,6 @@ export class AuthenticationService {
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
 
-    console.log('🔐 checkStoredAuthentication called with:', {
-      hasToken: !!token,
-      hasUserId: !!userId,
-      hasUsername: !!username,
-      currentSignedInValue: this.signedIn.value
-    });
-
     if (token && userId && username) {
       // Always update the state to ensure it's current
       this.signedIn.next(true);

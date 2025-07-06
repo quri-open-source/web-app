@@ -626,28 +626,6 @@ export class DesignLabService {
    * Debug del estado de autenticación
    */
   debugAuthenticationState(): void {
-    console.log('🔍 ===== AUTHENTICATION DEBUG =====');
-    console.log('🔍 localStorage data:');
-    console.log('  - token:', localStorage.getItem('token')?.substring(0, 30) + '...');
-    console.log('  - userId:', localStorage.getItem('userId'));
-    console.log('  - username:', localStorage.getItem('username'));
-
-    console.log('🔍 AuthenticationService data:');
-    console.log('  - getToken():', this.authService.getToken()?.substring(0, 30) + '...');
-    console.log('  - hasValidToken():', this.authService.hasValidToken());
-    console.log('  - isAuthenticated():', this.isAuthenticated());
-
-    // Forzar check de autenticación y ver resultado
-    console.log('🔍 Forcing checkStoredAuthentication...');
-    const authResult = this.authService.checkStoredAuthentication();
-    console.log('  - checkStoredAuthentication() result:', authResult);
-
-    // Verificar headers que se crearían
-    console.log('🔍 Testing token retrieval:');
-    const token = this.getAuthToken();
-    console.log('  - getAuthToken() result:', token.substring(0, 30) + '...');
-
-    console.log('🔍 ===== END AUTHENTICATION DEBUG =====');
   }
 
   // ==================== PRIVATE METHODS ====================

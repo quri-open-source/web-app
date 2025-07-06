@@ -18,7 +18,7 @@
               <span class="fulfillment-title">{{ 'fulfillments.cardTitle' | translate: { id: f.id } }}</span>
               <span class="fulfillment-status-label">
                 <strong>{{ 'fulfillments.status' | translate }}:</strong>
-                {{ ('fulfillments.status.' + (f.fulfillmentStatus ? f.fulfillmentStatus.toLowerCase() : 'unknown')) | translate }}
+                {{ ('fulfillments.statusValues.' + (f.status ? f.status.toLowerCase() : 'unknown')) | translate }}
               </span>
             </mat-card-title>
           </mat-card-header>

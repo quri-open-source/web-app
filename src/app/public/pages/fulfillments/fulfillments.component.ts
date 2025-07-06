@@ -42,6 +42,7 @@ export class FulfillmentsComponent {
     this.auth.currentUserId.subscribe(userId => {
       this.manufacturerService.getByUserId(userId).subscribe(manufacturer => {
         this.orderFulfillmentService.getAll(manufacturer.id).subscribe(data => {
+            console.log('Fulfillments loaded:', data);
           this.fulfillments.set(data);
         });
       });

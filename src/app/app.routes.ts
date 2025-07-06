@@ -111,7 +111,7 @@ export const routes: Routes = [
       {
         path: 'fulfillments/:fulfillmentId',
         loadComponent: () =>
-          import('./public/pages/fulfillments/fulfillment-detail.component').then(
+          import('./order-fulfillments/components/fulfillment-details/fulfillment-detail.component').then(
             (c) => c.FulfillmentDetailComponent
           ),
       },
