@@ -4,10 +4,11 @@ import { Observable, map } from 'rxjs';
 import { OrderFulfillmentResponse, OrderFulfillmentsResponse, CreateOrderFulfillmentRequest } from './order-fulfillments.response';
 import { OrderFulfillment } from '../model/order-fulfillment.entity';
 import { OrderFulfillmentAssembler } from './order-fulfillment.assembler';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class OrderFulfillmentService {
-  private readonly apiUrl = '/api/v1/fulfillments';
+  private readonly apiUrl = `${environment.serverBaseUrl}/api/v1/fulfillments`;
 
   constructor(private http: HttpClient) {}
 
