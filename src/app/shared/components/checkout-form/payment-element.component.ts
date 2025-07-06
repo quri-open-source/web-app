@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import {
   injectStripe,
+  NgxStripeModule,
   StripePaymentElementComponent
 } from 'ngx-stripe';
 import {
@@ -16,11 +17,11 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'ngstr-checkout-form',
   templateUrl: './payment-element.component.html',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatInputModule,
-    StripePaymentElementComponent
+    StripePaymentElementComponent,
+    NgxStripeModule
   ]
 })
 export class CheckoutFormComponent {
