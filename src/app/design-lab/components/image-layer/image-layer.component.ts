@@ -275,13 +275,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
       this.aspectRatio = this.currentWidth / this.currentHeight;
     }
 
-    console.log('🖼️ ImageLayerComponent initialized:', {
-      layerId: this.layer.id,
-      position: { x: this.currentX, y: this.currentY },
-      dimensions: { width: this.currentWidth, height: this.currentHeight },
-      aspectRatio: this.aspectRatio,
-      imageUrl: this.getImageUrl()
-    });
   }
 
   getImageUrl(): string {
@@ -297,12 +290,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
     if (this.naturalWidth && this.naturalHeight) {
       this.aspectRatio = this.naturalWidth / this.naturalHeight;
     }
-
-    console.log('✅ Image loaded successfully:', {
-      layerId: this.layer.id,
-      naturalSize: { width: this.naturalWidth, height: this.naturalHeight },
-      aspectRatio: this.aspectRatio
-    });
   }
 
   onImageError(_event: Event) {
@@ -323,12 +310,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
 
     // Only handle left mouse button
     if (event.button !== 0) return;
-
-    console.log('�️ Starting drag:', {
-      layerId: this.layer.id,
-      mousePos: { x: event.clientX, y: event.clientY },
-      currentPos: { x: this.currentX, y: this.currentY }
-    });
 
     this.startDrag(event);
   }

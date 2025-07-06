@@ -47,11 +47,9 @@ export class AuthenticationService {
       this.signedIn.next(true);
       this.signedInUserId.next(userId);
       this.signedInUsername.next(username);
-      console.log(`✅ Restored authentication for user: ${username}`);
       return true;
     }
 
-    console.log('❌ No valid authentication data found in localStorage');
     // Clear the state if no valid data
     this.signedIn.next(false);
     this.signedInUserId.next('');
@@ -98,7 +96,6 @@ export class AuthenticationService {
    * @returns The {@link SignInResponse} object containing the user's id, username, and token.
    */
   signIn(signInRequest: SignInRequest) {
-    console.log(signInRequest);
     return this.http.post<SignInResponse>(`${this.basePath}/api/v1/auth/sign-in`, signInRequest, this.httpOptions)
       .subscribe({
         next: (response) => {

@@ -16,13 +16,11 @@ export const authenticationInterceptor: HttpInterceptorFn = (
 
   // If no token, send request as is
   if (!token) {
-    console.log('🔧 Interceptor - No token found, sending request without Authorization header');
     return next(request);
   }
 
   // Validate token format (basic check)
   if (token.length < 10) {
-    console.error('🔧 Interceptor - Token seems invalid (too short):', token);
     return next(request);
   }
 

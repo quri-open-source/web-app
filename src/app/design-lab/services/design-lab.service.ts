@@ -35,7 +35,6 @@ export class DesignLabService {
   private authService = inject(AuthenticationService);
 
   constructor() {
-    console.log('🚀 DesignLabService initialized');
   }
 
   // ==================== PROJECT METHODS ====================
@@ -44,7 +43,6 @@ export class DesignLabService {
    * Obtener todos los proyectos de un usuario
    */
   getProjectsByUser(userId: string): Observable<Project[]> {
-    console.log('📋 DesignLabService - Getting projects for user:', userId);
 
     const params = new HttpParams().set('userId', userId);
 
@@ -53,7 +51,6 @@ export class DesignLabService {
       params: params
     }).pipe(
       map(responses => {
-        console.log('✅ Projects fetched successfully:', responses);
         return responses.map(response => this.mapToProject(response));
       }),
       catchError(error => {
@@ -67,17 +64,14 @@ export class DesignLabService {
    * Obtener proyecto por ID
    */
   getProjectById(projectId: string): Observable<Project> {
-    console.log('📋 DesignLabService - Getting project:', projectId);
 
     return this.http.get<ProjectResponse>(`${BASE_URL}/${projectId}`, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project fetched successfully:', response);
         return this.mapToProject(response);
       }),
       catchError(error => {
-        console.error('❌ Error fetching project:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -87,13 +81,11 @@ export class DesignLabService {
    * Crear un nuevo proyecto
    */
   createProject(request: CreateProjectRequest): Observable<ProjectResult> {
-    console.log('🆕 DesignLabService - Creating project:', request);
 
     return this.http.post<CreateProjectResponse>(BASE_URL, request, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project created successfully:', response);
         return {
           success: response.success,
           projectId: response.projectId,
@@ -101,7 +93,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error creating project:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -111,7 +102,6 @@ export class DesignLabService {
    * Eliminar un proyecto
    */
   deleteProject(projectId: string): Observable<DeleteProjectResult> {
-    console.log('🗑️ DesignLabService - Deleting project:', projectId);
 
     const url = `${BASE_URL}/${projectId}`;
 
@@ -119,14 +109,12 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project deleted successfully:', response);
         return {
           success: response.success,
           error: response.error
         };
       }),
       catchError(error => {
-        console.error('❌ Error deleting project:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -142,7 +130,6 @@ export class DesignLabService {
     garmentSize?: string;
     garmentGender?: string;
   }): Observable<ProjectResult> {
-    console.log('🖼️ DesignLabService - Updating project details:', { projectId, details });
 
     const url = `${BASE_URL}/${projectId}/details`;
 
@@ -150,7 +137,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project details updated successfully:', response);
         return {
           success: true,
           projectId: projectId,
@@ -158,7 +144,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating project details:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -169,7 +154,6 @@ export class DesignLabService {
    * Este método es un wrapper que actualiza el previewUrl manteniendo los demás campos
    */
   updateProjectPreview(projectId: string, previewUrl: string, currentProject?: Project): Observable<ProjectResult> {
-    console.log('🖼️ DesignLabService - Updating project preview only:', { projectId, previewUrl });
 
     // Si tenemos el proyecto actual, incluimos todos sus campos para no perder datos
     const updateData: any = { previewUrl };
@@ -180,12 +164,6 @@ export class DesignLabService {
       updateData.garmentSize = currentProject.garmentSize;
       updateData.garmentGender = currentProject.garmentGender;
 
-      console.log('🔄 Preserving current project fields:', {
-        status: currentProject.status,
-        garmentColor: currentProject.garmentColor,
-        garmentSize: currentProject.garmentSize,
-        garmentGender: currentProject.garmentGender
-      });
     }
 
     return this.updateProjectDetails(projectId, updateData);
@@ -195,7 +173,6 @@ export class DesignLabService {
    * Actualizar el status de un proyecto a GARMENT
    */
   updateProjectStatus(projectId: string, status: string, currentProject?: Project): Observable<ProjectResult> {
-    console.log('🔄 DesignLabService - Updating project status:', { projectId, status });
 
     // Construir el body con todos los campos para no perder datos
     const updateData: any = { status };
@@ -206,12 +183,6 @@ export class DesignLabService {
       updateData.garmentSize = currentProject.garmentSize;
       updateData.garmentGender = currentProject.garmentGender;
 
-      console.log('🔄 Preserving current project fields:', {
-        previewUrl: currentProject.previewUrl,
-        garmentColor: currentProject.garmentColor,
-        garmentSize: currentProject.garmentSize,
-        garmentGender: currentProject.garmentGender
-      });
     }
 
     return this.updateProjectDetails(projectId, updateData);
@@ -223,18 +194,14 @@ export class DesignLabService {
    * Crear una nueva capa de texto
    */
   createTextLayer(request: CreateTextLayerRequest): Observable<LayerResult> {
-    console.log('📝 DesignLabService - Creating text layer:', request);
 
     const url = `${BASE_URL}/layers/texts`;
 
-    console.log('📝 DesignLabService - Request URL:', url);
-    console.log('📝 DesignLabService - Request body:', request);
 
     return this.http.post<LayerOperationResponse>(url, request, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Text layer created successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -242,7 +209,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error creating text layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -252,7 +218,6 @@ export class DesignLabService {
    * Crear una nueva capa de imagen
    */
   createImageLayer(request: CreateImageLayerRequest): Observable<LayerResult> {
-    console.log('🖼️ DesignLabService - Creating image layer:', request);
 
     const url = `${BASE_URL}/${request.projectId}/layers/image`;
 
@@ -260,7 +225,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Image layer created successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -268,7 +232,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error creating image layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -278,7 +241,6 @@ export class DesignLabService {
    * Actualizar una capa de texto
    */
   updateTextLayer(projectId: string, layerId: string, request: UpdateTextLayerRequest): Observable<LayerResult> {
-    console.log('📝 DesignLabService - Updating text layer:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/text`;
 
@@ -286,7 +248,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Text layer updated successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -294,7 +255,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating text layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -304,7 +264,6 @@ export class DesignLabService {
    * Actualizar una capa de imagen
    */
   updateImageLayer(projectId: string, layerId: string, request: UpdateImageLayerRequest): Observable<LayerResult> {
-    console.log('🖼️ DesignLabService - Updating image layer:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/image`;
 
@@ -312,7 +271,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Image layer updated successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -320,7 +278,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating image layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -330,7 +287,6 @@ export class DesignLabService {
    * Actualizar coordenadas de una capa
    */
   updateLayerCoordinates(projectId: string, layerId: string, request: UpdateLayerCoordinatesRequest): Observable<LayerResult> {
-    console.log('📍 DesignLabService - Updating layer coordinates:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/coordinates`;
 
@@ -338,7 +294,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Layer coordinates updated successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -346,7 +301,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating layer coordinates:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -356,7 +310,6 @@ export class DesignLabService {
    * Eliminar una capa
    */
   deleteLayer(projectId: string, layerId: string): Observable<LayerResult> {
-    console.log('🗑️ DesignLabService - Deleting layer:', { projectId, layerId });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}`;
 
@@ -364,7 +317,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Layer deleted successfully:', response);
         return {
           success: response.success,
           layerId: response.layerId,
@@ -372,7 +324,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error deleting layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -384,17 +335,14 @@ export class DesignLabService {
    * Método de prueba para verificar la autenticación
    */
   testAuthentication(): Observable<any> {
-    console.log('🧪 DesignLabService - Testing authentication');
 
     return this.http.get<any>(BASE_URL, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Authentication test successful:', response);
         return response;
       }),
       catchError(error => {
-        console.error('❌ Authentication test failed:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -407,15 +355,11 @@ export class DesignLabService {
    */
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    console.log('🔧 DesignLabService - Token exists:', !!token);
-    console.log('🔧 DesignLabService - Token preview:', token?.substring(0, 20) + '...');
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-
-    console.log('🔧 DesignLabService - Headers created:', headers.keys());
     return headers;
   }
 

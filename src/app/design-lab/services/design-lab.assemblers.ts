@@ -123,7 +123,6 @@ export class DesignLabAssembler {
         height: response.details?.height || 100
       };
 
-      console.log('🖼️ Assembled image layer:', imageLayer);
       return imageLayer;
     }
 

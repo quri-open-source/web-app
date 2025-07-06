@@ -52,41 +52,31 @@ export class DesignLabService {
   private cloudinaryService = inject(CloudinaryService);
 
   constructor() {
-    console.log('🚀 DesignLabService initialized with real endpoints');
   }
 
   /**
    * Obtener token de autenticación de forma segura
    */
   private getAuthToken(): string {
-    console.log('🔑 DesignLabService - Getting auth token...');
 
     // Intentar obtener el token del AuthenticationService
     let token = this.authService.getToken();
-    console.log('🔑 Token from AuthService:', token?.substring(0, 20) + '...');
 
     // Si no hay token, forzar verificación de localStorage
     if (!token) {
-      console.log('🔑 No token from AuthService, checking localStorage directly...');
       token = localStorage.getItem('token');
-      console.log('🔑 Token from localStorage:', token?.substring(0, 20) + '...');
 
       // Si encontramos token en localStorage, forzar restauración en AuthService
       if (token) {
-        console.log('🔑 Found token in localStorage, forcing checkStoredAuthentication...');
         this.authService.checkStoredAuthentication();
       }
     }
 
     // Validar que el token existe
     if (!token) {
-      console.error('❌ No authentication token found anywhere!');
-      console.error('❌ localStorage token:', localStorage.getItem('token'));
-      console.error('❌ AuthService token:', this.authService.getToken());
       return '';
     }
 
-    console.log('✅ Token obtained successfully:', token.substring(0, 20) + '...');
     return token;
   }
 
@@ -94,24 +84,15 @@ export class DesignLabService {
    * Asegurar que la autenticación esté disponible
    */
   private ensureAuthentication(): void {
-    console.log('🔧 DesignLabService - Ensuring authentication is available...');
 
     // Verificar localStorage directamente
     const tokenInStorage = localStorage.getItem('token');
     const userIdInStorage = localStorage.getItem('userId');
     const usernameInStorage = localStorage.getItem('username');
 
-    console.log('🔧 Authentication data in localStorage:');
-    console.log('  - token exists:', !!tokenInStorage);
-    console.log('  - userId exists:', !!userIdInStorage);
-    console.log('  - username exists:', !!usernameInStorage);
 
     if (tokenInStorage && userIdInStorage && usernameInStorage) {
-      console.log('🔧 All auth data found in localStorage, forcing checkStoredAuthentication');
       this.authService.checkStoredAuthentication();
-    } else {
-      console.error('❌ Missing authentication data in localStorage!');
-      console.error('❌ User needs to sign in again');
     }
   }
 
@@ -122,7 +103,6 @@ export class DesignLabService {
    * GET http://localhost:8080/api/v1/projects?userId=cd9b8fcb-b943-40cf-aa90-a5cd1812f602
    */
   getProjectsByUser(userId: string): Observable<Project[]> {
-    console.log('📋 DesignLabService - Getting projects for user:', userId);
 
     // SIEMPRE asegurar autenticación antes de hacer petición
     this.ensureAuthentication();
@@ -132,26 +112,17 @@ export class DesignLabService {
 
     const params = new HttpParams().set('userId', userId);
 
-    console.log('📋 Making HTTP request with params:', params.toString());
-    console.log('📋 Base URL:', BASE_URL);
 
     return this.http.get<GetAllUserProjectsResponse>(BASE_URL, {
       headers: this.getHeaders(),
       params: params
     }).pipe(
       map(responses => {
-        console.log('✅ Projects fetched successfully:', responses);
         return this.assembler.toProjectEntities(responses);
       }),
       catchError(error => {
-        console.error('❌ Error fetching projects:', error);
-        console.error('❌ URL was:', BASE_URL);
-        console.error('❌ Params were:', params.toString());
-
         // Debug adicional en caso de error
-        console.error('❌ Running authentication debug after error:');
         this.debugAuthenticationState();
-
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -172,7 +143,6 @@ export class DesignLabService {
         error: (error) => {
           // Si es error 401, esperar un poco y reintentar una vez
           if (error.includes('Token expirado') || error.includes('401')) {
-            console.log('🔄 Retrying after authentication error...');
 
             setTimeout(() => {
               // Forzar verificación de autenticación
@@ -202,17 +172,14 @@ export class DesignLabService {
    * GET http://localhost:8080/api/v1/projects/{id}
    */
   getProjectById(projectId: string): Observable<Project> {
-    console.log('📋 DesignLabService - Getting project:', projectId);
 
     return this.http.get<any>(`${BASE_URL}/${projectId}`, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project fetched successfully:', response);
         return this.assembler.toProjectEntity(response);
       }),
       catchError(error => {
-        console.error('❌ Error fetching project:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -223,13 +190,11 @@ export class DesignLabService {
    * POST http://localhost:8080/api/v1/projects
    */
   createProject(request: CreateProjectRequest): Observable<ProjectResult> {
-    console.log('🆕 DesignLabService - Creating project:', request);
 
     return this.http.post<CreateProjectResponse>(BASE_URL, request, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project created successfully:', response);
         return this.assembler.toCreateProjectResult(response);
       }),
       catchError(error => {
@@ -244,7 +209,6 @@ export class DesignLabService {
    * DELETE http://localhost:8080/api/v1/projects/{projectId}
    */
   deleteProject(projectId: string): Observable<DeleteResult> {
-    console.log('🗑️ DesignLabService - Deleting project:', projectId);
 
     const url = `${BASE_URL}/${projectId}`;
 
@@ -252,11 +216,9 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project deleted successfully:', response);
         return this.assembler.toDeleteProjectResult(response);
       }),
       catchError(error => {
-        console.error('❌ Error deleting project:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -267,7 +229,6 @@ export class DesignLabService {
    * PUT http://localhost:8080/api/v1/projects/{projectId}/details
    */
   updateProjectPreview(projectId: string, previewUrl: string, currentProject?: Project): Observable<ProjectResult> {
-    console.log('🖼️ DesignLabService - Updating project preview:', { projectId, previewUrl });
 
     const url = `${BASE_URL}/${projectId}/details`;
 
@@ -279,22 +240,13 @@ export class DesignLabService {
       requestBody.garmentColor = currentProject.garmentColor;
       requestBody.garmentSize = currentProject.garmentSize;
       requestBody.garmentGender = currentProject.garmentGender;
-
-      console.log('🔄 Preserving current project fields:', {
-        status: currentProject.status,
-        garmentColor: currentProject.garmentColor,
-        garmentSize: currentProject.garmentSize,
-        garmentGender: currentProject.garmentGender
-      });
     }
 
-    console.log('📤 Sending complete request body:', requestBody);
 
     return this.http.put<{ message: string; timestamp: string }>(url, requestBody, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project preview updated successfully:', response);
         return {
           success: true,
           projectId: projectId,
@@ -302,7 +254,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating project preview:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -319,7 +270,6 @@ export class DesignLabService {
     garmentSize?: string;
     garmentGender?: string;
   }): Observable<ProjectResult> {
-    console.log('🔄 DesignLabService - Updating project details:', { projectId, details });
 
     const url = `${BASE_URL}/${projectId}/details`;
 
@@ -327,7 +277,6 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project details updated successfully:', response);
         return {
           success: true,
           projectId: projectId,
@@ -335,7 +284,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating project details:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -346,7 +294,6 @@ export class DesignLabService {
    * PUT http://localhost:8080/api/v1/projects/{projectId}/details
    */
   updateProjectStatus(projectId: string, status: string, currentProject?: Project): Observable<ProjectResult> {
-    console.log('🔄 DesignLabService - Updating project status:', { projectId, status });
 
     const url = `${BASE_URL}/${projectId}/details`;
 
@@ -358,22 +305,12 @@ export class DesignLabService {
       requestBody.garmentColor = currentProject.garmentColor;
       requestBody.garmentSize = currentProject.garmentSize;
       requestBody.garmentGender = currentProject.garmentGender;
-
-      console.log('🔄 Preserving current project fields:', {
-        previewUrl: currentProject.previewUrl,
-        garmentColor: currentProject.garmentColor,
-        garmentSize: currentProject.garmentSize,
-        garmentGender: currentProject.garmentGender
-      });
     }
-
-    console.log('📤 Sending project status update request body:', requestBody);
 
     return this.http.put<{ message: string; timestamp: string }>(url, requestBody, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Project status updated successfully:', response);
         return {
           success: true,
           projectId: projectId,
@@ -381,7 +318,6 @@ export class DesignLabService {
         };
       }),
       catchError(error => {
-        console.error('❌ Error updating project status:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -402,7 +338,6 @@ export class DesignLabService {
     isItalic: boolean;
     isUnderlined: boolean;
   }): Observable<LayerResult> {
-    console.log('📝 DesignLabService - Creating text layer:', { projectId, request });
 
     const fullRequest: CreateTextLayerRequest = {
       projectId: projectId,
@@ -411,18 +346,13 @@ export class DesignLabService {
 
     const url = `${BASE_URL}/layers/texts`;
 
-    console.log('📝 DesignLabService - Request URL:', url);
-    console.log('📝 DesignLabService - Request body:', fullRequest);
-
     return this.http.post<CreateTextLayerResponse>(url, fullRequest, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Text layer created successfully:', response);
         return this.assembler.toCreateTextLayerResult(response);
       }),
       catchError(error => {
-        console.error('❌ Error creating text layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -441,7 +371,6 @@ export class DesignLabService {
     isItalic: boolean;
     isUnderlined: boolean;
   }): Observable<LayerResult> {
-    console.log('📝 DesignLabService - Updating text layer details:', { projectId, layerId, request });
 
     const url = `${BASE_URL}/${projectId}/layers/${layerId}/text-details`;
     const requestBody = this.assembler.toUpdateTextLayerDetailsRequest(request);
@@ -450,11 +379,9 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Text layer details updated successfully:', response);
         return this.assembler.toUpdateTextLayerResult(response);
       }),
       catchError(error => {
-        console.error('❌ Error updating text layer details:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -471,7 +398,6 @@ export class DesignLabService {
     width: string;
     height: string;
   }): Observable<LayerResult> {
-    console.log('🖼️ DesignLabService - Creating image layer:', { projectId, request });
 
     const url = `${BASE_URL}/${projectId}/images`;
     const requestBody = this.assembler.toCreateImageLayerRequest(request);
@@ -480,11 +406,9 @@ export class DesignLabService {
       headers: this.getHeaders()
     }).pipe(
       map(response => {
-        console.log('✅ Image layer created successfully:', response);
         return this.assembler.toCreateImageLayerResult(response);
       }),
       catchError(error => {
-        console.error('❌ Error creating image layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -497,11 +421,9 @@ export class DesignLabService {
    * @returns Observable con el resultado de la creación del layer
    */
   uploadImageAndCreateLayer(file: File, projectId: string): Observable<LayerResult> {
-    console.log('🖼️ DesignLabService - Uploading image and creating layer:', { projectId, fileName: file.name });
 
     return this.cloudinaryService.uploadImageWithDimensions(file).pipe(
       switchMap((result: ImageUploadWithDimensions) => {
-        console.log('📤 Image uploaded, creating layer:', result);
 
         // Usar las dimensiones calculadas para crear el layer
         const createLayerRequest = {
@@ -513,7 +435,6 @@ export class DesignLabService {
         return this.createImageLayer(projectId, createLayerRequest);
       }),
       catchError(error => {
-        console.error('❌ Error uploading image and creating layer:', error);
         return throwError(() => this.getErrorMessage(error));
       })
     );
@@ -635,7 +556,6 @@ export class DesignLabService {
    * SIEMPRE incluye Bearer token
    */
   private getHeaders(): HttpHeaders {
-    console.log('🔧 DesignLabService - Creating headers with authentication...');
 
     // Obtener token de forma robusta
     const token = this.getAuthToken();
@@ -645,24 +565,6 @@ export class DesignLabService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-
-    console.log('🔧 Headers created:');
-    console.log('  - Content-Type: application/json');
-    console.log('  - Authorization: Bearer', token.substring(0, 20) + '...');
-    console.log('  - Full headers keys:', headers.keys());
-
-    // Verificar que el header Authorization se creó correctamente
-    const authHeader = headers.get('Authorization');
-    console.log('🔧 Authorization header value:', authHeader?.substring(0, 30) + '...');
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.error('❌ Authorization header is malformed!');
-      console.error('❌ Expected: Bearer <token>');
-      console.error('❌ Actual:', authHeader);
-    } else {
-      console.log('✅ Authorization header is correctly formatted');
-    }
-
     return headers;
   }
 
@@ -670,15 +572,8 @@ export class DesignLabService {
    * Obtener mensaje de error legible
    */
   private getErrorMessage(error: any): string {
-    console.log('🔍 DesignLabService - Error details:', error);
-    console.log('🔍 DesignLabService - Error status:', error.status);
-    console.log('🔍 DesignLabService - Error message:', error.message);
-    console.log('🔍 DesignLabService - Error body:', error.error);
 
     if (error.status === 401) {
-      console.error('🔒 Authentication failed - Token might be invalid or expired');
-      console.error('🔒 Current token:', this.authService.getToken()?.substring(0, 20) + '...');
-      console.error('🔒 Is authenticated:', this.isAuthenticated());
 
       // Intentar refrescar la autenticación
       this.authService.checkStoredAuthentication();
@@ -691,7 +586,6 @@ export class DesignLabService {
     } else if (error.status === 500) {
       return 'Error interno del servidor. Intenta nuevamente más tarde.';
     } else if (error.status === 0) {
-      console.error('🌐 Network error - No response from server');
       return 'Error de conexión. Verifica tu conexión a internet.';
     } else if (error.error?.message) {
       return error.error.message;

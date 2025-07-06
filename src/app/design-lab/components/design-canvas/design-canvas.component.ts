@@ -768,11 +768,6 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
 
   // === TEXT LAYER DRAG METHODS ===
   private onTextLayerDragStart(layer: Layer): void {
-    console.log('📝 Starting text layer drag:', {
-      layerId: layer.id,
-      text: layer.details?.text?.substring(0, 30) + '...',
-      position: { x: layer.x, y: layer.y }
-    });
 
     // Agregar clase CSS específica para text layers en drag
     const layerElement = document.querySelector(`[data-layer-id="${layer.id}"]`) as HTMLElement;
@@ -808,22 +803,9 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
 
     layer.x = constrainedX;
     layer.y = constrainedY;
-
-    console.log('📝 Moving text layer:', {
-      layerId: layer.id,
-      position: { x: constrainedX, y: constrainedY },
-      estimated: { width: estimatedWidth, height: estimatedHeight },
-      text: layer.details?.text?.substring(0, 20) + '...'
-    });
   }
 
   private onTextLayerDragEnd(event: CdkDragEnd, layer: Layer): void {
-    console.log('📝 Ending text layer drag:', {
-      layerId: layer.id,
-      finalDistance: event.distance,
-      text: layer.details?.text?.substring(0, 30) + '...'
-    });
-
     // Remover clase CSS específica
     const layerElement = document.querySelector(`[data-layer-id="${layer.id}"]`) as HTMLElement;
     if (layerElement) {
@@ -855,13 +837,6 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
 
   // === IMAGE LAYER DRAG METHODS ===
   private onImageLayerDragStart(layer: Layer): void {
-    console.log('🖼️ Starting image layer drag:', {
-      layerId: layer.id,
-      imageUrl: layer.details?.imageUrl?.substring(0, 50) + '...',
-      size: { width: layer.details?.width, height: layer.details?.height },
-      position: { x: layer.x, y: layer.y }
-    });
-
     // Agregar clase CSS específica para image layers en drag
     const layerElement = document.querySelector(`[data-layer-id="${layer.id}"]`) as HTMLElement;
     if (layerElement) {
@@ -904,22 +879,9 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
     layer.x = constrainedX;
     layer.y = constrainedY;
 
-    console.log('🖼️ Moving image layer:', {
-      layerId: layer.id,
-      position: { x: constrainedX, y: constrainedY },
-      imageSize: { width: imageWidth, height: imageHeight },
-      canvasBounds: { width: this.canvasWidth, height: this.canvasHeight },
-      imageUrl: layer.details?.imageUrl?.substring(0, 30) + '...'
-    });
   }
 
   private onImageLayerDragEnd(event: CdkDragEnd, layer: Layer): void {
-    console.log('🖼️ Ending image layer drag:', {
-      layerId: layer.id,
-      finalDistance: event.distance,
-      imageSize: { width: layer.details?.width, height: layer.details?.height }
-    });
-
     // Remover clase CSS específica
     const layerElement = document.querySelector(`[data-layer-id="${layer.id}"]`) as HTMLElement;
     if (layerElement) {
@@ -1272,15 +1234,6 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
       layerElement.style.height = `${newHeight}px`;
       layerElement.style.fontSize = `${Math.max(12, newWidth / 10)}px`;
     }
-
-    console.log('🔄 Resizing layer (corner only):', {
-      handle: this.resizeHandle,
-      originalSize: { width: currentWidth, height: currentHeight },
-      newSize: { width: Math.round(newWidth), height: Math.round(newHeight) },
-      newPosition: { x: Math.round(newX), y: Math.round(newY) },
-      layerType: this.selectedLayer.type,
-      maintainedAspectRatio: this.selectedLayer.type === LayerType.IMAGE
-    });
   }
 
   private stopResize(): void {
@@ -1406,14 +1359,12 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
       case 'c':
         if ((event.ctrlKey || event.metaKey) && this.selectedLayer) {
           // Copy layer to clipboard (simplified)
-          console.log('Copy layer:', this.selectedLayer.id);
           event.preventDefault();
         }
         break;
       case 'v':
         if ((event.ctrlKey || event.metaKey)) {
           // Paste layer from clipboard (simplified)
-          console.log('Paste layer');
           event.preventDefault();
         }
         break;
@@ -1444,11 +1395,9 @@ export class DesignCanvasComponent implements OnInit, OnDestroy {
   }
 
   onImageLoad(layer: Layer): void {
-    console.log('Image loaded for layer:', layer.id);
   }
 
   onImageError(layer: Layer): void {
-    console.error('Failed to load image for layer:', layer.id);
   }
 
   private generateLayerId(): string {
