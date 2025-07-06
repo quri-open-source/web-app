@@ -53,24 +53,33 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
     };
   }
 
+  /**
+   * Build a Cloudinary URL for the garment background image with optimized transformations.
+   * @param variant The image variant (e.g., 'garment-full', 'garment-generic', 'garment-color').
+   * @param config  The configuration object for garment properties.
+   * @returns The Cloudinary image URL.
+   */
   private buildCloudinaryUrl(variant: string, config: any): string {
     const baseUrl = 'https://res.cloudinary.com/quri/image/upload';
-
     // Cloudinary transformations for optimized loading
     const transformations = [
-      'c_fit', // Crop mode: fit
-      `w_${this.width},h_${this.height}`, // Dimensions
-      'q_auto', // Quality: auto
-      'f_auto', // Format: auto (WebP, AVIF)
-      'dpr_auto' // DPR: auto for retina displays
+      'c_fit',
+      `w_${this.width},h_${this.height}`,
+      'q_auto',
+      'f_auto',
+      'dpr_auto'
     ];
-
     // Generate filename based on variant and config
     const filename = this.generateFilename(variant, config);
-
     return `${baseUrl}/${transformations.join(',')}/${filename}.png`;
   }
 
+  /**
+   * Generate the filename for the Cloudinary image based on the variant and garment config.
+   * @param variant The image variant.
+   * @param config  The configuration object for garment properties.
+   * @returns The filename string.
+   */
   private generateFilename(variant: string, config: any): string {
     switch (variant) {
       case 'garment-full':
@@ -84,6 +93,11 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Get the HEX color code for a given garment color enum value.
+   * @param color The garment color enum value.
+   * @returns The HEX color string.
+   */
   private getGarmentColorHex(color: GARMENT_COLOR): string {
     const colorMap: { [key in GARMENT_COLOR]: string } = {
       [GARMENT_COLOR.WHITE]: '#FFFFFF',
@@ -103,15 +117,17 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
       [GARMENT_COLOR.YELLOW]: '#FBBF24',
       [GARMENT_COLOR.DARK_YELLOW]: '#D97706'
     };
-
     return colorMap[color] || '#FFFFFF';
   }
 
+  /**
+   * Handle image loading errors and apply fallback logic for garment backgrounds.
+   * @param event The image error event.
+   * @param fallbackType The type of fallback to apply ('generic', 'color', or 'final').
+   */
   onImageError(event: Event, fallbackType: 'generic' | 'color' | 'final'): void {
     const img = event.target as HTMLImageElement;
-
     if (!this.backgroundConfig) return;
-
     switch (fallbackType) {
       case 'generic':
         img.src = this.backgroundConfig.genericUrl;
@@ -125,6 +141,10 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Get the background style object for the garment background container.
+   * @returns An object with CSS style properties.
+   */
   getBackgroundStyle(): any {
     if (!this.backgroundConfig) {
       return {
@@ -133,7 +153,6 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
         'height.px': this.height
       };
     }
-
     return {
       'background-color': this.backgroundConfig.fallbackColor,
       'width.px': this.width,

@@ -37,7 +37,7 @@ export class DesignLabService {
   constructor() {
   }
 
-  // ==================== PROJECT METHODS ====================
+
 
   /**
    * Obtener todos los proyectos de un usuario
@@ -155,7 +155,7 @@ export class DesignLabService {
    */
   updateProjectPreview(projectId: string, previewUrl: string, currentProject?: Project): Observable<ProjectResult> {
 
-    // Si tenemos el proyecto actual, incluimos todos sus campos para no perder datos
+
     const updateData: any = { previewUrl };
 
     if (currentProject) {
@@ -174,7 +174,7 @@ export class DesignLabService {
    */
   updateProjectStatus(projectId: string, status: string, currentProject?: Project): Observable<ProjectResult> {
 
-    // Construir el body con todos los campos para no perder datos
+
     const updateData: any = { status };
 
     if (currentProject) {
@@ -188,7 +188,7 @@ export class DesignLabService {
     return this.updateProjectDetails(projectId, updateData);
   }
 
-  // ==================== LAYER METHODS ====================
+
 
   /**
    * Crear una nueva capa de texto
@@ -329,7 +329,7 @@ export class DesignLabService {
     );
   }
 
-  // ==================== UTILITY METHODS ====================
+
 
   /**
    * Método de prueba para verificar la autenticación
@@ -348,7 +348,7 @@ export class DesignLabService {
     );
   }
 
-  // ==================== PRIVATE METHODS ====================
+
 
   /**
    * Obtener headers HTTP con autenticación
@@ -420,7 +420,7 @@ export class DesignLabService {
       );
     }
 
-    // Fallback para tipos no reconocidos
+
     return new TextLayer(
       response.id,
       response.x,

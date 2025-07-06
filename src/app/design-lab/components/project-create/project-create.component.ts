@@ -51,11 +51,11 @@ export class ProjectCreateComponent implements OnInit {
   projectForm: FormGroup;
   isCreating = false;
 
-  // Enums para el template
+  // Enums for the template
   PROJECT_GENDER = PROJECT_GENDER;
   GARMENT_SIZE = GARMENT_SIZE;
 
-  // Servicios
+  // Services
   private fb = inject(FormBuilder);
   private designLabService = inject(DesignLabService);
   private authService = inject(AuthenticationService);
@@ -63,29 +63,29 @@ export class ProjectCreateComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
 
-  // Opciones de colores disponibles
+  // Available color options
   availableColors: ColorOption[] = [
-    { name: 'Blanco', value: GARMENT_COLOR.WHITE, hex: '#FFFFFF' },
-    { name: 'Negro', value: GARMENT_COLOR.BLACK, hex: '#000000' },
-    { name: 'Gris', value: GARMENT_COLOR.GRAY, hex: '#6B7280' },
-    { name: 'Gris Claro', value: GARMENT_COLOR.LIGHT_GRAY, hex: '#D1D5DB' },
-    { name: 'Rojo', value: GARMENT_COLOR.RED, hex: '#DC2626' },
-    { name: 'Rosa', value: GARMENT_COLOR.PINK, hex: '#EC4899' },
+    { name: 'White', value: GARMENT_COLOR.WHITE, hex: '#FFFFFF' },
+    { name: 'Black', value: GARMENT_COLOR.BLACK, hex: '#000000' },
+    { name: 'Gray', value: GARMENT_COLOR.GRAY, hex: '#6B7280' },
+    { name: 'Light Gray', value: GARMENT_COLOR.LIGHT_GRAY, hex: '#D1D5DB' },
+    { name: 'Red', value: GARMENT_COLOR.RED, hex: '#DC2626' },
+    { name: 'Pink', value: GARMENT_COLOR.PINK, hex: '#EC4899' },
     {
-      name: 'Púrpura Claro',
+      name: 'Light Purple',
       value: GARMENT_COLOR.LIGHT_PURPLE,
       hex: '#A78BFA',
     },
-    { name: 'Púrpura', value: GARMENT_COLOR.PURPLE, hex: '#7C3AED' },
-    { name: 'Azul Claro', value: GARMENT_COLOR.LIGHT_BLUE, hex: '#60A5FA' },
-    { name: 'Cian', value: GARMENT_COLOR.CYAN, hex: '#06B6D4' },
-    { name: 'Azul Cielo', value: GARMENT_COLOR.SKY_BLUE, hex: '#0EA5E9' },
-    { name: 'Azul', value: GARMENT_COLOR.BLUE, hex: '#2563EB' },
-    { name: 'Verde', value: GARMENT_COLOR.GREEN, hex: '#059669' },
-    { name: 'Verde Claro', value: GARMENT_COLOR.LIGHT_GREEN, hex: '#34D399' },
-    { name: 'Amarillo', value: GARMENT_COLOR.YELLOW, hex: '#FBBF24' },
+    { name: 'Purple', value: GARMENT_COLOR.PURPLE, hex: '#7C3AED' },
+    { name: 'Light Blue', value: GARMENT_COLOR.LIGHT_BLUE, hex: '#60A5FA' },
+    { name: 'Cyan', value: GARMENT_COLOR.CYAN, hex: '#06B6D4' },
+    { name: 'Sky Blue', value: GARMENT_COLOR.SKY_BLUE, hex: '#0EA5E9' },
+    { name: 'Blue', value: GARMENT_COLOR.BLUE, hex: '#2563EB' },
+    { name: 'Green', value: GARMENT_COLOR.GREEN, hex: '#059669' },
+    { name: 'Light Green', value: GARMENT_COLOR.LIGHT_GREEN, hex: '#34D399' },
+    { name: 'Yellow', value: GARMENT_COLOR.YELLOW, hex: '#FBBF24' },
     {
-      name: 'Amarillo Oscuro',
+      name: 'Dark Yellow',
       value: GARMENT_COLOR.DARK_YELLOW,
       hex: '#D97706',
     },
@@ -104,14 +104,15 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   /**
-   * Seleccionar color de la prenda
+   * Select the garment color.
+   * @param color The selected garment color.
    */
   selectColor(color: GARMENT_COLOR): void {
     this.projectForm.patchValue({ garmentColor: color });
   }
 
   /**
-   * Enviar formulario para crear proyecto
+   * Submit the form to create a new project.
    */
   onSubmit(): void {
     if (this.projectForm.valid) {
@@ -123,13 +124,13 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   /**
-   * Crear el proyecto
+   * Create the project using the form values and authenticated user ID.
    */
   private createProject(): void {
     this.isCreating = true;
     const formValue = this.projectForm.value;
 
-    // Obtener el userId del servicio de autenticación
+    // Get the userId from the authentication service
     this.authService.currentUserId.subscribe({
       next: (userId) => {
         if (!userId) {
@@ -161,7 +162,7 @@ export class ProjectCreateComponent implements OnInit {
             );
 
 
-            // Navegar al editor del proyecto
+            // Navigate to the project editor
             if (result.success && result.projectId) {
               this.router.navigate(['/home/design-lab/edit', result.projectId]);
             } else {
@@ -172,7 +173,7 @@ export class ProjectCreateComponent implements OnInit {
           error: (error: any) => {
             console.error('❌ Error creating project:', error);
 
-            // Extraer mensaje de error más específico
+            // Extract a more specific error message
             let errorMessage = this.translateService.instant(
               'designLab.errors.creationFailed'
             );
@@ -205,7 +206,8 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   /**
-   * Mostrar mensaje de error
+   * Show an error message in a snackbar.
+   * @param message The error message to display.
    */
   private showError(message: string): void {
     this.snackBar.open(message, this.translateService.instant('common.close'), {
@@ -215,7 +217,7 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   /**
-   * Marcar todos los campos del formulario como tocados para mostrar errores
+   * Mark all form fields as touched to display validation errors.
    */
   private markFormGroupTouched(): void {
     Object.keys(this.projectForm.controls).forEach((key) => {

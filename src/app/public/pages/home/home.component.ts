@@ -91,7 +91,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnInit() {
-        // Always build navigationLinks fresh
         this.navigationLinks = [
             {
                 name: 'Dashboard',
@@ -134,7 +133,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
             });
         }
 
-        // Listen to router events to update page title
+
         this.router.events
             .pipe(
                 filter(
@@ -147,19 +146,19 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.updatePageTitle(event.urlAfterRedirects);
             });
 
-        // Set initial title
+
         this.updatePageTitle(this.router.url);
     }
 
     private updatePageTitle(url: string) {
-        // Extract the route after /home/
+
         const routeMatch = url.match(/\/home\/?(.*)/);
         const route = routeMatch ? routeMatch[1] : '';
 
         const titleKey =
             this.routeTitleMap.get(route) || 'navigation.dashboard';
 
-        // Use synchronous translation to avoid subscription issues
+
         const translatedTitle = this.translateService.instant(titleKey);
         this.currentPageTitle = translatedTitle || titleKey;
     }
@@ -173,7 +172,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     navigateToSection(section: string) {
-        // Always navigate to /home/${section} to stay within the authenticated area
         this.router.navigate(['/home', section]);
     }
 
@@ -182,7 +180,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['/sign-in']);
     }
     viewCart() {
-        // Navigate to cart page
         this.router.navigate(['/home/cart']);
     }
 

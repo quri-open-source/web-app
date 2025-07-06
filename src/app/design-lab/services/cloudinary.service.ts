@@ -24,16 +24,16 @@ export interface ImageUploadWithDimensions {
   providedIn: 'root'
 })
 export class CloudinaryService {
-  private readonly cloudName = 'dkkfv72vo'; // Tu cloud name de Cloudinary
-  private readonly uploadPreset = 'teelab'; // CAMBIAR: Usa el nombre de tu preset unsigned
+  private readonly cloudName = 'dkkfv72vo';
+  private readonly uploadPreset = 'teelab';
 
   constructor() {
   }
 
   /**
-   * Calcula las dimensiones de una imagen usando HTML/JavaScript
-   * @param file El archivo de imagen
-   * @returns Promise con las dimensiones de la imagen
+   * Calculates the dimensions of an image using HTML/JavaScript
+   * @param file The image file
+   * @returns Promise with the image dimensions
    */
   calculateImageDimensions(file: File): Promise<ImageDimensions> {
     return new Promise((resolve, reject) => {
@@ -47,13 +47,13 @@ export class CloudinaryService {
           height: img.naturalHeight
         };
 
-        URL.revokeObjectURL(url); // Liberar memoria
+        URL.revokeObjectURL(url);
         resolve(dimensions);
       };
 
       img.onerror = () => {
         console.error('❌ Error loading image for dimension calculation');
-        URL.revokeObjectURL(url); // Liberar memoria
+        URL.revokeObjectURL(url);
         reject(new Error('Failed to load image for dimension calculation'));
       };
 
@@ -62,9 +62,9 @@ export class CloudinaryService {
   }
 
   /**
-   * Sube una imagen a Cloudinary con dimensiones calculadas previamente
-   * @param file El archivo de imagen a subir
-   * @returns Observable con la respuesta de Cloudinary y las dimensiones calculadas
+   * Uploads an image to Cloudinary with previously calculated dimensions
+   * @param file The image file to upload
+   * @returns Observable with the Cloudinary response and calculated dimensions
    */
   uploadImageWithDimensions(file: File): Observable<ImageUploadWithDimensions> {
 
@@ -92,9 +92,9 @@ export class CloudinaryService {
   }
 
   /**
-   * Sube una imagen a Cloudinary
-   * @param file El archivo de imagen a subir
-   * @returns Observable con la respuesta de Cloudinary
+   * Uploads an image to Cloudinary
+   * @param file The image file to upload
+   * @returns Observable with the Cloudinary response
    */
   uploadImage(file: File): Observable<CloudinaryUploadResult> {
 
@@ -130,9 +130,9 @@ export class CloudinaryService {
   }
 
   /**
-   * Valida que el archivo sea una imagen válida
-   * @param file El archivo a validar
-   * @returns true si es una imagen válida, false en caso contrario
+   * Validates that the file is a valid image
+   * @param file The file to validate
+   * @returns true if it is a valid image, false otherwise
    */
   isValidImageFile(file: File): boolean {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
@@ -142,16 +142,16 @@ export class CloudinaryService {
   }
 
   /**
-   * Obtiene información sobre los formatos de archivo soportados
-   * @returns Array con los tipos MIME soportados
+   * Gets information about supported file formats
+   * @returns Array with supported MIME types
    */
   getSupportedFormats(): string[] {
     return ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   }
 
   /**
-   * Obtiene el tamaño máximo de archivo permitido en bytes
-   * @returns El tamaño máximo en bytes
+   * Gets the maximum allowed file size in bytes
+   * @returns The maximum file size in bytes
    */
   getMaxFileSize(): number {
     return 10 * 1024 * 1024; // 10MB

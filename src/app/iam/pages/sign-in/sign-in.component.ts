@@ -72,7 +72,7 @@ export class SignInComponent implements OnInit {
 
     this.authenticationService.signIn(signInRequest);
 
-    // Reset loading state after a reasonable time
+
     setTimeout(() => {
       this.isLoading = false;
     }, 2000);

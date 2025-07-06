@@ -53,7 +53,7 @@ export interface CreateTextLayerResponse {
 }
 
 export interface CreateImageLayerRequest {
-  projectId: string; // esto ira en el path
+  projectId: string;
   // http://localhost:8080/api/v1/projects/f6e29830-ba1d-4c9e-8f3f-f3934c4edd97/images
   imageUrl: string;
   width: string;
@@ -79,7 +79,7 @@ export interface CreateImageLayerResponse {
 // http://localhost:8080/api/v1/projects/dee03e68-b253-4dc9-a830-319a8e7de282/layers/462f86ed-b8b3-4254-b763-db822da88320
 export interface DeleteLayerRequest {
   projectId: string; // esto ira en el path
-  layerId: string; // esto ira en el path
+  layerId: string;
 }
 export interface DeleteLayerResponse {
   message: string;
@@ -88,8 +88,8 @@ export interface DeleteLayerResponse {
 
 // http://localhost:8080/api/v1/projects/c7b5a719-43f2-4698-baa4-27581ab8a6cb/layers/8de48be3-b80e-41ad-ae9f-03a53e0f2108/coordinates
 export interface UpdateLayerCoordinatesRequest {
-  projectId: string; // esto ira en el path
-  layerId: string; // esto ira en el path
+  projectId: string;
+  layerId: string;
   x: number;
   y: number;
   z: number;
@@ -117,8 +117,8 @@ export interface UpdateLayerCoordinatesResponse {
 
 // http://localhost:8080/api/v1/projects/d45ad134-fc3d-4f1b-8cb5-a30caeaf6b82/layers/2ab964bf-84e4-4c15-b064-8af340a56022/text-details
 export interface UpdateTextLayerDetailsRequest {
-  projectId: string; // esto ira en el path
-  layerId: string; // esto ira en el path
+  projectId: string;
+  layerId: string;
   text: string;
   fontColor: string;
   fontFamily: string;
@@ -150,8 +150,8 @@ export interface UpdateTextLayerDetailsResponse {
 
 // http://localhost:8080/api/v1/projects/d45ad134-fc3d-4f1b-8cb5-a30caeaf6b82/layers/805645b4-f178-4806-8f06-d1e745a40376/image-details
 export interface UpdateImageLayerDetailsRequest {
-  projectId: string; // esto ira en el path
-  layerId: string; // esto ira en el path
+  projectId: string;
+  layerId: string;
   imageUrl: string;
   width: number;
   height: number;
@@ -219,7 +219,7 @@ export interface Details {
 
 // http://localhost:8080/api/v1/projects/{projectId}
 export interface DeleteProjectRequest {
-  projectId: string; // esto ira en el path
+  projectId: string;
 }
 export interface DeleteProjectResponse {
   message: string;
