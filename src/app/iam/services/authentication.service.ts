@@ -88,29 +88,7 @@ export class AuthenticationService {
    * @returns The {@link SignUpResponse} object containing the user's id and username.
    */
   signUp(signUpRequest: SignUpRequest) {
-    return this.http.post<SignUpResponse>(`${this.basePath}/api/v1/auth/sign-up`, signUpRequest, this.httpOptions)
-      .subscribe({
-        next: (response) => {
-          console.log(`Signed up as ${response.username} with id ${response.id}`);
-          alert(`Account created successfully! Welcome ${response.username}. Please sign in with your new account.`);
-          this.router.navigate(['/sign-in']).then();
-        },
-        error: (error) => {
-          console.error(`Error while signing up:`, error);
-          console.error(`Error details:`, error.error);
-
-          // Show more specific error messages
-          if (error.status === 409) {
-            alert('Username already exists. Please choose a different username.');
-          } else if (error.status === 400) {
-            alert('Invalid data. Please check your information and try again.');
-          } else {
-            alert('Sign up failed. Please try again.');
-          }
-
-          this.router.navigate(['/sign-up']).then();
-        }
-      });
+    return this.http.post<SignUpResponse>(`${this.basePath}/api/v1/auth/sign-up`, signUpRequest, this.httpOptions);
   }
 
   /**

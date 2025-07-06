@@ -52,6 +52,16 @@
       "required": "{{field}} es requerido",
       "minlength": "{{field}} debe tener al menos {{length}} caracteres",
       "passwordMismatch": "Las contraseñas no coinciden"
+    },
+    "manufacturerStep": {
+      "title": "Información del Fabricante",
+      "name": "Nombre",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "country": "País",
+      "state": "Estado",
+      "zip": "Código Postal",
+      "create": "Crear Fabricante"
     }
   },
   "common": {

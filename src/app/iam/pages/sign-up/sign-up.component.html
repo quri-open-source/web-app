@@ -11,7 +11,8 @@
       </mat-card-header>
 
       <mat-card-content class="signup-form-content">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="signup-form">
+        <!-- Paso 1: Registro normal -->
+        <form *ngIf="step === 1" [formGroup]="form" (ngSubmit)="onSubmit()" class="signup-form">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'signup.usernameField.label' | translate }}</mat-label>
             <input matInput
@@ -93,6 +94,39 @@
               {{ 'common.signIn' | translate }}
             </a>
           </div>
+        </form>
+
+        <!-- Paso 2: Manufacturer extra form -->
+        <form *ngIf="step === 2" [formGroup]="manufacturerForm" (ngSubmit)="onManufacturerSubmit()" class="signup-form">
+          <h3>{{ 'signup.manufacturerStep.title' | translate }}</h3>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.name' | translate }}</mat-label>
+            <input matInput formControlName="name" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.address' | translate }}</mat-label>
+            <input matInput formControlName="address" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.city' | translate }}</mat-label>
+            <input matInput formControlName="city" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.country' | translate }}</mat-label>
+            <input matInput formControlName="country" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.state' | translate }}</mat-label>
+            <input matInput formControlName="state" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'signup.manufacturerStep.zip' | translate }}</mat-label>
+            <input matInput formControlName="zip" required>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" class="signup-button" [disabled]="manufacturerForm.invalid || isLoading">
+            <mat-icon>factory</mat-icon>
+            {{ 'signup.manufacturerStep.create' | translate }}
+          </button>
         </form>
       </mat-card-content>
     </mat-card>

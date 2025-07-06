@@ -52,6 +52,16 @@
       "required": "{{field}} is required",
       "minlength": "{{field}} must be at least {{length}} characters",
       "passwordMismatch": "Passwords do not match"
+    },
+    "manufacturerStep": {
+      "title": "Manufacturer Information",
+      "name": "Name",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "state": "State",
+      "zip": "ZIP Code",
+      "create": "Create Manufacturer"
     }
   },
   "common": {
