@@ -1,0 +1,17 @@
+<mat-card *ngIf="fulfillment$ | async as fulfillment" class="fulfillment-detail-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon color="accent">assignment</mat-icon>
+      {{ 'fulfillments.cardTitle' | translate: { id: fulfillment.id } }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div><strong>{{ 'fulfillments.id' | translate }}:</strong> {{ fulfillment.id }}</div>
+    <div><strong>{{ 'fulfillments.created' | translate }}:</strong> {{ fulfillment.createdAt | date:'medium' }}</div>
+    <div><strong>{{ 'fulfillments.status' | translate }}:</strong> {{ fulfillment.fulfillmentStatus }}</div>
+    <div><strong>Order ID:</strong> {{ fulfillment.orderId }}</div>
+    <div><strong>Received Date:</strong> {{ fulfillment.receivedDate | date:'medium' }}</div>
+    <div><strong>Shipped Date:</strong> {{ fulfillment.shippedDate | date:'medium' }}</div>
+    <div><strong>Manufacturer ID:</strong> {{ fulfillment.manufacturerId }}</div>
+  </mat-card-content>
+</mat-card>

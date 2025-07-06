@@ -519,12 +519,14 @@
     "cardTitle": "Fulfillment #{{id}}",
     "id": "ID",
     "created": "Created",
+    "status": "Status",
     "status": {
       "pending": "Pending",
       "processing": "Processing",
       "shipped": "Shipped",
       "delivered": "Delivered",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "unknown": "Unknown"
     },
     "details": "View Details"
   }

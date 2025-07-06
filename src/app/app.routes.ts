@@ -108,6 +108,13 @@ export const routes: Routes = [
             (c) => c.FulfillmentsComponent
           ),
       },
+      {
+        path: 'fulfillments/:fulfillmentId',
+        loadComponent: () =>
+          import('./public/pages/fulfillments/fulfillment-detail.component').then(
+            (c) => c.FulfillmentDetailComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '/sign-in' },

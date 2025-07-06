@@ -11,6 +11,7 @@ import { OrderFulfillmentService } from '../../../order-fulfillments/services/or
 import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { ManufacturerService } from '../../../order-fulfillments/services/manufacturer.service';
 import { MatButton } from '@angular/material/button';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-fulfillments',
@@ -22,7 +23,8 @@ import { MatButton } from '@angular/material/button';
     MatExpansionModule,
     MatBadgeModule,
     TranslateModule,
-    MatButton
+    MatButton,
+    RouterModule
   ],
   providers: [DatePipe],
   templateUrl: './fulfillments.component.html',
@@ -34,7 +36,8 @@ export class FulfillmentsComponent {
   constructor(
     private auth: AuthenticationService,
     private manufacturerService: ManufacturerService,
-    private orderFulfillmentService: OrderFulfillmentService
+    private orderFulfillmentService: OrderFulfillmentService,
+    private router: Router
   ) {
     this.auth.currentUserId.subscribe(userId => {
       this.manufacturerService.getByUserId(userId).subscribe(manufacturer => {
@@ -45,13 +48,12 @@ export class FulfillmentsComponent {
     });
   }
 
-  getStatusClass(status: string): string {
-    return `status-badge ${status.toLowerCase()}`;
+  getStatusClass(status: string | undefined): string {
+    if (!status) return 'status-badge status-unknown';
+    return `status-badge ${status}`;
   }
 
   viewDetails(f: OrderFulfillment) {
-    // TODO: Implement navigation or dialog for details
-    console.log('View details for fulfillment:', f);
-    // Example: this.router.navigate(['/fulfillments', f.id]);
+    this.router.navigate(['/home/fulfillments', f.id]);
   }
 }

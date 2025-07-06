@@ -16,7 +16,10 @@
             <mat-card-title>
               <mat-icon color="accent" class="header-icon">assignment</mat-icon>
               <span class="fulfillment-title">{{ 'fulfillments.cardTitle' | translate: { id: f.id } }}</span>
-              <mat-badge [ngClass]="getStatusClass(f.fulfillmentStatus)" [matBadge]="('fulfillments.status.' + f.fulfillmentStatus.toLowerCase()) | translate" matBadgeOverlap="false" matBadgeSize="medium"></mat-badge>
+              <span class="fulfillment-status-label">
+                <strong>{{ 'fulfillments.status' | translate }}:</strong>
+                {{ ('fulfillments.status.' + (f.fulfillmentStatus ? f.fulfillmentStatus.toLowerCase() : 'unknown')) | translate }}
+              </span>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -25,9 +28,9 @@
               <div><strong>{{ 'fulfillments.created' | translate }}:</strong> {{ f.createdAt | date:'medium' }}</div>
             </div>
             <div class="fulfillment-actions">
-              <button mat-stroked-button color="primary" (click)="viewDetails(f)">
+              <a mat-stroked-button color="primary" [routerLink]="['/home/fulfillments', f.id]" style="min-width:140px; text-align:center;">
                 {{ 'fulfillments.details' | translate }}
-              </button>
+              </a>
             </div>
           </mat-card-content>
         </mat-card>
@@ -40,19 +43,22 @@
 .fulfillments-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   margin-top: 2rem;
 }
 .fulfillment-card-redesign {
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   padding: 1.5rem 1.2rem 1.2rem 1.2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 180px;
+  min-height: 200px;
   position: relative;
+  transition: box-shadow 0.2s;
+}
+.fulfillment-card-redesign:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
 }
 .fulfillment-title {
   font-size: 1.08rem;
@@ -67,5 +73,6 @@
 .fulfillment-actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: 1rem;
 }
 </style>
