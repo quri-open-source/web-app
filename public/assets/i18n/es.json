@@ -192,7 +192,9 @@
     "clearCart": "Vaciar Carrito",
     "proceedToCheckout": "Proceder al Pago",
     "loginRequired": "Por favor inicie sesión para proceder con el pago",
-    "checkoutNotImplemented": "La funcionalidad de pago estará disponible pronto"
+    "checkoutNotImplemented": "La funcionalidad de pago estará disponible pronto",
+    "selectManufacturer": "Selecciona fabricante",
+    "noManufacturers": "No hay fabricantes disponibles"
   },
   "colors": {
     "black": "Negro",

@@ -21,6 +21,11 @@ import { AuthenticationService } from '../../../iam/services/authentication.serv
 import { OrderProcessingService } from '../../../order-processing/services/order-processing.service';
 import { CreateOrderPaymentIntentRequest } from '../../../order-processing/services/order-processing.response';
 import { forkJoin } from 'rxjs';
+import { ManufacturerService } from '../../../order-fulfillments/services/manufacturer.service';
+import { Manufacturer } from '../../../order-fulfillments/model/manufacturer.entity';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-cart',
@@ -39,6 +44,9 @@ import { forkJoin } from 'rxjs';
         MatTooltipModule,
         MatDialogModule,
         TranslateModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
     ],
     templateUrl: './cart.component.html',
     styleUrls: ['./cart.component.css'],
@@ -46,6 +54,8 @@ import { forkJoin } from 'rxjs';
 export class CartComponent implements OnInit {
     cartProducts: ProductResponse[] = [];
     loading = false;
+    manufacturers: Manufacturer[] = [];
+    selectedManufacturerId: string | null = null;
 
     constructor(
         public cartService: CartService,
@@ -55,11 +65,28 @@ export class CartComponent implements OnInit {
         private translateService: TranslateService,
         private authService: AuthenticationService,
         private dialog: MatDialog,
-        private orderProcessingService: OrderProcessingService // <-- nuevo
+        private orderProcessingService: OrderProcessingService,
+        private manufacturerService: ManufacturerService
     ) {}
 
     ngOnInit() {
         this.loadCartProducts();
+        this.loadManufacturers();
+    }
+
+    loadManufacturers() {
+        this.manufacturerService.getAll().subscribe({
+            next: (manufacturers) => {
+                this.manufacturers = manufacturers;
+                if (manufacturers.length > 0) {
+                    this.selectedManufacturerId = manufacturers[0].id;
+                }
+            },
+            error: (err) => {
+                console.error('Error loading manufacturers', err);
+                this.manufacturers = [];
+            }
+        });
     }
 
     loadCartProducts() {
@@ -156,6 +183,19 @@ export class CartComponent implements OnInit {
     }
 
     proceedToCheckout() {
+        if (!this.selectedManufacturerId) {
+            const message = this.translateService.instant('cart.selectManufacturerRequired');
+            this.snackBar.open(
+                message,
+                this.translateService.instant('common.close'),
+                {
+                    duration: 5000,
+                    horizontalPosition: 'end',
+                    verticalPosition: 'top',
+                }
+            );
+            return;
+        }
         this.authService.currentUserId.subscribe((userId) => {
             if (!userId || userId === '') {
                 const message =
@@ -186,13 +226,14 @@ export class CartComponent implements OnInit {
             const paymentIntentRequest: CreateOrderPaymentIntentRequest = {
                 amount: Math.round(total * 100), // Stripe espera centavos
                 currency,
+                // Puedes agregar manufacturerId aquí si tu backend lo requiere
             };
 
             this.orderProcessingService.createPaymentIntent(paymentIntentRequest).subscribe({
                 next: (response) => {
-                    // Redirigir a checkout con el secret key
+                    // Redirigir a checkout con el secret key y manufacturerId
                     this.router.navigate(['/home/order-processing/checkout'], {
-                        state: { clientSecret: response.secretKey },
+                        state: { clientSecret: response.secretKey, manufacturerId: this.selectedManufacturerId },
                     });
                 },
                 error: (_err) => {

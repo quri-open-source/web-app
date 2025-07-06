@@ -205,7 +205,9 @@
     "clearCart": "Clear Cart",
     "proceedToCheckout": "Proceed to Checkout",
     "loginRequired": "Please log in to proceed with checkout",
-    "checkoutNotImplemented": "Checkout functionality will be available soon"
+    "checkoutNotImplemented": "Checkout functionality will be available soon",
+    "selectManufacturer": "Select manufacturer",
+    "noManufacturers": "No manufacturers available"
   },
   "colors": {
     "black": "Black",
