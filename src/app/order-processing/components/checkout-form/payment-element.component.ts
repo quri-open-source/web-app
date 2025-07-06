@@ -12,7 +12,7 @@ import {
   StripeElementsOptions,
   StripePaymentElementOptions
 } from '@stripe/stripe-js';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.prod';
 import { MatButton } from '@angular/material/button';
 
 @Component({
