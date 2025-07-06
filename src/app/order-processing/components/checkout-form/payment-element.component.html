@@ -1,20 +1,30 @@
 <div [formGroup]="paymentElementForm" class="checkout-form-container">
-  <h3 class="checkout-title">Payment Details</h3>
+  <h3 class="checkout-title">{{ 'payment.form.title' | translate }}</h3>
   <div class="form-fields">
     <mat-form-field appearance="fill" class="form-field">
-      <input matInput placeholder="Name" formControlName="name" />
+      <mat-label>{{ 'payment.form.name' | translate }}</mat-label>
+      <input matInput [placeholder]="'payment.form.namePlaceholder' | translate" formControlName="name" />
+      <mat-icon matPrefix>person</mat-icon>
     </mat-form-field>
     <mat-form-field appearance="fill" class="form-field">
-      <input matInput placeholder="Email" type="email" formControlName="email" />
+      <mat-label>{{ 'payment.form.email' | translate }}</mat-label>
+      <input matInput [placeholder]="'payment.form.emailPlaceholder' | translate" type="email" formControlName="email" />
+      <mat-icon matPrefix>email</mat-icon>
     </mat-form-field>
     <mat-form-field appearance="fill" class="form-field">
-      <input matInput placeholder="Address" formControlName="address" />
+      <mat-label>{{ 'payment.form.address' | translate }}</mat-label>
+      <input matInput [placeholder]="'payment.form.addressPlaceholder' | translate" formControlName="address" />
+      <mat-icon matPrefix>home</mat-icon>
     </mat-form-field>
     <mat-form-field appearance="fill" class="form-field">
-      <input matInput placeholder="ZIP Code" formControlName="zipcode" />
+      <mat-label>{{ 'payment.form.zipCode' | translate }}</mat-label>
+      <input matInput [placeholder]="'payment.form.zipCodePlaceholder' | translate" formControlName="zipcode" />
+      <mat-icon matPrefix>location_on</mat-icon>
     </mat-form-field>
     <mat-form-field appearance="fill" class="form-field">
-      <input matInput placeholder="City" formControlName="city" />
+      <mat-label>{{ 'payment.form.city' | translate }}</mat-label>
+      <input matInput [placeholder]="'payment.form.cityPlaceholder' | translate" formControlName="city" />
+      <mat-icon matPrefix>location_city</mat-icon>
     </mat-form-field>
   </div>
   <div class="stripe-element-wrapper">
@@ -28,6 +38,12 @@
     }
   </div>
 <button mat-stroked-button color="primary" class="pay-btn" (click)="pay()" [disabled]="paying() || paymentElementForm.invalid">
-    Pay
+    @if (!paying()) {
+      <mat-icon>payment</mat-icon>
+    }
+    @if (paying()) {
+      <mat-icon class="spinning">hourglass_empty</mat-icon>
+    }
+    {{ paying() ? ('payment.form.processing' | translate) : ('payment.form.payNow' | translate) }}
 </button>
 </div>
