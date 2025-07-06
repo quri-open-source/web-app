@@ -6,7 +6,8 @@ import { OrderFulfillment } from '../../model/order-fulfillment.entity';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { FulfillmentItemService } from '../../services/fulfillment-item.service';
 
 @Component({
   selector: 'app-fulfillment-detail',
@@ -18,8 +19,13 @@ import { Observable, switchMap } from 'rxjs';
 export class FulfillmentDetailComponent {
   fulfillmentId = inject(ActivatedRoute).snapshot.paramMap.get('fulfillmentId')!;
   fulfillment$: Observable<OrderFulfillment>;
+  items$: Observable<any[]>;
 
-  constructor(private fulfillmentService: OrderFulfillmentService) {
+  constructor(
+    private fulfillmentService: OrderFulfillmentService,
+    private fulfillmentItemService: FulfillmentItemService
+  ) {
     this.fulfillment$ = this.fulfillmentService.getById(this.fulfillmentId);
+    this.items$ = this.fulfillmentItemService.getRawItemsByFulfillmentId(this.fulfillmentId);
   }
 }
