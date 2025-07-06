@@ -716,7 +716,7 @@ export class SimpleEditorComponent implements OnInit, OnDestroy {
 
             // Find the design preview container (the t-shirt with layers)
             const previewElement =
-                this.elementRef.nativeElement.querySelector('.tshirt-preview');
+                this.elementRef.nativeElement.querySelector('.tshirt-container');
 
             if (!previewElement) {
                 return;
