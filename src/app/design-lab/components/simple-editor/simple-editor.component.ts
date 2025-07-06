@@ -193,9 +193,6 @@ export class SimpleEditorComponent implements OnInit, OnDestroy {
             'beforeunload',
             this.boundBeforeUnloadHandler
         );
-
-        // Also generate preview when component is destroyed (navigation away)
-        this.generateAndUpdatePreview();
     }
 
     @HostListener('window:beforeunload', ['$event'])
@@ -759,11 +756,6 @@ export class SimpleEditorComponent implements OnInit, OnDestroy {
             }
         } catch (error) {
             console.error('❌ Error generating preview:', error);
-            // Show user-friendly error message
-            this.snackBar.open('Failed to generate preview image', 'Close', {
-                duration: 3000,
-                panelClass: 'error-snackbar',
-            });
         }
     }
 
