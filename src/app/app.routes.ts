@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authenticationGuard } from './iam/services/authentication.guard';
+import { paymentSuccessGuard } from './order-processing/guards/payment-success.guard';
+import { checkoutGuard } from './order-processing/guards/checkout.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/sign-in', pathMatch: 'full' },
@@ -93,7 +95,7 @@ export const routes: Routes = [
           import('./order-processing/components/checkout-form/checkout-page.component').then(
             (c) => c.CheckoutPageComponent
           ),
-        canActivate: [authenticationGuard],
+        canActivate: [checkoutGuard],
       },
       {
         path: 'order-processing/payment/ok',
@@ -101,7 +103,7 @@ export const routes: Routes = [
           import('./order-processing/components/checkout-form/payment-success.component').then(
             (c) => c.PaymentSuccessComponent
           ),
-        canActivate: [authenticationGuard],
+        canActivate: [paymentSuccessGuard],
       },
       {
         path: 'fulfillments',
