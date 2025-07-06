@@ -28,6 +28,9 @@ export class CheckoutFormComponent {
   @ViewChild(StripePaymentElementComponent)
   paymentElement!: StripePaymentElementComponent;
 
+  // Recibe el clientSecret por parámetro
+  clientSecret!: string;
+
   private readonly fb = inject(UntypedFormBuilder);
 
   paymentElementForm = this.fb.group({
@@ -39,13 +42,15 @@ export class CheckoutFormComponent {
     amount: [2500, [Validators.required, Validators.pattern(/\d+/)]]
   });
 
-  elementsOptions: StripeElementsOptions = {
-    locale: 'en',
-    // clientSecret: environment.stripePublicKey,
-    appearance: {
-      theme: 'flat'
-    }
-  };
+  get elementsOptions(): StripeElementsOptions {
+    return {
+      locale: 'en',
+      clientSecret: this.clientSecret,
+      appearance: {
+        theme: 'flat'
+      }
+    };
+  }
 
   paymentElementOptions: StripePaymentElementOptions = {
     layout: {
