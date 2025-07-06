@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { environment } from "../../../environments/environment.prod";
+import { environment } from "../../../environments/environment";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 
 const stripePublicKey = environment.stripePublicKey;

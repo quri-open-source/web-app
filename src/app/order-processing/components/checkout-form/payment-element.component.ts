@@ -14,7 +14,7 @@ import {
   StripeElementsOptions,
   StripePaymentElementOptions
 } from '@stripe/stripe-js';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { CartService } from '../../../shared/services/cart.service';
