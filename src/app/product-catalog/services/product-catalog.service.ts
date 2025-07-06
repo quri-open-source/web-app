@@ -49,12 +49,10 @@ export class ProductCatalogService {
    * Creates a new product
    */
   createProduct(request: CreateProductRequest): Observable<CreateProductResponse> {
-    console.log('🛒 Creating product for project:', request.projectId);
 
     return this.http.post<CreateProductResponse>(this.baseUrl, request)
       .pipe(
         map((productResponse: CreateProductResponse) => {
-          console.log('✅ Product created successfully:', productResponse);
           return productResponse;
         }),
         catchError(this.handleError)

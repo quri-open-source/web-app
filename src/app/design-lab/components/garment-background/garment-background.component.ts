@@ -114,15 +114,12 @@ export class GarmentBackgroundComponent implements OnInit, OnChanges {
 
     switch (fallbackType) {
       case 'generic':
-        console.log('🖼️ Primary garment image failed, trying generic fallback');
         img.src = this.backgroundConfig.genericUrl;
         break;
       case 'color':
-        console.log('🖼️ Generic garment image failed, trying color fallback');
         img.src = this.backgroundConfig.colorUrl;
         break;
       case 'final':
-        console.log('🖼️ All garment images failed, using solid color fallback');
         img.style.display = 'none';
         break;
     }

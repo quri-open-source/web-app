@@ -11,9 +11,16 @@ export class OrderFulfillmentService {
 
   constructor(private http: HttpClient) {}
 
+
   getAll(manufacturerId: string): Observable<OrderFulfillment[]> {
     return this.http.get<OrderFulfillmentsResponse>(`${this.apiUrl}?manufacturerId=${manufacturerId}`).pipe(
       map(responses => responses.map(OrderFulfillmentAssembler.fromResponse))
+    );
+  }
+
+  getById(fulfillmentId: string): Observable<OrderFulfillment> {
+    return this.http.get<OrderFulfillmentResponse>(`${this.apiUrl}/${fulfillmentId}`).pipe(
+      map(OrderFulfillmentAssembler.fromResponse)
     );
   }
 

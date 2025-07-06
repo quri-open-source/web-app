@@ -42,23 +42,14 @@ export class AuthenticationService {
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
 
-    console.log('🔐 checkStoredAuthentication called with:', {
-      hasToken: !!token,
-      hasUserId: !!userId,
-      hasUsername: !!username,
-      currentSignedInValue: this.signedIn.value
-    });
-
     if (token && userId && username) {
       // Always update the state to ensure it's current
       this.signedIn.next(true);
       this.signedInUserId.next(userId);
       this.signedInUsername.next(username);
-      console.log(`✅ Restored authentication for user: ${username}`);
       return true;
     }
 
-    console.log('❌ No valid authentication data found in localStorage');
     // Clear the state if no valid data
     this.signedIn.next(false);
     this.signedInUserId.next('');
@@ -88,29 +79,7 @@ export class AuthenticationService {
    * @returns The {@link SignUpResponse} object containing the user's id and username.
    */
   signUp(signUpRequest: SignUpRequest) {
-    return this.http.post<SignUpResponse>(`${this.basePath}/api/v1/auth/sign-up`, signUpRequest, this.httpOptions)
-      .subscribe({
-        next: (response) => {
-          console.log(`Signed up as ${response.username} with id ${response.id}`);
-          alert(`Account created successfully! Welcome ${response.username}. Please sign in with your new account.`);
-          this.router.navigate(['/sign-in']).then();
-        },
-        error: (error) => {
-          console.error(`Error while signing up:`, error);
-          console.error(`Error details:`, error.error);
-
-          // Show more specific error messages
-          if (error.status === 409) {
-            alert('Username already exists. Please choose a different username.');
-          } else if (error.status === 400) {
-            alert('Invalid data. Please check your information and try again.');
-          } else {
-            alert('Sign up failed. Please try again.');
-          }
-
-          this.router.navigate(['/sign-up']).then();
-        }
-      });
+    return this.http.post<SignUpResponse>(`${this.basePath}/api/v1/auth/sign-up`, signUpRequest, this.httpOptions);
   }
 
   /**
@@ -127,7 +96,6 @@ export class AuthenticationService {
    * @returns The {@link SignInResponse} object containing the user's id, username, and token.
    */
   signIn(signInRequest: SignInRequest) {
-    console.log(signInRequest);
     return this.http.post<SignInResponse>(`${this.basePath}/api/v1/auth/sign-in`, signInRequest, this.httpOptions)
       .subscribe({
         next: (response) => {

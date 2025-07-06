@@ -101,7 +101,6 @@ export class ProjectCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('🆕 ProjectCreateComponent initialized');
   }
 
   /**
@@ -109,7 +108,6 @@ export class ProjectCreateComponent implements OnInit {
    */
   selectColor(color: GARMENT_COLOR): void {
     this.projectForm.patchValue({ garmentColor: color });
-    console.log('🎨 Color selected:', color);
   }
 
   /**
@@ -150,11 +148,8 @@ export class ProjectCreateComponent implements OnInit {
           userId: userId,
         };
 
-        console.log('🆕 Creating project with request:', request);
-
         this.designLabService.createProject(request).subscribe({
           next: (result) => {
-            console.log('✅ Project creation response:', result);
 
             this.snackBar.open(
               this.translateService.instant('designLab.messages.projectCreated'),
@@ -165,7 +160,6 @@ export class ProjectCreateComponent implements OnInit {
               }
             );
 
-            console.log("RESULT:", result);
 
             // Navegar al editor del proyecto
             if (result.success && result.projectId) {

@@ -17,7 +17,7 @@ export type OrderFulfillmentsResponse = OrderFulfillmentResponse[];
 export interface OrderFulfillmentResponse {
     id: string;
     orderId: string;
-    fulfillmentStatus: OrderFulfillmentStatus;
+    status: OrderFulfillmentStatus;
     receivedDate: Date;
     shippedDate: Date;
     manufacturerId: string;

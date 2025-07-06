@@ -80,6 +80,8 @@ export class CartComponent implements OnInit {
                 this.manufacturers = manufacturers;
                 if (manufacturers.length > 0) {
                     this.selectedManufacturerId = manufacturers[0].id;
+                    // Guardar el manufacturerId por defecto en localStorage
+                    localStorage.setItem('manufacturerId', manufacturers[0].id);
                 }
             },
             error: (err) => {

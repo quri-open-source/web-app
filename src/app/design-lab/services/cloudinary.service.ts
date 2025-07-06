@@ -28,10 +28,6 @@ export class CloudinaryService {
   private readonly uploadPreset = 'teelab'; // CAMBIAR: Usa el nombre de tu preset unsigned
 
   constructor() {
-    console.log('🔧 CloudinaryService initialized');
-    console.log('🔧 Cloud name:', this.cloudName);
-    console.log('🔧 Upload preset:', this.uploadPreset);
-    console.log('🔧 IMPORTANTE: Verifica que el preset sea "unsigned" en Cloudinary dashboard');
   }
 
   /**
@@ -41,7 +37,6 @@ export class CloudinaryService {
    */
   calculateImageDimensions(file: File): Promise<ImageDimensions> {
     return new Promise((resolve, reject) => {
-      console.log('📐 Calculating image dimensions for:', file.name);
 
       const img = new Image();
       const url = URL.createObjectURL(file);
@@ -52,7 +47,6 @@ export class CloudinaryService {
           height: img.naturalHeight
         };
 
-        console.log('📐 Image dimensions calculated:', dimensions);
         URL.revokeObjectURL(url); // Liberar memoria
         resolve(dimensions);
       };
@@ -73,11 +67,9 @@ export class CloudinaryService {
    * @returns Observable con la respuesta de Cloudinary y las dimensiones calculadas
    */
   uploadImageWithDimensions(file: File): Observable<ImageUploadWithDimensions> {
-    console.log('🖼️ Starting image upload with dimension calculation:', file.name);
 
     return from(
       this.calculateImageDimensions(file).then(async calculatedDimensions => {
-        console.log('📐 Dimensions calculated, proceeding with upload:', calculatedDimensions);
 
         try {
           const cloudinaryResult = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
@@ -85,11 +77,6 @@ export class CloudinaryService {
               next: (result) => resolve(result),
               error: (error) => reject(error)
             });
-          });
-
-          console.log('✅ Image uploaded successfully with dimensions:', {
-            cloudinaryResult,
-            calculatedDimensions
           });
 
           return {
@@ -110,7 +97,6 @@ export class CloudinaryService {
    * @returns Observable con la respuesta de Cloudinary
    */
   uploadImage(file: File): Observable<CloudinaryUploadResult> {
-    console.log('📤 Uploading image to Cloudinary:', file.name, file.size, 'bytes');
 
     const formData = new FormData();
     formData.append('file', file);
@@ -119,21 +105,12 @@ export class CloudinaryService {
 
     const uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`;
 
-    console.log('📤 Upload URL:', uploadUrl);
-    console.log('📤 Upload preset:', this.uploadPreset);
-    console.log('📤 FormData contents:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
-    }
-
     return from(
       fetch(uploadUrl, {
         method: 'POST',
         body: formData
       }).then(async response => {
         const responseText = await response.text();
-        console.log('📤 Response status:', response.status);
-        console.log('📤 Response text:', responseText);
 
         if (!response.ok) {
           let errorData;
@@ -147,7 +124,6 @@ export class CloudinaryService {
         }
 
         const result = JSON.parse(responseText);
-        console.log('✅ Upload successful:', result);
         return result;
       })
     );

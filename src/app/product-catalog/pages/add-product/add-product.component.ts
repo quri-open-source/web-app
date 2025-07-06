@@ -87,7 +87,6 @@ export class AddProductComponent implements OnInit {
       next: (project: Project) => {
         this.project = project;
         this.isLoading = false;
-        console.log('✅ Project loaded:', project);
       },
       error: (error: any) => {
         this.error = error;
@@ -102,12 +101,6 @@ export class AddProductComponent implements OnInit {
       this.isSaving = true;
       const formData = this.productForm.value;
 
-      console.log('📤 Adding product to catalog:', {
-        project: this.project,
-        priceAmount: formData.priceAmount,
-        priceCurrency: formData.priceCurrency
-      });
-
       // Create product request
       const createProductRequest: CreateProductRequest = {
         projectId: this.projectId!,
@@ -118,15 +111,11 @@ export class AddProductComponent implements OnInit {
       // Create product and then update project status
       this.productCatalogService.createProduct(createProductRequest).pipe(
         switchMap((productResponse) => {
-          console.log('✅ Product created successfully:', productResponse);
-
           // After creating the product, update the project status to GARMENT
-          console.log('🔄 Updating project status to GARMENT for project:', this.projectId);
           return this.designLabService.updateProjectStatus(this.projectId!, 'GARMENT', this.project!);
         })
       ).subscribe({
         next: (updateResult) => {
-          console.log('✅ Project status updated to GARMENT:', updateResult);
           this.isSaving = false;
 
           const message = this.translateService.instant('catalog.productAddedSuccess');

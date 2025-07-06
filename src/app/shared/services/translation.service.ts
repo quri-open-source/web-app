@@ -36,7 +36,6 @@ export class TranslationService {
       next: () => {
         localStorage.setItem('language', defaultLanguage);
         this.currentLanguage.next(defaultLanguage);
-        console.log('Language initialized:', defaultLanguage);
       },
       error: (error) => {
         console.error('Error loading translation files:', error);
@@ -55,7 +54,6 @@ export class TranslationService {
           this.translate.setDefaultLang(language);
           localStorage.setItem('language', language);
           this.currentLanguage.next(language);
-          console.log('Language changed to:', language);
         },
         error: (error) => {
           console.error('Error changing language:', error);

@@ -18,6 +18,9 @@ import { environment } from '../../../../environments/environment.prod';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { CartService } from '../../../shared/services/cart.service';
+import { OrderProcessingService } from '../../../order-processing/services/order-processing.service';
+import { CreateOrderRequest } from '../../../order-processing/services/order-processing.response';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -48,6 +51,8 @@ export class CheckoutFormComponent {
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
   private readonly translateService = inject(TranslateService);
+  private readonly orderProcessingService = inject(OrderProcessingService);
+  private readonly authService = inject(AuthenticationService);
 
   paymentElementForm = this.fb.group({
     name: ['John Doe', [Validators.required]],
@@ -82,7 +87,6 @@ export class CheckoutFormComponent {
   pay() {
     if (this.paying() || this.paymentElementForm.invalid) return;
 
-    console.log('💳 Starting payment process...');
     this.paying.set(true);
 
     const {
@@ -113,23 +117,37 @@ export class CheckoutFormComponent {
       })
       .subscribe(result => {
         this.paying.set(false);
-        console.log('💳 Payment result:', result);
-
         if (result.error) {
           console.error('❌ Payment failed:', result.error.message);
           // Show error to your customer (e.g., insufficient funds)
-          console.log({ success: false, error: result.error.message });
         } else {
           // The payment has been processed!
           if (result.paymentIntent.status === 'succeeded') {
-            console.log('✅ Payment succeeded! Clearing cart and redirecting...');
-
-            // Limpiar carrito
-            this.cartService.clearCart();
-            console.log('🛒 Cart cleared');
-
-            this.router.navigate(['/home/order-processing/payment/ok']);
-        } else {
+            // Obtener userId y productos del carrito
+            this.authService.currentUserId.subscribe(userId => {
+              if (!userId) {
+                // Manejar error de usuario no autenticado
+                this.router.navigate(['/home/iam/sign-in']);
+                return;
+              }
+              const items = this.cartService.cartItems.map(item => ({
+                productId: item.productId,
+                quantity: 1 // Ajusta si tienes cantidad real
+              }));
+              const orderRequest: CreateOrderRequest = { userId, items };
+              this.orderProcessingService.createOrder(orderRequest).subscribe({
+                next: (order) => {
+                  localStorage.setItem('orderId', order.id);
+                  this.cartService.clearCart();
+                  this.router.navigate(['/home/order-processing/payment/ok']);
+                },
+                error: (err) => {
+                  // Manejo de error al crear la orden
+                  console.error('Error creating order:', err);
+                }
+              });
+            });
+          } else {
             console.warn('⚠️ Payment intent status:', result.paymentIntent.status);
           }
         }

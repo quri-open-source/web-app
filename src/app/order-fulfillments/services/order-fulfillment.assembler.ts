@@ -6,7 +6,7 @@ export class OrderFulfillmentAssembler {
     return new OrderFulfillment(
       response.id,
       response.orderId,
-      response.fulfillmentStatus,
+      response.status,
       new Date(response.receivedDate),
       new Date(response.shippedDate),
       response.manufacturerId,
@@ -19,7 +19,7 @@ export class OrderFulfillmentAssembler {
     return {
       id: entity.id,
       orderId: entity.orderId,
-      fulfillmentStatus: entity.fulfillmentStatus,
+      status: entity.status,
       receivedDate: entity.receivedDate,
       shippedDate: entity.shippedDate,
       manufacturerId: entity.manufacturerId,

@@ -275,13 +275,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
       this.aspectRatio = this.currentWidth / this.currentHeight;
     }
 
-    console.log('🖼️ ImageLayerComponent initialized:', {
-      layerId: this.layer.id,
-      position: { x: this.currentX, y: this.currentY },
-      dimensions: { width: this.currentWidth, height: this.currentHeight },
-      aspectRatio: this.aspectRatio,
-      imageUrl: this.getImageUrl()
-    });
   }
 
   getImageUrl(): string {
@@ -297,12 +290,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
     if (this.naturalWidth && this.naturalHeight) {
       this.aspectRatio = this.naturalWidth / this.naturalHeight;
     }
-
-    console.log('✅ Image loaded successfully:', {
-      layerId: this.layer.id,
-      naturalSize: { width: this.naturalWidth, height: this.naturalHeight },
-      aspectRatio: this.aspectRatio
-    });
   }
 
   onImageError(_event: Event) {
@@ -324,12 +311,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
     // Only handle left mouse button
     if (event.button !== 0) return;
 
-    console.log('�️ Starting drag:', {
-      layerId: this.layer.id,
-      mousePos: { x: event.clientX, y: event.clientY },
-      currentPos: { x: this.currentX, y: this.currentY }
-    });
-
     this.startDrag(event);
   }
 
@@ -347,13 +328,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
   onResizeStart(event: MouseEvent, handle: string) {
     event.preventDefault();
     event.stopPropagation();
-
-    console.log('🔄 Starting resize:', {
-      layerId: this.layer.id,
-      handle: handle,
-      mousePos: { x: event.clientX, y: event.clientY },
-      currentSize: { width: this.currentWidth, height: this.currentHeight }
-    });
 
     this.isResizing = true;
     this.resizeHandle = handle;
@@ -498,10 +472,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
   };
 
   private finishDrag() {
-    console.log('✅ Drag finished:', {
-      layerId: this.layer.id,
-      finalPosition: { x: this.currentX, y: this.currentY }
-    });
 
     this.isDragging = false;
     this.cleanupEventListeners();
@@ -519,11 +489,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
   }
 
   private finishResize() {
-    console.log('✅ Resize finished:', {
-      layerId: this.layer.id,
-      finalPosition: { x: this.currentX, y: this.currentY },
-      finalSize: { width: this.currentWidth, height: this.currentHeight }
-    });
 
     this.isResizing = false;
     this.cleanupEventListeners();
@@ -555,11 +520,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
   }
 
   private updateLayerPosition() {
-    console.log('🔄 Updating layer in backend:', {
-      layerId: this.layer.id,
-      position: { x: this.layer.x, y: this.layer.y },
-      dimensions: { width: this.layer.details?.width, height: this.layer.details?.height }
-    });
 
     const updateRequest = {
       x: this.layer.x,
@@ -575,7 +535,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
       updateRequest
     ).subscribe({
       next: (result: any) => {
-        console.log('✅ Layer updated successfully:', result);
         this.layer.updatedAt = new Date();
 
         this.layerEvent.emit({
@@ -613,12 +572,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
   }
 
   private updateImageLayerDetails() {
-    console.log('🔄 Updating image layer details in backend:', {
-      layerId: this.layer.id,
-      position: { x: this.layer.x, y: this.layer.y },
-      dimensions: { width: this.layer.details?.width, height: this.layer.details?.height },
-      imageUrl: this.getImageUrl()
-    });
 
     const updateRequest = {
       imageUrl: this.getImageUrl(),
@@ -632,7 +585,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
       updateRequest
     ).subscribe({
       next: (result: any) => {
-        console.log('✅ Image layer details updated successfully:', result);
         this.layer.updatedAt = new Date();
 
         // Update position separately if it also changed
@@ -675,7 +627,6 @@ export class ImageLayerComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
 
-    console.log('🗑️ ImageLayerComponent - Deleting image layer:', this.layer.id);
 
     this.layerEvent.emit({
       layerId: this.layer.id,

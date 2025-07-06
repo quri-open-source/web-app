@@ -52,6 +52,16 @@
       "required": "{{field}} is required",
       "minlength": "{{field}} must be at least {{length}} characters",
       "passwordMismatch": "Passwords do not match"
+    },
+    "manufacturerStep": {
+      "title": "Manufacturer Information",
+      "name": "Name",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "state": "State",
+      "zip": "ZIP Code",
+      "create": "Create Manufacturer"
     }
   },
   "common": {
@@ -502,5 +512,22 @@
     "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
     "operationSuccessful": "Operation completed successfully",
     "operationFailed": "Operation failed"
+  },
+  "fulfillments": {
+    "title": "Fulfillments",
+    "empty": "No fulfillments found.",
+    "cardTitle": "Fulfillment #{{id}}",
+    "id": "ID",
+    "created": "Created",
+    "status": "Status",
+    "statusValues": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown"
+    },
+    "details": "View Details"
   }
 }

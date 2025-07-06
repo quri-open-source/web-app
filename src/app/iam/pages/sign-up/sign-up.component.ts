@@ -13,6 +13,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
+import { ManufacturerService } from '../../../order-fulfillments/services/manufacturer.service';
+import { CreateManufacturerRequest } from '../../../order-fulfillments/services/manufacturer.response';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -45,17 +48,22 @@ import { CommonModule } from '@angular/common';
 })
 export class SignUpComponent implements OnInit {
   form!: FormGroup;
+  manufacturerForm!: FormGroup;
   roles: Array<{ label: string; value: string }> = [];
   selectedRole = 'customer';
   submitted: boolean = false;
   hidePassword = true;
   hideConfirmPassword = true;
   isLoading = false;
+  step: 1 | 2 = 1;
+  createdUserId: string | null = null;
 
   constructor(
     private builder: FormBuilder,
     private authenticationService: AuthenticationService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private manufacturerService: ManufacturerService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -69,6 +77,15 @@ export class SignUpComponent implements OnInit {
       confirmPassword: ['', [Validators.required]],
       role: ['customer', Validators.required]
     }, { validators: this.passwordMatchValidator });
+
+    this.manufacturerForm = this.builder.group({
+      name: ['', Validators.required],
+      address: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
+      state: ['', Validators.required],
+      zip: ['', Validators.required]
+    });
   }
 
   onSubmit() {
@@ -86,12 +103,38 @@ export class SignUpComponent implements OnInit {
     }
     const signUpRequest = new SignUpRequest(username, password, roles);
 
-    this.authenticationService.signUp(signUpRequest);
+    this.authenticationService.signUp(signUpRequest).subscribe({
+      next: (response: any) => {
+        if (role === 'manufacturer' && response?.id) {
+          this.createdUserId = response.id;
+          this.step = 2;
+        } else {
+          this.router.navigate(['/home']);
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
 
-    // Reset loading state after a reasonable time
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000);
+  onManufacturerSubmit() {
+    if (this.manufacturerForm.invalid || !this.createdUserId) return;
+    this.isLoading = true;
+    const req: CreateManufacturerRequest = {
+      userId: this.createdUserId,
+      ...this.manufacturerForm.value
+    };
+    this.manufacturerService.create(req).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   passwordMatchValidator(control: AbstractControl): {[key: string]: any} | null {

@@ -26,7 +26,6 @@ export const authenticationGuard: CanActivateFn = (_route, _state) => {
   }
 
   // No valid authentication found, redirect to sign-in
-  console.log('❌ Authentication guard: No valid authentication, redirecting to sign-in');
   router.navigate(['/sign-in']).then();
   return false;
 };

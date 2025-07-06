@@ -52,6 +52,16 @@
       "required": "{{field}} es requerido",
       "minlength": "{{field}} debe tener al menos {{length}} caracteres",
       "passwordMismatch": "Las contraseñas no coinciden"
+    },
+    "manufacturerStep": {
+      "title": "Información del Fabricante",
+      "name": "Nombre",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "country": "País",
+      "state": "Estado",
+      "zip": "Código Postal",
+      "create": "Crear Fabricante"
     }
   },
   "common": {
@@ -507,5 +517,22 @@
     "switch": "Cambiar idioma",
     "english": "Inglés",
     "spanish": "Español"
+  },
+  "fulfillments": {
+    "title": "Órdenes de cumplimiento",
+    "empty": "No hay órdenes de cumplimiento.",
+    "cardTitle": "Orden #{{id}}",
+    "id": "ID",
+    "created": "Creado",
+    "status": "Estado",
+    "statusValues": {
+      "pending": "Pendiente",
+      "processing": "En proceso",
+      "shipped": "Enviado",
+      "delivered": "Entregado",
+      "cancelled": "Cancelado",
+      "unknown": "Desconocido"
+    },
+    "details": "Ver Detalles"
   }
 }

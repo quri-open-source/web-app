@@ -1,28 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatBadgeModule } from '@angular/material/badge';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { OrderFulfillment } from '../../../order-fulfillments/model/order-fulfillment.entity';
+import { OrderFulfillmentService } from '../../../order-fulfillments/services/order-fulfillment.service';
+import { AuthenticationService } from '../../../iam/services/authentication.service';
+import { ManufacturerService } from '../../../order-fulfillments/services/manufacturer.service';
+import { MatButton } from '@angular/material/button';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-fulfillments',
   standalone: true,
-  imports: [MatCardModule, MatIconModule],
-  template: `
-    <div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; background: #f5f5f5;">
-      <mat-card style="max-width: 420px; width: 100%; padding: 2rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon color="primary" style="vertical-align: middle; margin-right: 8px;">local_shipping</mat-icon>
-            Fulfillments
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p style="margin-top: 1rem; color: #666; text-align: center;">
-            This is a placeholder for the Fulfillments section.<br>
-            Only visible to manufacturers.
-          </p>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  `
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatExpansionModule,
+    MatBadgeModule,
+    TranslateModule,
+    MatButton,
+    RouterModule
+  ],
+  providers: [DatePipe],
+  templateUrl: './fulfillments.component.html',
+styleUrls: ['./fulfillments.component.css'],
 })
-export class FulfillmentsComponent {}
+export class FulfillmentsComponent {
+  fulfillments = signal<OrderFulfillment[]>([]);
+
+  constructor(
+    private auth: AuthenticationService,
+    private manufacturerService: ManufacturerService,
+    private orderFulfillmentService: OrderFulfillmentService,
+    private router: Router
+  ) {
+    this.auth.currentUserId.subscribe(userId => {
+      this.manufacturerService.getByUserId(userId).subscribe(manufacturer => {
+        this.orderFulfillmentService.getAll(manufacturer.id).subscribe(data => {
+          this.fulfillments.set(data);
+        });
+      });
+    });
+  }
+
+  getStatusClass(status: string | undefined): string {
+    if (!status) return 'status-badge status-unknown';
+    return `status-badge ${status}`;
+  }
+
+  viewDetails(f: OrderFulfillment) {
+    this.router.navigate(['/home/fulfillments', f.id]);
+  }
+}
