@@ -52,7 +52,8 @@
               [alt]="'T-shirt ' + project.garmentColor"
               class="tshirt-image"
               *ngIf="getTshirtImageUrl()"
-              loading="lazy">
+              loading="lazy"
+              crossorigin="anonymous">
 
             <!-- Layers Overlay with New Components -->
             <div class="layers-overlay" *ngIf="getTshirtImageUrl() && projectId">
@@ -73,7 +74,8 @@
                 [projectId]="projectId!"
                 [isSelected]="selectedLayerId === layer.id"
                 [showHandles]="true"
-                (layerEvent)="onImageLayerEvent($event)">
+                (layerEvent)="onImageLayerEvent($event)"
+                crossorigin="anonymous">
               </app-image-layer>
             </div>
 

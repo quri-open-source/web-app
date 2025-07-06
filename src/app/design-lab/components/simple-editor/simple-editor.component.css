@@ -83,9 +83,8 @@
 
 .tshirt-preview {
     max-width: 300px;
-    width: 100%;
     position: relative;
-    user-select: none;
+    background-color: white;
 }
 
 .tshirt-image {
@@ -95,10 +94,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease;
     display: block;
-}
-
-.tshirt-image:hover {
-    transform: scale(1.02);
 }
 
 /* Layers Overlay */
