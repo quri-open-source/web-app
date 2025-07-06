@@ -96,6 +96,8 @@ export class AuthenticationService {
    * @returns The {@link SignInResponse} object containing the user's id, username, and token.
    */
   signIn(signInRequest: SignInRequest) {
+
+    console.log(`Signing in with request:`, `${this.basePath}/api/v1/auth/sign-in`);
     return this.http.post<SignInResponse>(`${this.basePath}/api/v1/auth/sign-in`, signInRequest, this.httpOptions)
       .subscribe({
         next: (response) => {

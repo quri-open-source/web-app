@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ManufacturerResponse, ManufacturersResponse, CreateManufacturerRequest } from './manufacturer.response';
 import { ManufacturerAssembler } from './manufacturer.assembler';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ManufacturerService {
-  private readonly apiUrl = '/api/v1/manufacturers';
+  private readonly apiUrl = `${environment.serverBaseUrl}/api/v1/manufacturers`;
 
   constructor(private http: HttpClient) {}
 

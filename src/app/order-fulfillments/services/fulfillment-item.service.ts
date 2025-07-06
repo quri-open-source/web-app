@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { FulfillmentItemResponse, OrderFulfillmentItemsRequest, UpdateOrderFulfillmentItemStatusRequest } from './order-fulfillment-items.response';
+import { FulfillmentItemResponse, UpdateOrderFulfillmentItemStatusRequest } from './order-fulfillment-items.response';
 import { FulfillmentItem } from '../model/fulfillment-item.entity';
 import { FulfillmentItemAssembler } from './fulfillment-item.assembler';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class FulfillmentItemService {
-  private readonly apiUrl = '/api/v1/fulfillments';
+  private readonly apiUrl = `${environment.serverBaseUrl}/api/v1/fulfillments`;
 
   constructor(private http: HttpClient) {}
 
