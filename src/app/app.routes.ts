@@ -96,6 +96,14 @@ export const routes: Routes = [
         canActivate: [authenticationGuard],
       },
       {
+        path: 'order-processing/payment/ok',
+        loadComponent: () =>
+          import('./order-processing/components/checkout-form/payment-success.component').then(
+            (c) => c.PaymentSuccessComponent
+          ),
+        canActivate: [authenticationGuard],
+      },
+      {
         path: 'fulfillments',
         loadComponent: () =>
           import('./public/pages/fulfillments/fulfillments.component').then(
