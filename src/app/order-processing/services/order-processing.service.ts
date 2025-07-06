@@ -22,7 +22,7 @@ export class OrderProcessingService {
 
   // GET /api/v1/orders?userId=...
   getUserOrders(userId: string): Observable<UserOrdersResponse> {
-    return this.http.get<UserOrdersResponse>(`${this.apiUrl}?userId=${userId}`);git
+    return this.http.get<UserOrdersResponse>(`${this.apiUrl}?userId=${userId}`);
   }
 
   // POST /api/v1/orders
