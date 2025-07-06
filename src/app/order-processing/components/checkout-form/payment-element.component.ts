@@ -1,7 +1,9 @@
 import { Component, inject, Input, signal, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import {
   injectStripe,
@@ -16,17 +18,23 @@ import { environment } from '../../../../environments/environment.prod';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { CartService } from '../../../shared/services/cart.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'ngstr-checkout-form',
   templateUrl: './payment-element.component.html',
   styleUrls: ['./payment-element.component.css'],
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatFormFieldModule,
     StripePaymentElementComponent,
     NgxStripeModule,
-    MatButton
+    MatButton,
+    TranslateModule,
+    MatIconModule
   ]
 })
 export class CheckoutFormComponent {
@@ -39,6 +47,7 @@ export class CheckoutFormComponent {
   private readonly fb = inject(UntypedFormBuilder);
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
+  private readonly translateService = inject(TranslateService);
 
   paymentElementForm = this.fb.group({
     name: ['John Doe', [Validators.required]],
@@ -72,6 +81,8 @@ export class CheckoutFormComponent {
 
   pay() {
     if (this.paying() || this.paymentElementForm.invalid) return;
+    
+    console.log('💳 Starting payment process...');
     this.paying.set(true);
 
     const {
@@ -102,16 +113,31 @@ export class CheckoutFormComponent {
       })
       .subscribe(result => {
         this.paying.set(false);
+        console.log('💳 Payment result:', result);
+        
         if (result.error) {
+          console.error('❌ Payment failed:', result.error.message);
           // Show error to your customer (e.g., insufficient funds)
           console.log({ success: false, error: result.error.message });
         } else {
           // The payment has been processed!
-        if (result.paymentIntent.status === 'succeeded') {
-          // Limpiar carrito y redirigir a pantalla de éxito
-          this.cartService.clearCart();
-          this.router.navigate(['/home/order-processing/payment/ok']);
-        }
+          if (result.paymentIntent.status === 'succeeded') {
+            console.log('✅ Payment succeeded! Clearing cart and redirecting...');
+            
+            // Limpiar carrito
+            this.cartService.clearCart();
+            console.log('🛒 Cart cleared');
+            
+            // Pequeña pausa antes de redirigir para asegurar que el estado se actualice
+            setTimeout(() => {
+              console.log('🔄 Redirecting to success page...');
+              this.router.navigate(['/home/order-processing/payment/ok'], { 
+                replaceUrl: true // Usar replaceUrl para evitar problemas con el historial
+              });
+            }, 500);
+          } else {
+            console.warn('⚠️ Payment intent status:', result.paymentIntent.status);
+          }
         }
       });
   }
