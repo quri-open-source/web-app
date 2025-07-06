@@ -12,7 +12,7 @@ import {
   CreateOrderPaymentIntentResponse,
   OrderByIdResponse
 } from './order-processing.response';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class OrderProcessingService {
