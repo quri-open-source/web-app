@@ -58,9 +58,7 @@ export class CheckoutFormComponent {
   paymentElementOptions: StripePaymentElementOptions = {
     layout: {
       type: 'tabs',
-      defaultCollapsed: false,
-      radios: false,
-      spacedAccordionItems: false
+      defaultCollapsed: false
     }
   };
 
