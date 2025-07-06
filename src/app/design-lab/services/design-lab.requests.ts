@@ -1,6 +1,6 @@
 import { GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER } from '../../const';
 
-// ==================== PROJECT REQUESTS ====================
+
 export interface CreateProjectRequest {
   title: string;
   garmentColor: GARMENT_COLOR;
@@ -9,7 +9,7 @@ export interface CreateProjectRequest {
   userId: string;
 }
 
-// ==================== LAYER REQUESTS ====================
+
 export interface CreateTextLayerRequest {
   projectId: string;
   x: number;

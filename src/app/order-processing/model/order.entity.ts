@@ -1,5 +1,5 @@
-// Entidades de dominio para Order Processing
-// Reutiliza las interfaces de response como base
+// Domain entities for Order Processing
+// Reuses response interfaces as base types
 
 
 import { OrderResponse, ItemResponse, OrderResponseStatus } from '../services/order-processing.response';

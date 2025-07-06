@@ -23,7 +23,7 @@ export class ManufacturerService {
     );
   }
   getByUserId(userId: string): Observable<Manufacturer> {
-    // Endpoint: /api/v1/manufacturers/{userId}/details
+
     return this.http.get<ManufacturerResponse>(`${this.apiUrl}/${userId}/details`).pipe(
       map(ManufacturerAssembler.fromResponse)
     );

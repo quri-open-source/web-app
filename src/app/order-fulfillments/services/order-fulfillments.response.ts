@@ -6,12 +6,12 @@ export enum OrderFulfillmentStatus {
     CANCELLED = 'CANCELLED'
 }
 
-// get all fulfillments by manufacturerId
-// api/v1/fulfillments?manufacturerId=...
+// Get all fulfillments by manufacturerId
+// Endpoint: api/v1/fulfillments?manufacturerId=...
 export interface OrderFulfillmentsRequest {
-    manufacturerId: string; // en el query
+    manufacturerId: string; // in query params
 }
-// recibe como response
+// Response type
 export type OrderFulfillmentsResponse = OrderFulfillmentResponse[];
 
 export interface OrderFulfillmentResponse {
@@ -25,20 +25,20 @@ export interface OrderFulfillmentResponse {
     updatedAt: Date;
 }
 
-// get fulfillment by id
-// api/v1/fulfillments/{fulfillmentId}
+// Get fulfillment by ID
+// Endpoint: api/v1/fulfillments/{fulfillmentId}
 export interface OrderFulfillmentByIdRequest {
-    fulfillmentId: string; // en el path
+    fulfillmentId: string; // in path param
 }
-// este endpoint recibe como response
+// Response type for this endpoint
 export type OrderFulfillmentByIdResponse = OrderFulfillmentResponse;
 
 
-// create fulfillment
-// api/v1/fulfillments
+// Create fulfillment
+// Endpoint: api/v1/fulfillments
 export interface CreateOrderFulfillmentRequest {
-    orderId: string; // en el body
-    manufacturerId: string; // en el body
+    orderId: string; // in request body
+    manufacturerId: string; // in request body
 }
-// este endpoint recibe como response
+// Response type for this endpoint
 export type CreateOrderFulfillmentResponse = OrderFulfillmentResponse;

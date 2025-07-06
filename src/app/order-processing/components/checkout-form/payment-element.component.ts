@@ -123,16 +123,16 @@ export class CheckoutFormComponent {
         } else {
           // The payment has been processed!
           if (result.paymentIntent.status === 'succeeded') {
-            // Obtener userId y productos del carrito
+            // Get userId and products from the cart
             this.authService.currentUserId.subscribe(userId => {
               if (!userId) {
-                // Manejar error de usuario no autenticado
+                // Handle unauthenticated user error
                 this.router.navigate(['/home/iam/sign-in']);
                 return;
               }
               const items = this.cartService.cartItems.map(item => ({
                 productId: item.productId,
-                quantity: 1 // Ajusta si tienes cantidad real
+                quantity: 1 // Adjust if you have real quantity
               }));
               const orderRequest: CreateOrderRequest = { userId, items };
               this.orderProcessingService.createOrder(orderRequest).subscribe({
@@ -142,7 +142,7 @@ export class CheckoutFormComponent {
                   this.router.navigate(['/home/order-processing/payment/ok']);
                 },
                 error: (err) => {
-                  // Manejo de error al crear la orden
+                  // Handle error when creating the order
                   console.error('Error creating order:', err);
                 }
               });

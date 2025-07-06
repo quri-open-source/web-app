@@ -1,6 +1,6 @@
 import { PROJECT_STATUS, GARMENT_COLOR, GARMENT_SIZE, PROJECT_GENDER, LayerType } from '../../const';
 
-// ==================== PROJECT RESPONSES ====================
+
 export interface ProjectResponse {
   id: string;
   title: string;
@@ -28,7 +28,7 @@ export interface DeleteProjectResponse {
   error?: string;
 }
 
-// ==================== LAYER RESPONSES ====================
+
 export interface LayerResponse {
   id: string;
   type: LayerType;

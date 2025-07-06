@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,12 +49,10 @@ interface NavigationLink {
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private destroy$ = new Subject<void>();
     currentPageTitle = 'Dashboard';
-
     navigationLinks: NavigationLink[] = [];
-
     private readonly routeTitleMap = new Map<string, string>([
         ['', 'navigation.dashboard'],
         ['dashboard', 'navigation.dashboard'],
@@ -62,6 +60,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         ['design-lab', 'navigation.designLab'],
         ['cart', 'navigation.cart'],
     ]);
+    isMobile = false;
+    private resizeListener = this.checkScreenSize.bind(this);
 
     constructor(
         private authService: AuthenticationService,
@@ -71,8 +71,26 @@ export class HomeComponent implements OnInit, OnDestroy {
         private snackBar: MatSnackBar
     ) {}
 
+    ngAfterViewInit() {
+        this.checkScreenSize();
+        window.addEventListener('resize', this.resizeListener);
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('resize', this.resizeListener);
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    checkScreenSize() {
+        this.isMobile = window.innerWidth <= 768;
+    }
+
+    isMobileScreen(): boolean {
+        return this.isMobile;
+    }
+
     ngOnInit() {
-        // Always build navigationLinks fresh
         this.navigationLinks = [
             {
                 name: 'Dashboard',
@@ -115,7 +133,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             });
         }
 
-        // Listen to router events to update page title
+
         this.router.events
             .pipe(
                 filter(
@@ -128,24 +146,19 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.updatePageTitle(event.urlAfterRedirects);
             });
 
-        // Set initial title
+
         this.updatePageTitle(this.router.url);
     }
 
-    ngOnDestroy() {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
     private updatePageTitle(url: string) {
-        // Extract the route after /home/
+
         const routeMatch = url.match(/\/home\/?(.*)/);
         const route = routeMatch ? routeMatch[1] : '';
 
         const titleKey =
             this.routeTitleMap.get(route) || 'navigation.dashboard';
 
-        // Use synchronous translation to avoid subscription issues
+
         const translatedTitle = this.translateService.instant(titleKey);
         this.currentPageTitle = translatedTitle || titleKey;
     }
@@ -159,7 +172,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     navigateToSection(section: string) {
-        // Always navigate to /home/${section} to stay within the authenticated area
         this.router.navigate(['/home', section]);
     }
 
@@ -168,7 +180,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.router.navigate(['/sign-in']);
     }
     viewCart() {
-        // Navigate to cart page
         this.router.navigate(['/home/cart']);
     }
 

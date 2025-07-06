@@ -3,7 +3,7 @@ import { Project } from '../model/project.entity';
 import { TextLayer, ImageLayer, Layer } from '../model/layer.entity';
 import { LayerType } from '../../const';
 
-// Imports from project.response.ts
+
 import {
   CreateProjectResponse,
   CreateTextLayerRequest,
@@ -28,7 +28,7 @@ import {
 })
 export class DesignLabAssembler {
 
-  // ==================== PROJECT ASSEMBLERS ====================
+
 
   /**
    * Convertir ProjectResponse del backend a entidad Project del dominio
@@ -39,7 +39,7 @@ export class DesignLabAssembler {
       response.title,
       response.userId,
       response.previewUrl,
-      response.status as any, // Cast temporal para evitar error de tipo
+      response.status as any,
       response.garmentColor as any,
       response.garmentSize as any,
       response.garmentGender as any,
@@ -77,7 +77,7 @@ export class DesignLabAssembler {
     };
   }
 
-  // ==================== LAYER ASSEMBLERS ====================
+
 
   /**
    * Convertir LayerResponse del backend a entidad Layer del dominio
@@ -116,7 +116,7 @@ export class DesignLabAssembler {
         response.details?.imageUrl || ''
       );
 
-      // Agregar details para compatibilidad con el template
+
       imageLayer.details = {
         imageUrl: response.details?.imageUrl || '',
         width: response.details?.width || 100,
@@ -126,7 +126,7 @@ export class DesignLabAssembler {
       return imageLayer;
     }
 
-    // Fallback para tipos no reconocidos
+
     return new TextLayer(
       response.id,
       response.x,
@@ -213,7 +213,7 @@ export class DesignLabAssembler {
     };
   }
 
-  // ==================== REQUEST ASSEMBLERS ====================
+
 
   /**
    * Crear CreateTextLayerRequest sin projectId (va en la URL)
