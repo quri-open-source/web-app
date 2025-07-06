@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (!userId || !token) return;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    this.http.get<any>(`http://localhost:8080/api/v1/users/${userId}`, { headers })
+    this.http.get<any>(`/api/v1/users/${userId}`, { headers })
       .subscribe({
         next: data => this.user = data,
         error: () => this.user = null
