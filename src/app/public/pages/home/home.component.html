@@ -1,7 +1,7 @@
 <div class="home-layout">
       <!-- Sidebar -->
       <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #drawer class="sidenav" fixedInViewport="true" mode="side" opened="true">
+        <mat-sidenav #drawer class="sidenav" fixedInViewport="true" [mode]="isMobileScreen() ? 'over' : 'side'" [opened]="!isMobileScreen() ? true : false">
           <div class="sidebar-header">
             <mat-icon class="brand-icon">science</mat-icon>
             <h2 class="brand-name">QURI</h2>
